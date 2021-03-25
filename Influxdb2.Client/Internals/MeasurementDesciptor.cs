@@ -8,17 +8,26 @@ namespace Influxdb2.Client
     /// <summary>
     /// Measurement描述
     /// </summary>
-    class MeasurementDesciptor
+    sealed class MeasurementDesciptor
     {
         /// <summary>
         /// 获取名称
         /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// 获取所有字段
+        /// </summary>
         public PropertyDescriptor[] Fields { get; }
 
+        /// <summary>
+        /// 获取所有标签
+        /// </summary>
         public PropertyDescriptor[] Tags { get; }
 
+        /// <summary>
+        /// 获取时间点
+        /// </summary>
         public PropertyDescriptor? Time { get; }
 
 
@@ -30,28 +39,26 @@ namespace Influxdb2.Client
         private MeasurementDesciptor(Type type)
         {
             var properties = type.GetProperties()
-                .Where(item => item.CanRead && item.CanWrite)
+                .Where(item => item.CanRead && item.CanWrite && item.IsDefined(typeof(InfluxdbDataTypeAttribute)))
                 .Select(p => new PropertyDescriptor(p))
                 .ToArray();
 
-            var times = properties.Where(item => item.ColumnType == ColumnType.Time).ToArray();
+            var times = properties.Where(item => item.DataType == DataType.Time).ToArray();
             if (times.Length > 1)
             {
-                throw new ArgumentException($"{type}只能声明一次ColumnType.Time字段");
+                throw new ArgumentException($"{type}至多只能声明一个{nameof(DataType.Time)}属性");
             }
 
-            var fields = properties.Where(item => item.ColumnType == ColumnType.Field).ToArray();
+            var fields = properties.Where(item => item.DataType == DataType.Field).ToArray();
             if (fields.Length == 0)
             {
-                throw new ArgumentException($"{type}至少声明一个ColumnType.Field字段");
+                throw new ArgumentException($"{type}至少声明一个{nameof(DataType.Field)}属性");
             }
 
             this.Time = times.FirstOrDefault();
             this.Fields = fields;
-            this.Tags = properties.Where(item => item.ColumnType == ColumnType.Tag).ToArray();
-
-            var attr = type.GetCustomAttribute<MeasurementAttribute>();
-            this.Name = attr == null || string.IsNullOrEmpty(attr.Name) ? type.Name : attr.Name;
+            this.Tags = properties.Where(item => item.DataType == DataType.Tag).ToArray();
+            this.Name = type.Name;
         }
 
         /// <summary>
