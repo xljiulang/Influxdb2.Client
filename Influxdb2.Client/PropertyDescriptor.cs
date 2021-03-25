@@ -7,8 +7,8 @@ namespace Influxdb2.Client
     /// </summary>
     class PropertyDescriptor : Property<object, object>
     {
-        public ColumnType Type { get; } 
-      
+        public ColumnType Type { get; }
+
         /// <summary>
         /// 属性描述
         /// </summary>
@@ -25,7 +25,18 @@ namespace Influxdb2.Client
                     this.Name = attr.Name;
                 }
             }
-        } 
+        }
+
+        /// <summary>
+        /// 获取标签值
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns> 
+        public string GetTagValue(object instance)
+        {
+            var value = this.GetValue(instance);
+            return $@"""{value}""";
+        }
     }
 
 }
