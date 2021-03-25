@@ -9,6 +9,11 @@ namespace Influxdb2.Client
     /// </summary>
     sealed class WriteReturnAttribute : SpecialReturnAttribute
     {
+        /// <summary>
+        /// 检测结果的正确性
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override async Task SetResultAsync(ApiResponseContext context)
         {
             if (context.ResultStatus == ResultStatus.None)
@@ -16,10 +21,10 @@ namespace Influxdb2.Client
                 var response = context.HttpContext.ResponseMessage;
                 if (response != null && response.IsSuccessStatusCode == false)
                 {
-                    var error = (WriteError?)await context.JsonDeserializeAsync(typeof(WriteError));
-                    if (error != null)
+                    var error = await context.JsonDeserializeAsync(typeof(WriteError));
+                    if (error is WriteError writeError)
                     {
-                        throw new InfluxdbWriteException(error);
+                        throw new InfluxdbWriteException(writeError);
                     }
                 }
             }

@@ -42,7 +42,7 @@ namespace Influxdb2.Client
             }
             else
             {
-                this.valueConverter = value => value?.ToString();
+                this.valueConverter = GetTagValueString;
             }
         }
 
@@ -55,6 +55,21 @@ namespace Influxdb2.Client
         {
             var value = this.GetValue(instance);
             return this.valueConverter.Invoke(value);
+        }
+
+        /// <summary>
+        /// 获取Tag的文本值
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private string? GetTagValueString(object? value)
+        {
+            var stringValue = value?.ToString();
+            if (string.IsNullOrWhiteSpace(stringValue) == true)
+            {
+                return null;
+            }
+            return stringValue;
         }
 
         /// <summary>
@@ -88,7 +103,15 @@ namespace Influxdb2.Client
                 return value => value?.ToString();
             }
 
-            return value => value is null ? null : $@"""{value}""";
+            return value =>
+            {
+                var stringValue = value?.ToString();
+                if (string.IsNullOrWhiteSpace(stringValue) == true)
+                {
+                    return null;
+                }
+                return $@"""{stringValue}""";
+            };
         }
 
         /// <summary>
