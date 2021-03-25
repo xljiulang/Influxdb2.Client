@@ -20,13 +20,11 @@ namespace Influxdb2
             };
 
             var services = new ServiceCollection();
-            services
-                .AddHttpApi<IInfuxdbClient>()
-                .ConfigureHttpClient(c =>
-                {
-                    c.BaseAddress = new Uri("http://v5.taichuan.net:8086");
-                    c.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Token jM6KYmfy6iryQc_0Rms16hJnZjVieFYPRW4RrkeENnLiMdaRZMQ_g4mP8Xi_Cbmp6A1varU8E7E8VdC5NmRQaQ==");
-                });
+            services.AddInfuxdbClient(db =>
+            {
+                db.Host = new Uri("http://v5.taichuan.net:8086");
+                db.Token = "jM6KYmfy6iryQc_0Rms16hJnZjVieFYPRW4RrkeENnLiMdaRZMQ_g4mP8Xi_Cbmp6A1varU8E7E8VdC5NmRQaQ==";
+            });
 
             services.AddLogging(c => c.AddConsole());
 
