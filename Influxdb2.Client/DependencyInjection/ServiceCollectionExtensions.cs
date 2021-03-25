@@ -13,20 +13,28 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加IInfuxdbClient
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configureOptions"></param>
         /// <returns></returns>
         public static IHttpClientBuilder AddInfuxdbClient(this IServiceCollection services, Action<InfuxdbOptions> configureOptions)
         {
-            var builder = services.AddHttpApi<IInfuxdbClient>();
-            var name = builder.Name;
+            return services.Configure(configureOptions).AddInfuxdbClient();
+        }
 
-            services.Configure(name, configureOptions);
-            return builder.ConfigureHttpClient((sp, httpClient) =>
-            {
-                var infuxdb = sp.GetRequiredService<IOptionsMonitor<InfuxdbOptions>>().Get(name);
-                httpClient.BaseAddress = infuxdb.Host;
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Token {infuxdb.Token}");
-            });
+        /// <summary>
+        /// 添加IInfuxdbClient
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configureOptions"></param>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddInfuxdbClient(this IServiceCollection services)
+        {
+            return services
+                .AddHttpApi<IInfuxdbClient>()
+                .ConfigureHttpClient((sp, httpClient) =>
+                {
+                    var infuxdb = sp.GetRequiredService<IOptionsMonitor<InfuxdbOptions>>().CurrentValue;
+                    httpClient.BaseAddress = infuxdb.Host;
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Token {infuxdb.Token}");
+                });
         }
     }
 }
