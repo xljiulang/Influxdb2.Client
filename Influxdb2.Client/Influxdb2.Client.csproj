@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+
   <ItemGroup>
     <PackageReference Include="WebApiClientCore" Version="2.0.1" />
   </ItemGroup>

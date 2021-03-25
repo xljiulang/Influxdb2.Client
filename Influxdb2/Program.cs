@@ -10,6 +10,17 @@ namespace Influxdb2
     {
         static async Task Main(string[] args)
         {
+
+            var f = Flux
+                .From("v5")
+                .Range("-60h", DateTimeOffset.Now)
+                .Filter(FilterFn.R.MatchMeasurement("M3"))
+                .Pivot();
+
+            var sql = f.ToString();
+
+
+
             var services = new ServiceCollection();
             services.AddLogging(c => c.AddConsole());
 
@@ -23,13 +34,13 @@ namespace Influxdb2
             using var scope = root.CreateScope();
             var infuxdb = scope.ServiceProvider.GetRequiredService<IInfuxdbClient>();
 
-            var model = new M2
+            var model = new M3
             {
                 Age = 10,
                 CoId = "coid001",
                 CreateTime = DateTimeOffset.Now,
                 LabelId = "lb001",
-                Name = "name"
+                Name = "李4"
             };
             await infuxdb.WriteAsync(model, "v5", "v5");
 

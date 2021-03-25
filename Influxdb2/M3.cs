@@ -4,7 +4,7 @@ using System;
 namespace Influxdb2
 {
 
-    class M2
+    class M3
     {
         [InfluxdbDataType(DataType.Tag)]
         public string CoId { get; set; }
