@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Influxdb2.Client
 {
@@ -7,7 +8,9 @@ namespace Influxdb2.Client
     /// </summary>
     class PropertyDescriptor : Property<object, object>
     {
-        public ColumnType Type { get; }
+        public ColumnType ColumnType { get; }
+
+        private Func<object, string?> valueConvert;
 
         /// <summary>
         /// 属性描述
@@ -19,24 +22,79 @@ namespace Influxdb2.Client
             var attr = property.GetCustomAttribute<ColumnAttribute>();
             if (attr != null)
             {
-                this.Type = attr.Type;
+                this.ColumnType = attr.Type;
                 if (string.IsNullOrEmpty(attr.Name) == false)
                 {
                     this.Name = attr.Name;
                 }
             }
+
+            var type = property.PropertyType;
+            if (this.ColumnType == ColumnType.Time)
+            {
+                this.valueConvert = GetTimeConverter(type);
+            }
+            else if (this.ColumnType == ColumnType.Field)
+            {
+
+            }
+            else
+            {
+                this.valueConvert = GetTagConverter(type);
+            }
         }
 
-        /// <summary>
-        /// 获取标签值
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <returns></returns> 
-        public string GetTagValue(object instance)
+        public string? GetStringValue(object instance)
         {
             var value = this.GetValue(instance);
-            return $@"""{value}""";
+            return this.valueConvert(value);
         }
+
+        private static Func<object, string?> GetTagConverter(Type type)
+        {
+            return (object value) => $@"""{value}""";
+        }
+
+
+        private static Func<object, string?> GetFieldConverter(Type type)
+        {
+            if( type== typeof(int ))
+        }
+
+
+        private static Func<object, string?> GetTimeConverter(Type type)
+        {
+            if (type == typeof(DateTime?))
+            {
+                return (object value) =>
+                {
+                    var val = (DateTime?)value;
+                    return val == null ? null : new DateTimeOffset(val.Value).ToUnixTimeMilliseconds().ToString();
+                };
+            }
+
+            if (type == typeof(DateTimeOffset?))
+            {
+                return (object value) =>
+                {
+                    var val = (DateTimeOffset?)value;
+                    return val?.ToUnixTimeMilliseconds().ToString();
+                };
+            }
+
+            if (type == typeof(DateTime))
+            {
+                return (object value) => new DateTimeOffset((DateTime)value).ToUnixTimeMilliseconds().ToString();
+            }
+
+            if (type == typeof(DateTimeOffset))
+            {
+                return (object value) => ((DateTimeOffset)value).ToUnixTimeMilliseconds().ToString();
+            }
+
+            throw new NotSupportedException($"不支持时间类型{type}");
+        }
+
     }
 
 }

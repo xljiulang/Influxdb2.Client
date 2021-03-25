@@ -34,13 +34,13 @@ namespace Influxdb2.Client
                 .Select(p => new PropertyDescriptor(p))
                 .ToArray();
 
-            var times = properties.Where(item => item.Type == ColumnType.Time).ToArray();
+            var times = properties.Where(item => item.ColumnType == ColumnType.Time).ToArray();
             if (times.Length > 1)
             {
                 throw new ArgumentException($"{type}只能声明一次ColumnType.Time字段");
             }
 
-            var fields = properties.Where(item => item.Type == ColumnType.Field).ToArray();
+            var fields = properties.Where(item => item.ColumnType == ColumnType.Field).ToArray();
             if (fields.Length == 0)
             {
                 throw new ArgumentException($"{type}至少声明一个ColumnType.Field字段");
@@ -48,7 +48,7 @@ namespace Influxdb2.Client
 
             this.Time = times.FirstOrDefault();
             this.Fields = fields;
-            this.Tags = properties.Where(item => item.Type == ColumnType.Tag).ToArray();
+            this.Tags = properties.Where(item => item.ColumnType == ColumnType.Tag).ToArray();
 
             var attr = type.GetCustomAttribute<MeasurementAttribute>();
             this.Name = attr == null || string.IsNullOrEmpty(attr.Name) ? type.Name : attr.Name;
