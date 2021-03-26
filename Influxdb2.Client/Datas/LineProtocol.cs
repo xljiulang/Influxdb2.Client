@@ -1,7 +1,7 @@
 ﻿using System;
 using WebApiClientCore.Internals;
 
-namespace Influxdb2.Client
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// 数据行协议

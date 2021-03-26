@@ -3,12 +3,12 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Influxdb2.Client
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// Csv读取器
     /// </summary>
-    public class CsvReader
+    sealed class CsvReader
     {
         private readonly StreamReader reader;
 
@@ -37,7 +37,7 @@ namespace Influxdb2.Client
         /// <summary>
         /// 获取行的索引
         /// </summary>
-        public int RawIndex { get; private set; } = -1;
+        public int RowIndex { get; private set; } = -1;
 
         /// <summary>
         /// 获取表格的索引
@@ -80,7 +80,7 @@ namespace Influxdb2.Client
             // 新表格初始化columns
             if (this.columnIndex < 0)
             {
-                this.RawIndex = 0;
+                this.RowIndex = 0;
                 this.TableIndex += 1;
 
                 this.columnIndex = 0;
@@ -91,7 +91,7 @@ namespace Influxdb2.Client
             // 读完所有列，重新读取（行可能没有读完)
             if (this.columnIndex >= this.columns.Length)
             {
-                this.RawIndex += 1;
+                this.RowIndex += 1;
                 this.columnIndex = 0;
                 return await ReadAsync();
             }
@@ -99,7 +99,7 @@ namespace Influxdb2.Client
             // 读完一行，重新读取（列可能没有读完)
             if (this.valuePostion >= this.currentLine.Length)
             {
-                this.RawIndex += 1;
+                this.RowIndex += 1;
                 return await ReadAsync();
             }
 
@@ -191,12 +191,11 @@ namespace Influxdb2.Client
                 span = span.Slice(0, span.Length - 1);
             }
 
-            if (span.Contains("\"\"", StringComparison.InvariantCulture) == false)
-            {
-                return span.ToString();
-            }
+            var value = span.Contains("\"\"", StringComparison.InvariantCulture)
+                ? span.ToString().Replace("\"\"", "\"")
+                : span.ToString();
 
-            return span.ToString().Replace("\"\"", "\"");
+            return string.IsNullOrEmpty(value) ? null : value;
         }
 
         /// <summary>
@@ -205,7 +204,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public override string ToString()
         {
-            return $"Table[{this.TableIndex}].Row[{this.RawIndex}].{this.Column} = {this.Value}";
+            return $"Table[{this.TableIndex}].Row[{this.RowIndex}].{this.Column} = {this.Value}";
         }
     }
 }

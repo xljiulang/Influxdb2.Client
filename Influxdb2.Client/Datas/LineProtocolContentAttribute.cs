@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
 
-namespace Influxdb2.Client
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// LineProtocol内容

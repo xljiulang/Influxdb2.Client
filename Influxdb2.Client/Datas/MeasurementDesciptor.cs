@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 
-namespace Influxdb2.Client
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// Measurement描述

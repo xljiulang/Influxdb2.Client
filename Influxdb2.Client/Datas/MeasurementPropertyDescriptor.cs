@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Influxdb2.Client
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// 表示Measurement的属性描述

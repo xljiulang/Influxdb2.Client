@@ -2,7 +2,7 @@
 using System.Reflection;
 using WebApiClientCore.Internals;
 
-namespace Influxdb2.Client
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// 表示属性
@@ -69,7 +69,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="instance">实例</param>
         /// <param name="value">值</param>
-        public void SetValue(TDeclaring instance, TProperty value)
+        public virtual void SetValue(TDeclaring instance, TProperty value)
         {
             this.seter?.Invoke(instance, value);
         }

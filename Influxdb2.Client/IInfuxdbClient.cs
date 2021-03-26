@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Influxdb2.Client.Datas;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using WebApiClientCore.Attributes;
 

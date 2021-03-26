@@ -10,16 +10,7 @@ namespace Influxdb2
     class Program
     {
         static async Task Main(string[] args)
-        {
-
-            var fileStream = File.OpenRead(@"C:\Users\Administrator\Desktop\response.csv");
-            var reader = new CsvReader(fileStream);
-
-            while (await reader.ReadAsync())
-            {
-                Console.WriteLine(reader);
-            }
-
+        {            
             var flux = Flux
                 .From("v5")
                 .Range("-60h")
