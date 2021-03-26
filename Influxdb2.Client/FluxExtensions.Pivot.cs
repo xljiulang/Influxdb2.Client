@@ -12,7 +12,7 @@
         /// <returns></returns>
         public static IFlux Pivot(this IFlux flux)
         {
-            return flux.Pivot(Columns.TimeColumn, Columns.FieldColumn);
+            return flux.Pivot(Columns.Time, Columns.Field);
         }
 
         /// <summary>

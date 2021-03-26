@@ -17,18 +17,22 @@ namespace Influxdb2.Client
         /// <summary>
         /// 只包含_value列的集合
         /// </summary>
-        public static Columns ValueColumn { get; } = new Columns("_value");
+        public static Columns Value { get; } = new Columns("_value");
 
         /// <summary>
         /// 只包含_time列的集合
         /// </summary>
-        public static Columns TimeColumn { get; } = new Columns("_time");
-
+        public static Columns Time { get; } = new Columns("_time");
 
         /// <summary>
         /// 只包含_field列的集合
         /// </summary>
-        public static Columns FieldColumn { get; } = new Columns("_field");
+        public static Columns Field { get; } = new Columns("_field");
+
+        /// <summary>
+        /// 包含_start和_stop列的集合
+        /// </summary>
+        public static Columns StartStop { get; } = new Columns("_start", "_stop");
 
         /// <summary>
         /// 创建多个列的结合

@@ -18,7 +18,7 @@
         /// <returns></returns>
         public static IFlux Bottom(this IFlux flux, int n)
         {
-            return flux.Bottom(n, Columns.ValueColumn);
+            return flux.Bottom(n, Columns.Value);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@
         /// <returns></returns>
         public static IFlux Top(this IFlux flux, int n)
         {
-            return flux.Top(n, Columns.ValueColumn);
+            return flux.Top(n, Columns.Value);
         }
 
         /// <summary>

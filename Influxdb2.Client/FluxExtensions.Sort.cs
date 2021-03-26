@@ -12,7 +12,7 @@
         /// <returns></returns>
         public static IFlux Sort(this IFlux flux, bool desc = false)
         {
-            return flux.Sort(Columns.ValueColumn, desc);
+            return flux.Sort(Columns.Value, desc);
         }
 
         /// <summary>
