@@ -21,11 +21,11 @@
         /// Filter
         /// </summary>
         /// <param name="flux"></param>
-        /// <param name="fn">函数</param> 
+        /// <param name="fnBody">过滤函数的body</param> 
         /// <returns></returns>
-        public static IFlux Filter(this IFlux flux, FilterFn fn)
+        public static IFlux Filter(this IFlux flux, FnBody fnBody, SingleQuotesBehavior behavior = SingleQuotesBehavior.Replce)
         {
-            return flux.Pipe($"filter(fn: ({fn.ParamName}) => {fn})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"filter(fn: ({fnBody.ParamName}) => {fnBody})", behavior);
         }
     }
 }

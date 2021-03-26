@@ -4,16 +4,16 @@ using System.Text;
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 过滤函数
+    /// 过滤函数的Body
     /// </summary>
-    public class FilterFn
+    public class FnBody
     {
         private readonly StringBuilder builder = new StringBuilder();
 
         /// <summary>
         /// 返回r参数名的过滤函数
         /// </summary>
-        public static FilterFn R => new FilterFn("r");
+        public static FnBody R => new FnBody("r");
 
         /// <summary>
         /// 获取参数名
@@ -24,7 +24,7 @@ namespace Influxdb2.Client
         /// 过滤函数
         /// </summary>
         /// <param name="paramName">参数名</param>
-        private FilterFn(string paramName)
+        private FnBody(string paramName)
         {
             this.ParamName = paramName;
         }
@@ -34,7 +34,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="fn"></param>
         /// <returns></returns>
-        public FilterFn And(FilterFn fn)
+        public FnBody And(FnBody fn)
         {
             if (this.ParamName != fn.ParamName)
             {
@@ -49,7 +49,7 @@ namespace Influxdb2.Client
         /// and关键字
         /// </summary>
         /// <returns></returns>
-        public FilterFn And()
+        public FnBody And()
         {
             this.builder.Append(" and ");
             return this;
@@ -60,7 +60,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="fn"></param>
         /// <returns></returns> 
-        public FilterFn Or(FilterFn fn)
+        public FnBody Or(FnBody fn)
         {
             if (this.ParamName != fn.ParamName)
             {
@@ -76,7 +76,7 @@ namespace Influxdb2.Client
         /// or关键字
         /// </summary>
         /// <returns></returns>
-        public FilterFn Or()
+        public FnBody Or()
         {
             this.builder.Append(" or ");
             return this;
@@ -87,7 +87,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="measurementName">名</param>
         /// <returns></returns>
-        public FilterFn MatchMeasurement(string measurementName)
+        public FnBody MatchMeasurement(string measurementName)
         {
             return this.WhenColumn("_measurement", "==", measurementName);
         }
@@ -97,10 +97,10 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="fieldName">名</param>
         /// <returns></returns>
-        public FilterFn MatchField(string fieldName)
+        public FnBody MatchField(string fieldName)
         {
             return this.WhenColumn("_field", "==", fieldName);
-        }
+        } 
 
         /// <summary>
         /// 匹配标签
@@ -108,7 +108,7 @@ namespace Influxdb2.Client
         /// <param name="tagName">名</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public FilterFn MatchTag(string tagName, string value)
+        public FnBody MatchTag(string tagName, string value)
         {
             return this.WhenColumn(tagName, "==", value);
         }
@@ -120,7 +120,7 @@ namespace Influxdb2.Client
         /// <param name="op">比较符号</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public FilterFn WhenColumn(string columnName, string op, object value)
+        public FnBody WhenColumn(string columnName, string op, object value)
         {
             if (value is string stringValue)
             {
@@ -139,7 +139,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="fnBody"></param>
         /// <returns></returns>
-        public FilterFn Then(string fnBody)
+        public FnBody Then(string fnBody)
         {
             builder.Append(" ").Append(fnBody);
             return this;
@@ -160,7 +160,7 @@ namespace Influxdb2.Client
         /// <param name="fn1"></param>
         /// <param name="fn2"></param>
         /// <returns></returns>
-        public static FilterFn operator &(FilterFn fn1, FilterFn fn2)
+        public static FnBody operator &(FnBody fn1, FnBody fn2)
         {
             return fn1.And(fn2);
         }
@@ -171,7 +171,7 @@ namespace Influxdb2.Client
         /// <param name="fn1"></param>
         /// <param name="fn2"></param>
         /// <returns></returns>
-        public static FilterFn operator |(FilterFn fn1, FilterFn fn2)
+        public static FnBody operator |(FnBody fn1, FnBody fn2)
         {
             return fn1.Or(fn2);
         }
