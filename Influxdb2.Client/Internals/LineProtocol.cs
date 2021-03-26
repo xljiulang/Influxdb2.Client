@@ -17,7 +17,7 @@ namespace Influxdb2.Client
         /// <param name="measurement"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public static string From(object measurement)
+        public static string GetLineProtocol(object measurement)
         {
             var desciptor = MeasurementDesciptor.Get(measurement.GetType());
             var builder = new ValueStringBuilder(stackalloc char[1024]);

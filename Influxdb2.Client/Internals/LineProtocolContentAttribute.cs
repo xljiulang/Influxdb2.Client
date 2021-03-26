@@ -23,7 +23,7 @@ namespace Influxdb2.Client
                 throw new InfluxdbException($"值不能为null:{context.ParameterName}");
             }
 
-            var lineString = LineProtocol.From(measurement);
+            var lineString = LineProtocol.GetLineProtocol(measurement);
             context.HttpContext.RequestMessage.Content = new StringContent(lineString);
             return Task.CompletedTask;
         }

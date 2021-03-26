@@ -18,17 +18,17 @@ namespace Influxdb2.Client
         /// <summary>
         /// 获取所有字段
         /// </summary>
-        public PropertyDescriptor[] Fields { get; }
+        public MeasurementPropertyDescriptor[] Fields { get; }
 
         /// <summary>
         /// 获取所有标签
         /// </summary>
-        public PropertyDescriptor[] Tags { get; }
+        public MeasurementPropertyDescriptor[] Tags { get; }
 
         /// <summary>
         /// 获取时间点
         /// </summary>
-        public PropertyDescriptor? Time { get; }
+        public MeasurementPropertyDescriptor? Time { get; }
 
 
         /// <summary>
@@ -39,8 +39,8 @@ namespace Influxdb2.Client
         private MeasurementDesciptor(Type type)
         {
             var properties = type.GetProperties()
-                .Where(item => item.CanRead && item.CanWrite && item.IsDefined(typeof(ColumnTypeAttribute)))
-                .Select(p => new PropertyDescriptor(p))
+                .Where(item => item.CanRead && item.IsDefined(typeof(ColumnTypeAttribute)))
+                .Select(p => new MeasurementPropertyDescriptor(p))
                 .ToArray();
 
             var times = properties.Where(item => item.ColumnType == ColumnType.Time).ToArray();
