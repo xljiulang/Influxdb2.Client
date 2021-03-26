@@ -6,7 +6,7 @@ namespace Influxdb2.Client
     /// <summary>
     /// 表示Flux对象
     /// </summary>
-    public class Flux : IFlux
+    public sealed class Flux : IFlux
     {
         /// <summary>
         /// From语句
@@ -15,19 +15,30 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux From(string bucket)
         {
-            return new Flux(bucket);
+            var flux = new Flux();
+            flux.builder.AppendLine(@$"from(bucket:""{bucket}"")");
+            return flux;
         }
 
+        /// <summary>
+        /// union查询
+        /// </summary>
+        /// <param name="table1"></param>
+        /// <param name="table2"></param>
+        public static IFlux Union(IFlux table1, IFlux table2)
+        {
+            var flux = new Flux();
+            flux.builder.AppendLine($"union(tables: [{table1}, {table2}])");
+            return flux;
+        }
 
         private readonly StringBuilder builder = new StringBuilder();
 
         /// <summary>
         /// Flux对象
         /// </summary>
-        /// <param name="bucket"></param>
-        private Flux(string bucket)
+        private Flux()
         {
-            this.builder.AppendLine(@$"from(bucket:""{bucket}"")");
         }
 
         /// <summary>
@@ -38,23 +49,26 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public IFlux Pipe(string value, SingleQuotesBehavior behavior)
         {
-            var pipe = "|> ";
-            if (value == null || behavior == SingleQuotesBehavior.NoReplace)
+            if (string.IsNullOrEmpty(value))
             {
-                this.builder.Append(pipe).AppendLine(value);
                 return this;
             }
 
-            var span = value.ToCharArray().AsSpan();
-            for (var i = 0; i < span.Length; i++)
+            if (behavior == SingleQuotesBehavior.Replce)
             {
-                if (span[i] == '\'')
+                var span = value.ToCharArray().AsSpan();
+                for (var i = 0; i < span.Length; i++)
                 {
-                    span[i] = '"';
+                    if (span[i] == '\'')
+                    {
+                        span[i] = '"';
+                    }
+
                 }
+                value = span.ToString();
             }
 
-            this.builder.Append(pipe).AppendLine(span.ToString());
+            this.builder.Append("|> ").AppendLine(value);
             return this;
         }
 

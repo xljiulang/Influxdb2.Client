@@ -10,16 +10,24 @@ namespace Influxdb2
     {
         static async Task Main(string[] args)
         {
-            var f = Flux
+            var f1 = Flux
                 .From("v5")
                 .Range("-60h")
                 .Filter(FilterFn.R.MatchMeasurement("M3"))
                 .Pivot()
-                .Sort(Columns.Values("Name"))
-                .Limit(2);
+                .Filter(FilterFn.R.Then("r.Age > 10"));
+
+            var f2 = Flux
+                .From("v5")
+                .Range("-60h")
+                .Filter(FilterFn.R.MatchMeasurement("M3"))
+                .Pivot()
+                .Filter(FilterFn.R.WhenColumn("Age", "<=", 10));
+
+
+            var f = f1.Union(f2).Top(3, Columns.Values("Age"));
 
             var sql = f.ToString();
-
 
 
             var services = new ServiceCollection();
