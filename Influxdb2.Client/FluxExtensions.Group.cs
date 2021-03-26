@@ -3,7 +3,7 @@
     /// <summary>
     /// Flux扩展
     /// </summary>
-    public static partial class Flux
+    public static partial class FluxExtensions
     {
         /// <summary>
         /// 将_field转换为列

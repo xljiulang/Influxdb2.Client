@@ -6,7 +6,7 @@ namespace Influxdb2.Client
     /// <summary>
     /// 提供IFlux对象的创建
     /// </summary>
-    public static partial class Flux
+    public static class Flux
     {
         /// <summary>
         /// From语句

@@ -5,7 +5,7 @@ namespace Influxdb2.Client
     /// <summary>
     /// Flux扩展
     /// </summary>
-    public static partial class Flux
+    public static partial class FluxExtensions
     {
         /// <summary>
         /// Range

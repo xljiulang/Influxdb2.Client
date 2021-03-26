@@ -12,9 +12,11 @@ namespace Influxdb2
         {
             var f = Flux
                 .From("v5")
-                .Range("-60h", DateTimeOffset.Now)
+                .Range("-60h")
                 .Filter(FilterFn.R.MatchMeasurement("M3"))
-                .Group(Columns.Values("LabelId", "CoId"));
+                .Pivot()
+                .Sort(Columns.Values("Name"))
+                .Limit(2);
 
             var sql = f.ToString();
 
@@ -35,7 +37,7 @@ namespace Influxdb2
 
             var model = new M3
             {
-                Age = 10,
+                Age = 30,
                 CoId = "coid001",
                 CreateTime = DateTimeOffset.Now,
                 LabelId = "lb001",
