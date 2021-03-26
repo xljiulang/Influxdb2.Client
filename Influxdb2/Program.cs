@@ -10,13 +10,11 @@ namespace Influxdb2
     {
         static async Task Main(string[] args)
         {
-
             var f = Flux
                 .From("v5")
                 .Range("-60h", DateTimeOffset.Now)
                 .Filter(FilterFn.R.MatchMeasurement("M3"))
-                .Pivot()
-                .Group(Columns.Values("a", "b"));
+                .Group(Columns.Values("LabelId", "CoId"));
 
             var sql = f.ToString();
 

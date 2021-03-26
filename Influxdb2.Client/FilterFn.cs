@@ -1,128 +1,176 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Influxdb2.Client
 {
+    /// <summary>
+    /// 过滤函数
+    /// </summary>
     public class FilterFn
     {
         private readonly StringBuilder builder = new StringBuilder();
 
+        /// <summary>
+        /// 返回r参数名的过滤函数
+        /// </summary>
         public static FilterFn R => new FilterFn("r");
 
+        /// <summary>
+        /// 获取参数名
+        /// </summary>
         public string ParamName { get; }
 
+        /// <summary>
+        /// 过滤函数
+        /// </summary>
+        /// <param name="paramName">参数名</param>
         private FilterFn(string paramName)
         {
             this.ParamName = paramName;
         }
 
+        /// <summary>
+        /// and计算
+        /// </summary>
+        /// <param name="fn"></param>
+        /// <returns></returns>
+        public FilterFn And(FilterFn fn)
+        {
+            if (this.ParamName != fn.ParamName)
+            {
+                throw new ArgumentException($"{nameof(fn)}的{nameof(ParamName)}必须为{ParamName}");
+            }
+            this.And();
+            this.builder.Append($"({fn})");
+            return this;
+        }
+
+        /// <summary>
+        /// and关键字
+        /// </summary>
+        /// <returns></returns>
         public FilterFn And()
         {
             this.builder.Append(" and ");
             return this;
         }
 
-        public FilterFn And(FilterFn fn)
-        {
-            this.And();
-            this.builder.Append($"({fn})");
-            return this;
-        }
-        public FilterFn Or()
-        {
-            this.builder.Append($" or ");
-            return this;
-        }
-
+        /// <summary>
+        /// or计算
+        /// </summary>
+        /// <param name="fn"></param>
+        /// <returns></returns> 
         public FilterFn Or(FilterFn fn)
         {
+            if (this.ParamName != fn.ParamName)
+            {
+                throw new ArgumentException($"{nameof(fn)}的{nameof(ParamName)}必须为{ParamName}");
+            }
+
             this.Or();
             this.builder.Append($"({fn})");
             return this;
         }
 
         /// <summary>
-        /// 选择Measurement
+        /// or关键字
         /// </summary>
-        /// <param name="measurement">名</param>
         /// <returns></returns>
-        public FilterFn MatchMeasurement(string measurement)
+        public FilterFn Or()
         {
-            builder.Append(@$"{this.ParamName}._measurement == ""{measurement}""");
+            this.builder.Append(" or ");
             return this;
         }
 
         /// <summary>
-        /// 选择字段
+        /// 匹配Measurement
         /// </summary>
-        /// <param name="field">名</param>
+        /// <param name="measurementName">名</param>
         /// <returns></returns>
-        public FilterFn MatchField(string field)
+        public FilterFn MatchMeasurement(string measurementName)
         {
-            builder.Append(@$"{this.ParamName}._field == ""{field}""");
-            return this;
+            return this.WhenColumn("_measurement", "==", measurementName);
         }
 
         /// <summary>
-        /// 字段值匹配
-        /// </summary> 
-        /// <param name="op">比较符号</param>
-        /// <param name="tagValue">值</param>
+        /// 匹配_field列
+        /// </summary>
+        /// <param name="fieldName">名</param>
         /// <returns></returns>
-        public FilterFn MatchValue(string op, object value)
+        public FilterFn MatchField(string fieldName)
         {
-            if (value is string stringValue)
-            {
-                builder.Append(@$"{this.ParamName}._value {op} ""{stringValue}""");
-            }
-            else
-            {
-                builder.Append(@$"{this.ParamName}._value {op} {value}");
-            }
-            return this;
+            return this.WhenColumn("_field", "==", fieldName);
         }
 
         /// <summary>
-        /// 匹配pivot产生的列
+        /// 匹配标签
+        /// </summary>
+        /// <param name="tagName">名</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public FilterFn MatchTag(string tagName, string value)
+        {
+            return this.WhenColumn(tagName, "==", value);
+        }
+
+        /// <summary>
+        /// 比较列的值
         /// </summary> 
-        /// <param name="name">列名</param>
+        /// <param name="columnName">列名</param>
         /// <param name="op">比较符号</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public FilterFn MatchColumn(string name, string op, object value)
+        public FilterFn WhenColumn(string columnName, string op, object value)
         {
             if (value is string stringValue)
             {
-                builder.Append(@$"{this.ParamName}.{name} {op} ""{stringValue}""");
+                builder.Append(@$"{this.ParamName}.{columnName} {op} ""{stringValue}""");
             }
             else
             {
-                builder.Append(@$"{this.ParamName}.{name} {op} {value}");
+                builder.Append(@$"{this.ParamName}.{columnName} {op} {value}");
             }
+            return this;
+        }
+
+
+        /// <summary>
+        /// 追加body
+        /// </summary>
+        /// <param name="fnBody"></param>
+        /// <returns></returns>
+        public FilterFn Then(string fnBody)
+        {
+            builder.Append(" ").Append(fnBody);
             return this;
         }
 
         /// <summary>
-        /// 标签匹配
+        /// 转换为文本
         /// </summary>
-        /// <param name="name">名</param>
-        /// <param name="value">值</param>
         /// <returns></returns>
-        public FilterFn MatchTag(string name, string value)
-        {
-            builder.Append(@$"{this.ParamName}.{name} == ""{value}""");
-            return this;
-        }
-
         public override string ToString()
         {
             return this.builder.ToString();
         }
 
+        /// <summary>
+        /// And
+        /// </summary>
+        /// <param name="fn1"></param>
+        /// <param name="fn2"></param>
+        /// <returns></returns>
         public static FilterFn operator &(FilterFn fn1, FilterFn fn2)
         {
             return fn1.And(fn2);
         }
 
+        /// <summary>
+        /// Or
+        /// </summary>
+        /// <param name="fn1"></param>
+        /// <param name="fn2"></param>
+        /// <returns></returns>
         public static FilterFn operator |(FilterFn fn1, FilterFn fn2)
         {
             return fn1.Or(fn2);
