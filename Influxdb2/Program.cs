@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Influxdb2
@@ -10,10 +11,20 @@ namespace Influxdb2
     {
         static async Task Main(string[] args)
         {
+
+            var fileStream = File.OpenRead(@"C:\Users\Administrator\Desktop\response.csv");
+            var reader = new CsvReader(fileStream);
+
+            while (await reader.ReadAsync())
+            {
+                Console.WriteLine(reader);
+            }
+
             var flux = Flux
                 .From("v5")
                 .Range("-60h")
-                .Filter(FnBody.R.MeasurementEquals("M3").And().FieldEquals("Age"));
+                .Filter(FnBody.R.MeasurementEquals("M7"))
+                .Pivot();
 
             var sql = flux.ToString();
 

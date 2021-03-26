@@ -23,15 +23,26 @@ namespace Influxdb2.Client
         /// </summary>
         private string currentLine = string.Empty;
 
+
         /// <summary>
-        /// 获取当前的值
+        /// 获取值
         /// </summary>
         public string? Value { get; private set; }
 
         /// <summary>
-        /// 获取当前的列
+        /// 获取列名
         /// </summary>
         public string Column { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// 获取行的索引
+        /// </summary>
+        public int RawIndex { get; private set; } = -1;
+
+        /// <summary>
+        /// 获取表格的索引
+        /// </summary>
+        public int TableIndex { get; private set; } = -1;
 
         /// <summary>
         /// Csv读取器
@@ -66,9 +77,12 @@ namespace Influxdb2.Client
                 }
             }
 
-            // 初始化columns
+            // 新表格初始化columns
             if (this.columnIndex < 0)
             {
+                this.RawIndex = 0;
+                this.TableIndex += 1;
+
                 this.columnIndex = 0;
                 this.columns = this.currentLine.Split(',');
                 this.currentLine = string.Empty;
@@ -77,6 +91,7 @@ namespace Influxdb2.Client
             // 读完所有列，重新读取（行可能没有读完)
             if (this.columnIndex >= this.columns.Length)
             {
+                this.RawIndex += 1;
                 this.columnIndex = 0;
                 return await ReadAsync();
             }
@@ -84,6 +99,7 @@ namespace Influxdb2.Client
             // 读完一行，重新读取（列可能没有读完)
             if (this.valuePostion >= this.currentLine.Length)
             {
+                this.RawIndex += 1;
                 return await ReadAsync();
             }
 
@@ -189,7 +205,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{this.Column}: {this.Value}";
+            return $"Table[{this.TableIndex}].Row[{this.RawIndex}].{this.Column} = {this.Value}";
         }
     }
 }
