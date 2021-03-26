@@ -6,7 +6,7 @@
     public static partial class FluxExtensions
     {
         /// <summary>
-        /// 将_field转换为列
+        /// 分组
         /// </summary>
         /// <param name="flux"></param>
         /// <returns></returns>
