@@ -9,9 +9,9 @@ namespace Influxdb2.Client
     sealed class PropertyDescriptor : Property<object, object>
     {
         /// <summary>
-        /// 数据类型
+        /// 获取列类型
         /// </summary>
-        public DataType DataType { get; }
+        public ColumnType ColumnType { get; }
 
         /// <summary>
         /// 值转换器
@@ -25,18 +25,18 @@ namespace Influxdb2.Client
         public PropertyDescriptor(PropertyInfo property)
             : base(property)
         {
-            var attr = property.GetCustomAttribute<InfluxdbDataTypeAttribute>();
+            var attr = property.GetCustomAttribute<ColumnTypeAttribute>();
             if (attr != null)
             {
-                this.DataType = attr.DataType;
+                this.ColumnType = attr.ColumnType;
             }
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-            if (this.DataType == DataType.Time)
+            if (this.ColumnType == ColumnType.Time)
             {
                 this.valueConverter = this.GetTimeConverter(type);
             }
-            else if (this.DataType == DataType.Field)
+            else if (this.ColumnType == ColumnType.Field)
             {
                 this.valueConverter = this.GetFieldConverter(type);
             }

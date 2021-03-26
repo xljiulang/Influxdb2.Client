@@ -39,25 +39,25 @@ namespace Influxdb2.Client
         private MeasurementDesciptor(Type type)
         {
             var properties = type.GetProperties()
-                .Where(item => item.CanRead && item.CanWrite && item.IsDefined(typeof(InfluxdbDataTypeAttribute)))
+                .Where(item => item.CanRead && item.CanWrite && item.IsDefined(typeof(ColumnTypeAttribute)))
                 .Select(p => new PropertyDescriptor(p))
                 .ToArray();
 
-            var times = properties.Where(item => item.DataType == DataType.Time).ToArray();
+            var times = properties.Where(item => item.ColumnType == ColumnType.Time).ToArray();
             if (times.Length > 1)
             {
-                throw new ArgumentException($"{type}至多只能声明一个{nameof(DataType.Time)}属性");
+                throw new ArgumentException($"{type}至多只能声明一个{nameof(ColumnType.Time)}列的属性");
             }
 
-            var fields = properties.Where(item => item.DataType == DataType.Field).ToArray();
+            var fields = properties.Where(item => item.ColumnType == ColumnType.Field).ToArray();
             if (fields.Length == 0)
             {
-                throw new ArgumentException($"{type}至少声明一个{nameof(DataType.Field)}属性");
+                throw new ArgumentException($"{type}至少声明一个{nameof(ColumnType.Field)}列的属性");
             }
 
             this.Time = times.FirstOrDefault();
             this.Fields = fields;
-            this.Tags = properties.Where(item => item.DataType == DataType.Tag).ToArray();
+            this.Tags = properties.Where(item => item.ColumnType == ColumnType.Tag).ToArray();
             this.Name = type.Name;
         }
 

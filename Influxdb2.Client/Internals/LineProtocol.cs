@@ -51,7 +51,7 @@ namespace Influxdb2.Client
 
             if (fieldWrited == false)
             {
-                throw new ArgumentException($"{desciptor.Name}至少一个{nameof(DataType.Field)}有值");
+                throw new ArgumentException($"{desciptor.Name}至少有一个{nameof(ColumnType.Field)}列不为null");
             }
 
             if (desciptor.Time != null)

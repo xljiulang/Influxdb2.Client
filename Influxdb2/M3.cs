@@ -6,23 +6,23 @@ namespace Influxdb2
 
     class M3
     {
-        [InfluxdbDataType(DataType.Tag)]
+        [ColumnType(ColumnType.Tag)]
         public string CoId { get; set; }
 
 
-        [InfluxdbDataType(DataType.Tag)]
+        [ColumnType(ColumnType.Tag)]
         public string LabelId { get; set; }
 
 
-        [InfluxdbDataType(DataType.Field)]
+        [ColumnType(ColumnType.Field)]
         public string Name { get; set; }
 
 
-        [InfluxdbDataType(DataType.Field)]
+        [ColumnType(ColumnType.Field)]
         public int? Age { get; set; }
 
 
-        [InfluxdbDataType(DataType.Time)]
+        [ColumnType(ColumnType.Time)]
         public DateTimeOffset CreateTime { get; set; }
     }
 }

@@ -33,6 +33,31 @@
             return flux.Pipe($"bottom(n:{n}, columns:{columns})", SingleQuotesBehavior.NoReplace);
         }
 
+
+        /// <summary>
+        /// 前n条 
+        /// </summary>
+        /// <param name="flux"></param>
+        /// <param name="n"></param>
+        /// <param name="columns">排序列</param>
+        /// <returns></returns>
+        public static IFlux Top(this IFlux flux, int n)
+        {
+            return flux.Top(n, Columns.ValueColumn);
+        }
+
+        /// <summary>
+        /// 前n条 
+        /// </summary>
+        /// <param name="flux"></param>
+        /// <param name="n"></param>
+        /// <param name="columns">排序列</param>
+        /// <returns></returns>
+        public static IFlux Top(this IFlux flux, int n, Columns columns)
+        {
+            return flux.Pipe($"top(n:{n}, columns: {columns})", SingleQuotesBehavior.NoReplace);
+        }
+
         /// <summary>
         /// 取出不是null的第一条
         /// </summary>
@@ -41,17 +66,6 @@
         public static IFlux First(this IFlux flux)
         {
             return flux.Pipe($"first()", SingleQuotesBehavior.NoReplace);
-        }
-
-        /// <summary>
-        /// 消除重复
-        /// </summary>
-        /// <param name="flux"></param>
-        /// <param name="column">Column on which to track unique values</param>
-        /// <returns></returns>
-        public static IFlux Distinct(this IFlux flux, string column = ValueColumnName)
-        {
-            return flux.Pipe($"distinct('{column}')");
         }
 
         /// <summary>
@@ -89,30 +103,6 @@
         }
 
         /// <summary>
-        /// 前n条 
-        /// </summary>
-        /// <param name="flux"></param>
-        /// <param name="n"></param>
-        /// <param name="columns">排序列</param>
-        /// <returns></returns>
-        public static IFlux Top(this IFlux flux, int n)
-        {
-            return flux.Top(n, Columns.ValueColumn);
-        }
-
-        /// <summary>
-        /// 前n条 
-        /// </summary>
-        /// <param name="flux"></param>
-        /// <param name="n"></param>
-        /// <param name="columns">排序列</param>
-        /// <returns></returns>
-        public static IFlux Top(this IFlux flux, int n, Columns columns)
-        {
-            return flux.Pipe($"top(n:{n}, columns: {columns})", SingleQuotesBehavior.NoReplace);
-        }
-
-        /// <summary>
         /// 唯一值
         /// </summary>
         /// <param name="flux"></param>
@@ -121,6 +111,17 @@
         public static IFlux Unique(this IFlux flux, string column = ValueColumnName)
         {
             return flux.Pipe($"unique(column:'{column}')");
+        }
+
+        /// <summary>
+        /// 消除重复
+        /// </summary>
+        /// <param name="flux"></param>
+        /// <param name="column">Column on which to track unique values</param>
+        /// <returns></returns>
+        public static IFlux Distinct(this IFlux flux, string column = ValueColumnName)
+        {
+            return flux.Pipe($"distinct('{column}')");
         }
     }
 }

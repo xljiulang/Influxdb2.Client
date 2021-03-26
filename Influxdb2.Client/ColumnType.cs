@@ -1,9 +1,9 @@
 ﻿namespace Influxdb2.Client
 {
     /// <summary>
-    /// Influxdb数据类型
+    /// Influxdb列类型
     /// </summary>
-    public enum DataType
+    public enum ColumnType
     {
         /// <summary>
         /// 字段
