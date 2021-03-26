@@ -83,38 +83,38 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 匹配Measurement
+        /// measurement名等于
         /// </summary>
-        /// <param name="measurementName">名</param>
+        /// <param name="measurement">名</param>
         /// <returns></returns>
-        public FnBody MatchMeasurement(string measurementName)
+        public FnBody MeasurementEquals(string measurement)
         {
-            return this.WhenColumn("_measurement", "==", measurementName);
+            return this.WhenColumn("_measurement", "==", measurement);
         }
 
         /// <summary>
-        /// 匹配_field列
+        /// _field列名等于
         /// </summary>
-        /// <param name="fieldName">名</param>
+        /// <param name="field">名</param>
         /// <returns></returns>
-        public FnBody MatchField(string fieldName)
+        public FnBody FieldEquals(string field)
         {
-            return this.WhenColumn("_field", "==", fieldName);
-        } 
+            return this.WhenColumn("_field", "==", field);
+        }
 
         /// <summary>
-        /// 匹配标签
+        /// 指定标签列的值等于
         /// </summary>
         /// <param name="tagName">名</param>
-        /// <param name="value">值</param>
+        /// <param name="tagValue">值</param>
         /// <returns></returns>
-        public FnBody MatchTag(string tagName, string value)
+        public FnBody TagEquals(string tagName, string tagValue)
         {
-            return this.WhenColumn(tagName, "==", value);
+            return this.WhenColumn(tagName, "==", tagValue);
         }
 
         /// <summary>
-        /// 比较列的值
+        /// 当列符合条件时
         /// </summary> 
         /// <param name="columnName">列名</param>
         /// <param name="op">比较符号</param>

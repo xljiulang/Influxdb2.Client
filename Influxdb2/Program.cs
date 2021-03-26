@@ -12,9 +12,8 @@ namespace Influxdb2
         {
             var flux = Flux
                 .From("v5")
-                .Range("-60h", DateTime.Now)
-                .Filter(FnBody.R.MatchMeasurement("M3") & FnBody.R.MatchTag("Tag1", "tt"));
-
+                .Range("-60h", DateTime.Now)               
+                .Filter(FnBody.R.MeasurementEquals("M3").FieldEquals("Age"));
 
             var sql = flux.ToString();
 
