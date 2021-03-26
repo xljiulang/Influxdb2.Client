@@ -54,7 +54,7 @@ namespace Influxdb2.Client
                 return this;
             }
 
-            if (behavior == SingleQuotesBehavior.Replce)
+            if (behavior == SingleQuotesBehavior.Replace)
             {
                 var span = value.ToCharArray().AsSpan();
                 for (var i = 0; i < span.Length; i++)

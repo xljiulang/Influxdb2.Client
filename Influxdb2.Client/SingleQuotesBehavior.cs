@@ -8,7 +8,7 @@
         /// <summary>
         /// 替换为双引号
         /// </summary>
-        Replce,
+        Replace,
 
         /// <summary>
         /// 不替换单引号为双引号

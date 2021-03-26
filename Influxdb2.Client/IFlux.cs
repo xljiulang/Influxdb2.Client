@@ -11,6 +11,6 @@
         /// <param name="value">值，不包含管道符号 </param>
         /// <param name="behavior">单引号处理方式</param>
         /// <returns></returns>
-        IFlux Pipe(string value, SingleQuotesBehavior behavior = SingleQuotesBehavior.Replce);
+        IFlux Pipe(string value, SingleQuotesBehavior behavior = SingleQuotesBehavior.Replace);
     }
 }

@@ -12,7 +12,7 @@
         /// <param name="fnBody">过滤函数的body</param>
         /// <param name="paramName">参数名</param>
         /// <returns></returns>
-        public static IFlux Filter(this IFlux flux, string fnBody, string paramName = "r", SingleQuotesBehavior behavior = SingleQuotesBehavior.Replce)
+        public static IFlux Filter(this IFlux flux, string fnBody, string paramName = "r", SingleQuotesBehavior behavior = SingleQuotesBehavior.Replace)
         {
             return flux.Pipe($"filter(fn: ({paramName}) => {fnBody} )", behavior);
         }
@@ -23,7 +23,7 @@
         /// <param name="flux"></param>
         /// <param name="fnBody">过滤函数的body</param> 
         /// <returns></returns>
-        public static IFlux Filter(this IFlux flux, FnBody fnBody, SingleQuotesBehavior behavior = SingleQuotesBehavior.Replce)
+        public static IFlux Filter(this IFlux flux, FnBody fnBody, SingleQuotesBehavior behavior = SingleQuotesBehavior.Replace)
         {
             return flux.Pipe($"filter(fn: ({fnBody.ParamName}) => {fnBody})", behavior);
         }
