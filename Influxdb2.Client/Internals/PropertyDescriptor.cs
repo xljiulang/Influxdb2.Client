@@ -16,7 +16,7 @@ namespace Influxdb2.Client
         /// <summary>
         /// 值转换器
         /// </summary>
-        private Func<object?, string?> valueConverter;
+        private readonly Func<object?, string?> valueConverter;
 
         /// <summary>
         /// 属性描述
@@ -65,11 +65,7 @@ namespace Influxdb2.Client
         private string? GetTagValueString(object? value)
         {
             var stringValue = value?.ToString();
-            if (string.IsNullOrWhiteSpace(stringValue) == true)
-            {
-                return null;
-            }
-            return stringValue;
+            return string.IsNullOrWhiteSpace(stringValue) ? null : stringValue;
         }
 
         /// <summary>
@@ -106,11 +102,7 @@ namespace Influxdb2.Client
             return value =>
             {
                 var stringValue = value?.ToString();
-                if (string.IsNullOrWhiteSpace(stringValue) == true)
-                {
-                    return null;
-                }
-                return $@"""{stringValue}""";
+                return string.IsNullOrWhiteSpace(stringValue) ? null : $@"""{stringValue}""";
             };
         }
 

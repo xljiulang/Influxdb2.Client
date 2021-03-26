@@ -4,9 +4,9 @@ using System.Text;
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示Flux对象
+    /// 提供IFlux的创建
     /// </summary>
-    public sealed class Flux : IFlux
+    public static class Flux
     {
         /// <summary>
         /// From语句
@@ -15,46 +15,63 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux From(string bucket)
         {
-            var flux = new Flux();
-            flux.builder.AppendLine(@$"from(bucket:""{bucket}"")");
-            return flux;
+            return Parse(@$"from(bucket:""{bucket}"")");
         }
 
         /// <summary>
-        /// union查询
+        /// 从fluxText转换
         /// </summary>
-        /// <param name="table1"></param>
-        /// <param name="table2"></param>
-        public static IFlux Union(IFlux table1, IFlux table2)
-        {
-            var flux = new Flux();
-            flux.builder.AppendLine($"union(tables: [{table1}, {table2}])");
-            return flux;
-        }
-
-        private readonly StringBuilder builder = new StringBuilder();
-
-        /// <summary>
-        /// Flux对象
-        /// </summary>
-        private Flux()
-        {
-        }
-
-        /// <summary>
-        /// 添加管道
-        /// </summary>
-        /// <param name="value">值，不包含管道符号 </param>
-        /// <param name="behavior">单引号处理方式</param>
+        /// <param name="fluxText"></param> 
         /// <returns></returns>
-        public IFlux Pipe(string value, SingleQuotesBehavior behavior)
+        public static IFlux Parse(string fluxText)
         {
-            if (string.IsNullOrEmpty(value))
+            return new FluxImpl(fluxText);
+        }
+
+        /// <summary>
+        /// Flux实现
+        /// </summary>
+        private class FluxImpl : IFlux
+        {
+            private readonly StringBuilder builder = new StringBuilder();
+
+            /// <summary>
+            /// Flux实现
+            /// </summary>
+            /// <param name="fluxText"></param> 
+            public FluxImpl(string fluxText)
             {
+                this.builder.Append(fluxText);
+            }
+
+            /// <summary>
+            /// 添加管道
+            /// </summary>
+            /// <param name="value">值，不包含管道符号 </param>
+            /// <param name="behavior">单引号处理方式</param>
+            /// <returns></returns>
+            public IFlux Pipe(string value, SingleQuotesBehavior behavior)
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    return this;
+                }
+
+                if (behavior == SingleQuotesBehavior.Replace)
+                {
+                    value = RepaceSingleQuotes(value);
+                }
+
+                this.builder.Append("|> ").AppendLine(value);
                 return this;
             }
 
-            if (behavior == SingleQuotesBehavior.Replace)
+            /// <summary>
+            /// 替换单引号 
+            /// </summary>
+            /// <param name="value"></param>
+            /// <returns></returns>
+            private static string RepaceSingleQuotes(string value)
             {
                 var span = value.ToCharArray().AsSpan();
                 for (var i = 0; i < span.Length; i++)
@@ -63,22 +80,19 @@ namespace Influxdb2.Client
                     {
                         span[i] = '"';
                     }
-
                 }
-                value = span.ToString();
+                return span.ToString();
             }
 
-            this.builder.Append("|> ").AppendLine(value);
-            return this;
+            /// <summary>
+            /// 转换为文本
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                return this.builder.ToString();
+            }
         }
 
-        /// <summary>
-        /// 转换为文本
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return this.builder.ToString();
-        }
     }
 }

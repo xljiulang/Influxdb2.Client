@@ -12,7 +12,7 @@
         /// <returns></returns>
         public static IFlux Union(this IFlux flux, IFlux other)
         {
-            return Flux.Union(flux, other);
+            return Flux.Parse($"union(tables: [{flux}, {other}])");
         }
     }
 }
