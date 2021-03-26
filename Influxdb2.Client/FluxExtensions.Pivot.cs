@@ -12,7 +12,7 @@
         /// <returns></returns>
         public static IFlux Pivot(this IFlux flux)
         {
-            return flux.Pivot(Columns.Create("_time"), Columns.Create("_field"));
+            return flux.Pivot(Columns.TimeColumn, Columns.FieldColumn);
         }
 
         /// <summary>
@@ -23,7 +23,7 @@
         /// <param name="columnKey"></param>
         /// <param name="valueColumn"></param>
         /// <returns></returns>
-        public static IFlux Pivot(this IFlux flux, Columns rawKey, Columns columnKey, string valueColumn = "_value")
+        public static IFlux Pivot(this IFlux flux, Columns rawKey, Columns columnKey, string valueColumn = ValueColumnName)
         {
             return flux.Pipe(@$"pivot(rowKey:{rawKey}, columnKey:{columnKey}, valueColumn:""{valueColumn}"")", SingleQuotesBehavior.NoReplace);
         }

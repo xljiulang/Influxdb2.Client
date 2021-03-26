@@ -1,6 +1,6 @@
 ﻿namespace Influxdb2.Client
 {
-	public static partial class FluxExtensions
+    public static partial class FluxExtensions
 	{
 		/// <summary>
 		/// 复制列为新的列

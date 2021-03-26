@@ -9,6 +9,8 @@
         /// 分组
         /// </summary>
         /// <param name="flux"></param>
+        /// <param name="columns"></param>
+        /// <param name="mode"></param>
         /// <returns></returns>
         public static IFlux Group(this IFlux flux, Columns columns, GroupMode mode = GroupMode.By)
         {

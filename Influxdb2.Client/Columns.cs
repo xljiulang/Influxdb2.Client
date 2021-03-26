@@ -7,7 +7,7 @@ namespace Influxdb2.Client
     /// </summary>
     public class Columns
     {
-        private readonly string[] columns;
+        private readonly string columnsString;
 
         /// <summary>
         /// 返回空集合
@@ -18,6 +18,17 @@ namespace Influxdb2.Client
         /// 只包含_value列的集合
         /// </summary>
         public static Columns ValueColumn { get; } = new Columns("_value");
+
+        /// <summary>
+        /// 只包含_time列的集合
+        /// </summary>
+        public static Columns TimeColumn { get; } = new Columns("_time");
+
+
+        /// <summary>
+        /// 只包含_field列的集合
+        /// </summary>
+        public static Columns FieldColumn { get; } = new Columns("_field");
 
         /// <summary>
         /// 创建多个列的结合
@@ -36,7 +47,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public Columns(params string[] columns)
         {
-            this.columns = columns;
+            this.columnsString = $"[{string.Join(",", columns.Select(c => @$"""{c}"""))}]";
         }
 
         /// <summary>
@@ -45,7 +56,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public override string ToString()
         {
-            return $"[{string.Join(",", this.columns.Select(c => @$"""{c}"""))}]";
+            return this.columnsString;
         }
     }
 }
