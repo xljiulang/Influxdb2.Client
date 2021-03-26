@@ -15,7 +15,8 @@ namespace Influxdb2
                 .From("v5")
                 .Range("-60h", DateTimeOffset.Now)
                 .Filter(FilterFn.R.MatchMeasurement("M3"))
-                .Pivot();
+                .Pivot()
+                .Group(Columns.Values("a", "b"));
 
             var sql = f.ToString();
 

@@ -25,7 +25,7 @@
         /// <returns></returns>
         public static IFlux Pivot(this IFlux flux, Columns rawKey, Columns columnKey, string valueColumn = "_value")
         {
-            return flux.Pipe(@$"|> pivot(rowKey:[{rawKey}], columnKey:[{columnKey}], valueColumn:""{valueColumn}"")", false);
+            return flux.Pipe(@$"pivot(rowKey:{rawKey}, columnKey:{columnKey}, valueColumn:""{valueColumn}"")", SingleQuotesBehavior.NoReplace);
         }
     }
 }

@@ -12,7 +12,7 @@
         /// <returns></returns>
         public static IFlux Group(this IFlux flux, Columns columns, GroupMode mode = GroupMode.By)
         {
-            return flux.Pipe(@$"|> group(columns:{columns}, mode:""{mode.ToString().ToLower()}"")");
+            return flux.Pipe(@$"group(columns:{columns}, mode:""{mode.ToString().ToLower()}"")", SingleQuotesBehavior.NoReplace);
         }
 
     }

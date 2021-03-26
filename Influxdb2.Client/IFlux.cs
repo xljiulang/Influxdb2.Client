@@ -8,9 +8,9 @@
         /// <summary>
         /// 添加管道
         /// </summary>
-        /// <param name="value">值</param>
-        /// <param name="replceSingleQuotes">是否替换单引号为双引号</param>
+        /// <param name="value">值，不包含管道符号 </param>
+        /// <param name="behavior">单引号处理方式</param>
         /// <returns></returns>
-        IFlux Pipe(string value, bool replceSingleQuotes = true);
+        IFlux Pipe(string value, SingleQuotesBehavior behavior = SingleQuotesBehavior.Replce);
     }
 }
