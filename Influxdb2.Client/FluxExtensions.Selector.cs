@@ -13,7 +13,19 @@
         /// <returns></returns>
         public static IFlux Bottom(this IFlux flux, int n)
         {
-            return flux.Pipe($"bottom(n:{n})", SingleQuotesBehavior.NoReplace);
+            return flux.Bottom(n, Columns.ValueColumn);
+        }
+
+        /// <summary>
+        /// 保留最后n条
+        /// </summary>
+        /// <param name="flux"></param>
+        /// <param name="n"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public static IFlux Bottom(this IFlux flux, int n, Columns columns)
+        {
+            return flux.Pipe($"bottom(n:{n}, columns:{columns})", SingleQuotesBehavior.NoReplace);
         }
 
         /// <summary>
@@ -72,14 +84,15 @@
         }
 
         /// <summary>
-        /// 前n条
+        /// 前n条 
         /// </summary>
         /// <param name="flux"></param>
         /// <param name="n"></param>
+        /// <param name="columns">排序列</param>
         /// <returns></returns>
         public static IFlux Top(this IFlux flux, int n)
         {
-            return flux.Pipe($"top(n:{n})", SingleQuotesBehavior.NoReplace);
+            return flux.Top(n, Columns.ValueColumn);
         }
 
         /// <summary>

@@ -10,6 +10,16 @@
         /// </summary>
         /// <param name="flux"></param>
         /// <returns></returns>
+        public static IFlux Sort(this IFlux flux, bool desc = false)
+        {
+            return flux.Sort(Columns.ValueColumn, desc);
+        }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <param name="flux"></param>
+        /// <returns></returns>
         public static IFlux Sort(this IFlux flux, Columns columns, bool desc = false)
         {
             return flux.Pipe($"sort(columns:{columns}, desc:{desc.ToString().ToLower()})", SingleQuotesBehavior.NoReplace);

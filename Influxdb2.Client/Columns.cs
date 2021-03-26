@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Influxdb2.Client
 {
@@ -8,32 +7,36 @@ namespace Influxdb2.Client
     /// </summary>
     public class Columns
     {
-        private readonly List<string> columnList = new List<string>();
+        private readonly string[] columns;
 
         /// <summary>
         /// 返回空集合
         /// </summary>
-        public static Columns Empty => new Columns();
+        public static Columns Empty { get; } = new Columns();
 
         /// <summary>
-        /// 多个值
+        /// 只包含_value列的集合
+        /// </summary>
+        public static Columns ValueColumn { get; } = new Columns("_value");
+
+        /// <summary>
+        /// 创建多个列的结合
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public static Columns Values(params string[] columns) => Empty.Add(columns);
-
-        /// <summary>
-        /// 添加一个或多个列名
-        /// </summary>
-        /// <param name="columns"></param>
-        /// <returns></returns>
-        public Columns Add(params string[] columns)
+        public static Columns Create(params string[] columns)
         {
-            foreach (var item in columns)
-            {
-                this.columnList.Add(item);
-            }
-            return this;
+            return new Columns(columns);
+        }
+
+        /// <summary>
+        /// 表示多个列名
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public Columns(params string[] columns)
+        {
+            this.columns = columns;
         }
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public override string ToString()
         {
-            return $"[{string.Join(",", columnList.Select(c => @$"""{c}"""))}]";
+            return $"[{string.Join(",", this.columns.Select(c => @$"""{c}"""))}]";
         }
     }
 }
