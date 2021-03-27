@@ -6,24 +6,24 @@ using System.Reflection;
 namespace Influxdb2.Client.Datas
 {
     /// <summary>
-    /// 数据点描述
+    /// 实体描述
     /// </summary>
-    sealed class PointDataDesciptor
+    sealed class EntityDesciptor
     {
         /// <summary>
         /// 描述缓存
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, PointDataDesciptor> cache = new();
+        private static readonly ConcurrentDictionary<Type, EntityDesciptor> cache = new();
 
         /// <summary>
-        /// 获取数据点描述
+        /// 获取描述
         /// </summary>
         /// <param name="entityType"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public static PointDataDesciptor Get(Type entityType)
+        public static EntityDesciptor Get(Type entityType)
         {
-            return cache.GetOrAdd(entityType, t => new PointDataDesciptor(t));
+            return cache.GetOrAdd(entityType, t => new EntityDesciptor(t));
         }
 
 
@@ -35,29 +35,29 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// 获取所有字段
         /// </summary>
-        public PointDataPropertyDescriptor[] Fields { get; }
+        public EntityPropertyDescriptor[] Fields { get; }
 
         /// <summary>
         /// 获取所有标签
         /// </summary>
-        public PointDataPropertyDescriptor[] Tags { get; }
+        public EntityPropertyDescriptor[] Tags { get; }
 
         /// <summary>
         /// 获取时间点
         /// </summary>
-        public PointDataPropertyDescriptor? Timestamp { get; }
+        public EntityPropertyDescriptor? Timestamp { get; }
 
 
         /// <summary>
-        /// 数据点描述
+        /// 实体描述
         /// </summary>
         /// <param name="entityType">实体类型</param>
         /// <exception cref="ArgumentException"></exception>
-        private PointDataDesciptor(Type entityType)
+        private EntityDesciptor(Type entityType)
         {
             var properties = entityType.GetProperties()
                 .Where(item => item.CanRead && item.IsDefined(typeof(ColumnTypeAttribute)))
-                .Select(p => new PointDataPropertyDescriptor(p))
+                .Select(p => new EntityPropertyDescriptor(p))
                 .OrderBy(item => item.Name)
                 .ToArray();
 

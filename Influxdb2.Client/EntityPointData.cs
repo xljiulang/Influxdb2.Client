@@ -12,9 +12,9 @@ namespace Influxdb2.Client
     public class EntityPointData : IPointData
     {
         /// <summary>
-        /// 数据点描述
+        /// 实体描述
         /// </summary>
-        private readonly PointDataDesciptor desciptor;
+        private readonly EntityDesciptor desciptor;
 
         /// <summary>
         /// 获取数据实体
@@ -28,7 +28,7 @@ namespace Influxdb2.Client
         /// <exception cref="ArgumentException"></exception>
         public EntityPointData(object entity)
         {
-            this.desciptor = PointDataDesciptor.Get(entity.GetType());
+            this.desciptor = EntityDesciptor.Get(entity.GetType());
             this.Entity = entity;
         }
 
@@ -42,7 +42,7 @@ namespace Influxdb2.Client
             var builder = new StringBuilder(desciptor.Measurement);
             foreach (var tag in desciptor.Tags)
             {
-                var value = tag.GetStringValue(this.Entity);              
+                var value = tag.GetStringValue(this.Entity);
                 builder.Append(',').Append(tag.Name).Append('=').Append(value);
             }
 
