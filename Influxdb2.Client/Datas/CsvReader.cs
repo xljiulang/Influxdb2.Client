@@ -66,8 +66,15 @@ namespace Influxdb2.Client.Datas
                     return false;
                 }
 
+                // #注释，忽略
+                var lineString = await this.reader.ReadLineAsync();
+                if (lineString.StartsWith('#') == true)
+                {
+                    return await ReadAsync();
+                }
+
                 this.valuePostion = 0;
-                this.currentLine = await this.reader.ReadLineAsync();
+                this.currentLine = lineString;
 
                 // 空行表示新的表格
                 if (string.IsNullOrEmpty(this.currentLine) == true)
