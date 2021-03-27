@@ -41,22 +41,21 @@ namespace Influxdb2.Client.Datas
                 return buidler.ToString();
             }
             return name;
-        }         
+        }
 
         /// <summary>
         /// 对字段内容进行编码
         /// </summary>
         /// <param name="value">字段内容</param> 
         /// <returns></returns>
-        public static string? EncodeFieldValue(object? value)
+        public static string? EncodeFieldValue(string? value)
         {
-            var stringValue = value?.ToString();
-            if (string.IsNullOrWhiteSpace(stringValue))
+            if (string.IsNullOrWhiteSpace(value))
             {
                 return null;
             }
 
-            var span = stringValue.AsSpan();
+            var span = value.AsSpan();
             if (span.IndexOfAny("\"\r\n") >= 0)
             {
                 var buidler = new StringBuilder();
@@ -74,16 +73,16 @@ namespace Influxdb2.Client.Datas
                 }
                 return buidler.ToString();
             }
-            return stringValue;
+            return value;
         }
 
 
         /// <summary>
-        /// 创建字段值的编码器
+        /// 创建字段值的转换器
         /// </summary>
         /// <param name="fieldType">字段类型</param>
         /// <returns></returns>
-        public static Func<object?, string?> CreateFieldValueEncoder(Type fieldType)
+        public static Func<object?, string?> CreateFieldValueConverter(Type fieldType)
         {
             if (fieldType == typeof(sbyte) ||
                 fieldType == typeof(byte) ||
@@ -112,7 +111,7 @@ namespace Influxdb2.Client.Datas
 
             return value =>
             {
-                var encodeValue = EncodeFieldValue(value);
+                var encodeValue = EncodeFieldValue(value?.ToString());
                 return encodeValue == null ? null : @$"""{encodeValue}""";
             };
 

@@ -1,6 +1,5 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
-using System.Data;
 using System.Diagnostics;
 using System.Text;
 
@@ -43,11 +42,7 @@ namespace Influxdb2.Client
             var builder = new StringBuilder(desciptor.Measurement);
             foreach (var tag in desciptor.Tags)
             {
-                var value = tag.GetStringValue(this.Entity);
-                if (value == null)
-                {
-                    throw new NoNullAllowedException($"标签{tag.Name}的值不能为空");
-                }
+                var value = tag.GetStringValue(this.Entity);              
                 builder.Append(',').Append(tag.Name).Append('=').Append(value);
             }
 

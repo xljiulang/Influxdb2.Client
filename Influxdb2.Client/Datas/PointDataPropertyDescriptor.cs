@@ -38,7 +38,7 @@ namespace Influxdb2.Client.Datas
             }
             else if (this.ColumnType == ColumnType.Field)
             {
-                this.valueConverter = LineProtocolUtil.CreateFieldValueEncoder(type);
+                this.valueConverter = LineProtocolUtil.CreateFieldValueConverter(type);
             }
             else // 标签
             {
