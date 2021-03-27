@@ -59,7 +59,7 @@ namespace Influxdb2.Client.Datas
         /// <param name="instance">实例</param>
         /// <exception cref="NotSupportedException"></exception>
         /// <returns></returns>
-        public TProperty GetValue(TDeclaring instance)
+        protected TProperty GetValue(TDeclaring instance)
         {
             return this.geter == null
                 ? throw new NotSupportedException()
@@ -71,7 +71,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="instance">实例</param>
         /// <param name="value">值</param>
-        public virtual void SetValue(TDeclaring instance, TProperty value)
+        protected void SetValue(TDeclaring instance, TProperty value)
         {
             this.seter?.Invoke(instance, value);
         }

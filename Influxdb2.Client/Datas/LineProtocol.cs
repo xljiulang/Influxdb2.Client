@@ -24,7 +24,7 @@ namespace Influxdb2.Client.Datas
 
             foreach (var tag in desciptor.Tags)
             {
-                var tagValue = tag.GetValueString(measurement);
+                var tagValue = tag.GetString(measurement);
                 if (tagValue != null)
                 {
                     builder.Append(Comma).Append(tag.Name).Append('=').Append(tagValue);
@@ -34,7 +34,7 @@ namespace Influxdb2.Client.Datas
             var fieldWrited = false;
             foreach (var field in desciptor.Fields)
             {
-                var fieldValue = field.GetValueString(measurement);
+                var fieldValue = field.GetString(measurement);
                 if (fieldValue != null)
                 {
                     var divider = Comma;
@@ -55,7 +55,7 @@ namespace Influxdb2.Client.Datas
 
             if (desciptor.Time != null)
             {
-                var timestamp = desciptor.Time.GetValueString(measurement);
+                var timestamp = desciptor.Time.GetString(measurement);
                 if (timestamp != null)
                 {
                     builder.Append(Space).Append(timestamp);

@@ -6,7 +6,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 模型属性描述器
     /// </summary>
-    sealed class ModelPropertyDescriptor : Property<object, object>
+    sealed class ModelPropertyDescriptor : Property<object, object?>
     {
         /// <summary>
         /// 值转换器
@@ -251,15 +251,15 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="instance"></param>
         /// <param name="value"></param>
-        public override void SetValue(object instance, object value)
+        public void SetString(object instance, string? value)
         {
             if (this.valueConverter == null)
             {
                 throw new NotSupportedException($"不支持将文本值转换为类型{this.Info.PropertyType}");
             }
 
-            var valueCast = this.valueConverter.Invoke((string?)value);
-            base.SetValue(instance, valueCast!);
+            var valueCast = this.valueConverter.Invoke(value);
+            base.SetValue(instance, valueCast);
         }
     }
 }

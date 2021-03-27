@@ -6,7 +6,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 表示Measurement的属性描述
     /// </summary>
-    sealed class MeasurementPropertyDescriptor : Property<object, object>
+    sealed class MeasurementPropertyDescriptor : Property<object, object?>
     {
         /// <summary>
         /// 获取列类型
@@ -51,9 +51,9 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="instance">实例</param>
         /// <returns></returns>
-        public string? GetValueString(object instance)
+        public string? GetString(object instance)
         {
-            var value = this.GetValue(instance);
+            var value = base.GetValue(instance);
             return this.valueConverter.Invoke(value);
         }
 
