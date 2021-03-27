@@ -6,7 +6,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 模型属性描述器
     /// </summary>
-    sealed class ModelPropertyDescriptor : Property<object, object?>
+    sealed class ModelPropertyDescriptor : PropertyDescriptor<object, object?>
     {
         /// <summary>
         /// 值转换器

@@ -20,13 +20,19 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         protected override Task SetHttpContentAsync(ApiParameterContext context)
         {
-            var measurement = context.ParameterValue;
-            if (measurement == null)
+            var entity = context.ParameterValue;
+            if (entity == null)
             {
                 throw new InfluxdbException($"值不能为null:{context.ParameterName}");
             }
 
-            var lineProtocol = LineProtocol.ParseMeasurement(measurement);
+            var pointData = entity as IPointData;
+            if (pointData == null)
+            {
+                pointData = new EntityPointData(entity);
+            }
+
+            var lineProtocol = pointData.ToLineProtocol();
             context.HttpContext.RequestMessage.Content = new StringContent(lineProtocol, Encoding.UTF8, mediaType);
             return Task.CompletedTask;
         }

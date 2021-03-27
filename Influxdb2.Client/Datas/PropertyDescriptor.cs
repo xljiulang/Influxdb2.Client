@@ -6,12 +6,12 @@ using WebApiClientCore.Internals;
 namespace Influxdb2.Client.Datas
 {
     /// <summary>
-    /// 表示属性
+    /// 表示属性描述
     /// </summary>
     /// <typeparam name="TDeclaring">定义属性的类型</typeparam>
     /// <typeparam name="TProperty">属性类型</typeparam>
     [DebuggerDisplay("Name = {Name}")]
-    class Property<TDeclaring, TProperty>
+    class PropertyDescriptor<TDeclaring, TProperty>
     {
         /// <summary>
         /// 获取器
@@ -34,10 +34,10 @@ namespace Influxdb2.Client.Datas
         public PropertyInfo Info { get; }
 
         /// <summary>
-        /// 属性
+        /// 属性描述
         /// </summary>
         /// <param name="property">属性信息</param>
-        public Property(PropertyInfo property)
+        public PropertyDescriptor(PropertyInfo property)
         {
             this.Name = property.Name;
             this.Info = property;
@@ -71,9 +71,14 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="instance">实例</param>
         /// <param name="value">值</param>
+        /// <exception cref="NotSupportedException"></exception>
         protected void SetValue(TDeclaring instance, TProperty value)
         {
-            this.seter?.Invoke(instance, value);
+            if (this.seter == null)
+            {
+                throw new NotSupportedException();
+            }
+            this.seter.Invoke(instance, value);
         }
     }
 }

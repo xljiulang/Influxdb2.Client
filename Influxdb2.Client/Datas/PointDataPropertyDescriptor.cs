@@ -4,9 +4,9 @@ using System.Reflection;
 namespace Influxdb2.Client.Datas
 {
     /// <summary>
-    /// 表示Measurement的属性描述
+    /// 表示数据点的属性描述
     /// </summary>
-    sealed class MeasurementPropertyDescriptor : Property<object, object?>
+    sealed class PointDataPropertyDescriptor : PropertyDescriptor<object, object?>
     {
         /// <summary>
         /// 获取列类型
@@ -22,7 +22,7 @@ namespace Influxdb2.Client.Datas
         /// 属性描述
         /// </summary>
         /// <param name="property">属性信息</param>
-        public MeasurementPropertyDescriptor(PropertyInfo property)
+        public PointDataPropertyDescriptor(PropertyInfo property)
             : base(property)
         {
             var attr = property.GetCustomAttribute<ColumnTypeAttribute>();

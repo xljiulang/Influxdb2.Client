@@ -13,13 +13,25 @@ namespace Influxdb2.Client
         /// <summary>
         /// 写入数据
         /// </summary>
-        /// <param name="measurement">ColumnType标记的数据</param>
+        /// <param name="entity">ColumnTypeAttribute标记的实体</param>
         /// <param name="bucket">空间名</param>
         /// <param name="org">组织</param>
         /// <returns></returns>
         [WriteReturn]
         [HttpPost("/api/v2/write")]
-        Task WriteAsync([Required, LineProtocolContent] object measurement, [DefaultBucket] string? bucket = default, [DefaultOrg] string? org = default);
+        Task WriteAsync([Required, LineProtocolContent] object entity, [DefaultBucket] string? bucket = default, [DefaultOrg] string? org = default);
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="pointData">数据点</param>
+        /// <param name="bucket">空间名</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        [WriteReturn]
+        [HttpPost("/api/v2/write")]
+        Task WriteAsync([Required, LineProtocolContent] IPointData pointData, [DefaultBucket] string? bucket = default, [DefaultOrg] string? org = default);
+
 
         /// <summary>
         /// 查询数据

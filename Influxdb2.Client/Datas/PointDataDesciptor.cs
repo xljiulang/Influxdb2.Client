@@ -6,76 +6,76 @@ using System.Reflection;
 namespace Influxdb2.Client.Datas
 {
     /// <summary>
-    /// Measurement描述
+    /// 数据点描述
     /// </summary>
-    sealed class MeasurementDesciptor
+    sealed class PointDataDesciptor
     {
         /// <summary>
-        /// 获取名称
+        /// 获取Measurement
         /// </summary>
-        public string Name { get; }
+        public string Measurement { get; }
 
         /// <summary>
         /// 获取所有字段
         /// </summary>
-        public MeasurementPropertyDescriptor[] Fields { get; }
+        public PointDataPropertyDescriptor[] Fields { get; }
 
         /// <summary>
         /// 获取所有标签
         /// </summary>
-        public MeasurementPropertyDescriptor[] Tags { get; }
+        public PointDataPropertyDescriptor[] Tags { get; }
 
         /// <summary>
         /// 获取时间点
         /// </summary>
-        public MeasurementPropertyDescriptor? Time { get; }
+        public PointDataPropertyDescriptor? Time { get; }
 
 
         /// <summary>
-        /// Measurement描述
+        /// 数据点描述
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="entityType">实体类型</param>
         /// <exception cref="ArgumentException"></exception>
-        private MeasurementDesciptor(Type type)
+        private PointDataDesciptor(Type entityType)
         {
-            var properties = type.GetProperties()
+            var properties = entityType.GetProperties()
                 .Where(item => item.CanRead && item.IsDefined(typeof(ColumnTypeAttribute)))
-                .Select(p => new MeasurementPropertyDescriptor(p))
+                .Select(p => new PointDataPropertyDescriptor(p))
                 .OrderBy(item => item.Name)
                 .ToArray();
 
             var times = properties.Where(item => item.ColumnType == ColumnType.Timestamp).ToArray();
             if (times.Length > 1)
             {
-                throw new ArgumentException($"{type}至多只能声明一个{nameof(ColumnType.Timestamp)}列的属性");
+                throw new ArgumentException($"{entityType}至多只能声明一个{nameof(ColumnType.Timestamp)}列的属性");
             }
 
             var fields = properties.Where(item => item.ColumnType == ColumnType.Field).ToArray();
             if (fields.Length == 0)
             {
-                throw new ArgumentException($"{type}至少声明一个{nameof(ColumnType.Field)}列的属性");
+                throw new ArgumentException($"{entityType}至少声明一个{nameof(ColumnType.Field)}列的属性");
             }
 
             this.Time = times.FirstOrDefault();
             this.Fields = fields;
             this.Tags = properties.Where(item => item.ColumnType == ColumnType.Tag).ToArray();
-            this.Name = type.Name;
+            this.Measurement = entityType.Name;
         }
 
         /// <summary>
-        /// Measurement描述缓存
+        /// 描述缓存
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, MeasurementDesciptor> cache = new ConcurrentDictionary<Type, MeasurementDesciptor>();
+        private static readonly ConcurrentDictionary<Type, PointDataDesciptor> cache = new ConcurrentDictionary<Type, PointDataDesciptor>();
 
         /// <summary>
-        /// 获取Measurement描述
+        /// 获取数据点描述
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="entityType"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public static MeasurementDesciptor Get(Type type)
+        public static PointDataDesciptor Get(Type entityType)
         {
-            return cache.GetOrAdd(type, t => new MeasurementDesciptor(t));
+            return cache.GetOrAdd(entityType, t => new PointDataDesciptor(t));
         }
     }
 }

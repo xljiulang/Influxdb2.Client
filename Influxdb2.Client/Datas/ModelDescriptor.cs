@@ -17,10 +17,10 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// 模型描述器
         /// </summary>
-        /// <param name="type"></param>
-        public ModelDescriptor(Type type)
+        /// <param name="modelType">模型类型</param>
+        public ModelDescriptor(Type modelType)
         {
-            this.PropertyDescriptors = type
+            this.PropertyDescriptors = modelType
                 .GetProperties()
                 .Where(item => item.CanWrite)
                 .Select(item => new ModelPropertyDescriptor(item))
@@ -35,11 +35,11 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// 获取ModelDescriptor描述
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="modelType">模型类型</param>
         /// <returns></returns>
-        public static ModelDescriptor Get(Type type)
+        public static ModelDescriptor Get(Type modelType)
         {
-            return cache.GetOrAdd(type, t => new ModelDescriptor(t));
+            return cache.GetOrAdd(modelType, t => new ModelDescriptor(t));
         }
     }
 }
