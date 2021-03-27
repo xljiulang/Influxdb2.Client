@@ -71,7 +71,7 @@ namespace Influxdb2.Client
         {
             this.columns = columns;
             this.Count = columns.Length;
-            this.columnsString = $"[{string.Join(",", columns.Select(c => @$"""{c}"""))}]";
+            this.columnsString = $"[{string.Join(", ", columns.Select(c => @$"""{c}"""))}]";
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux From(string bucket)
         {
-            return Parse(@$"from(bucket:""{bucket}"")");
+            return Parse(@$"from(bucket:""{bucket}""){Environment.NewLine}");
         }
 
         /// <summary>
