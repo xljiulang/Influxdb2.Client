@@ -38,7 +38,7 @@ namespace Influxdb2.Client
         /// <summary>
         /// 获取字段集合
         /// </summary>
-        public ICollection<ColumnValue> Fields => this.tags;
+        public ICollection<ColumnValue> Fields => this.fields;
 
         /// <summary>
         /// 自定义数据点
@@ -153,13 +153,13 @@ namespace Influxdb2.Client
             }
 
             var builder = new StringBuilder(this.MeasurementName);
-            foreach (var item in this.Tags)
+            foreach (var item in this.Tags.OrderBy(item => item.Column))
             {
                 builder.Append(',').Append(item.Column).Append('=').Append(item.Value);
             }
 
             var index = 0;
-            foreach (var item in this.Fields)
+            foreach (var item in this.Fields.OrderBy(item => item.Column))
             {
                 var divider = index == 0 ? ' ' : ',';
                 builder.Append(divider).Append(item.Column).Append('=').Append(item.Value);
