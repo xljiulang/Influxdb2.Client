@@ -20,5 +20,16 @@ namespace Influxdb2.Client
         /// </summary>
         [AllowNull]
         public string Token { get; set; }
+
+
+        /// <summary>
+        /// 默认的Org
+        /// </summary>
+        public string? DefaultOrg { get; set; }
+
+        /// <summary>
+        /// 默认的Bucket
+        /// </summary>
+        public string? DefaultBucket { get; set; }
     }
 }

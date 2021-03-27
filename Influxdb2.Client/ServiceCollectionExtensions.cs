@@ -10,13 +10,13 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// 添加IInfuxdbClient
+        /// 添加IInfuxdb
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddInfuxdbClient(this IServiceCollection services, Action<InfuxdbOptions> configureOptions)
+        public static IHttpClientBuilder AddInfuxdb(this IServiceCollection services, Action<InfuxdbOptions> configureOptions)
         {
-            return services.Configure(configureOptions).AddInfuxdbClient();
+            return services.Configure(configureOptions).AddInfuxdb();
         }
 
         /// <summary>
@@ -25,10 +25,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddInfuxdbClient(this IServiceCollection services)
+        public static IHttpClientBuilder AddInfuxdb(this IServiceCollection services)
         {
             return services
-                .AddHttpApi<IInfuxdbClient>()
+                .AddHttpApi<IInfuxdb>()
                 .ConfigureHttpClient((sp, httpClient) =>
                 {
                     var infuxdb = sp.GetRequiredService<IOptionsMonitor<InfuxdbOptions>>().CurrentValue;

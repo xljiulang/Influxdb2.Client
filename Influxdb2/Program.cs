@@ -13,15 +13,17 @@ namespace Influxdb2
             var services = new ServiceCollection();
             services.AddLogging(c => c.AddConsole());
 
-            services.AddInfuxdbClient(db =>
+            services.AddInfuxdb(db =>
             {
+                db.DefaultOrg = "v5";
+                db.DefaultBucket = "v5";
                 db.Host = new Uri("http://v5.taichuan.net:8086");
                 db.Token = "jM6KYmfy6iryQc_0Rms16hJnZjVieFYPRW4RrkeENnLiMdaRZMQ_g4mP8Xi_Cbmp6A1varU8E7E8VdC5NmRQaQ==";
             });
 
             var root = services.BuildServiceProvider();
             using var scope = root.CreateScope();
-            var infuxdb = scope.ServiceProvider.GetRequiredService<IInfuxdbClient>();
+            var infuxdb = scope.ServiceProvider.GetRequiredService<IInfuxdb>();
 
             var model = new M3
             {
@@ -32,7 +34,7 @@ namespace Influxdb2
                 Name = "李4"
             };
 
-            await infuxdb.WriteAsync(model, "v5", "v5");
+            await infuxdb.WriteAsync(model);
 
             var flux = Flux
                 .From("v5")
@@ -41,7 +43,7 @@ namespace Influxdb2
                 .Limit(10)
                 ;
 
-            var tables = await infuxdb.QueryAsync(flux, "v5");
+            var tables = await infuxdb.QueryAsync(flux);
             var models = tables.ToModels<M3>();
 
             Console.WriteLine("Hello World!");
