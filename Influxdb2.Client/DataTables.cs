@@ -48,7 +48,7 @@ namespace Influxdb2.Client
         /// <param name="column">指定列</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public bool TryGetFirstValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value)
+        public bool TryGetFirstValue<TValue>(string column, [MaybeNull] out TValue value)
         {
             if (this.Count == 0 || this[0].IsEmpty)
             {

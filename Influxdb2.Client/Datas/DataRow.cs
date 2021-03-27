@@ -47,20 +47,24 @@ namespace Influxdb2.Client.Datas
         /// <param name="column">列名</param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool TryGetValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value)
+        public bool TryGetValue<TValue>(string column, [MaybeNull] out TValue value)
         {
-            var result = base.TryGetValue(column, out var stringValue);
-            if (typeof(TValue) == typeof(string))
+            if (base.TryGetValue(column, out var stringValue))
             {
-                value = Unsafe.As<string?, TValue>(ref stringValue);
-            }
-            else
-            {
-                var castValue = ConvertToType(stringValue, typeof(TValue));
-                value = (TValue)castValue;
+                if (typeof(TValue) == typeof(string))
+                {
+                    value = Unsafe.As<string?, TValue>(ref stringValue);
+                }
+                else
+                {
+                    var castValue = ConvertToType(stringValue, typeof(TValue));
+                    value = (TValue)castValue;
+                }
+                return true;
             }
 
-            return result;
+            value = default;
+            return false;
         }
 
         /// <summary>
@@ -72,16 +76,23 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         private static object? ConvertToType(string? value, Type targetType)
         {
+            var canbeNull = false;
+            var underlyingType = Nullable.GetUnderlyingType(targetType);
+            if (underlyingType != null)
+            {
+                canbeNull = true;
+                targetType = underlyingType;
+            }
+
             if (value == null)
             {
                 return null;
             }
-
-            var underlyingType = Nullable.GetUnderlyingType(targetType);
-            if (underlyingType != null)
+            else if (canbeNull == false)
             {
-                targetType = underlyingType;
+                throw new NotSupportedException($"不支持将Null值转换为{targetType}");
             }
+
 
             if (targetType.IsEnum == true)
             {
@@ -103,7 +114,7 @@ namespace Influxdb2.Client.Datas
                 return Guid.Parse(value.ToString());
             }
 
-            throw new NotSupportedException($"不支持将对象{value}转换为{targetType}");
+            throw new NotSupportedException($"不支持将值{value}转换为{targetType}");
         }
     }
 }
