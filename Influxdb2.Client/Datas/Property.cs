@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using WebApiClientCore.Internals;
 
@@ -9,6 +10,7 @@ namespace Influxdb2.Client.Datas
     /// </summary>
     /// <typeparam name="TDeclaring">定义属性的类型</typeparam>
     /// <typeparam name="TProperty">属性类型</typeparam>
+    [DebuggerDisplay("Name = {Name}")]
     class Property<TDeclaring, TProperty>
     {
         /// <summary>

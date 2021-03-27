@@ -15,40 +15,32 @@ namespace Influxdb2.Client.Datas
         public string[] Columns => this.Keys.ToArray();
 
         /// <summary>
+        /// 获取多列的值
+        /// </summary>
+        /// <param name="column">列集合</param>
+        /// <returns></returns>
+        public ColumnValue[] this[Columns columns]
+        {
+            get
+            {
+                var index = 0;
+                var columnValues = new ColumnValue[columns.Count];
+                foreach (var item in columns)
+                {
+                    this.TryGetValue(item, out var value);
+                    columnValues[index] = new ColumnValue(item, value);
+                    index += 1;
+                }
+                return columnValues;
+            }
+        }
+
+        /// <summary>
         /// 数据行
         /// </summary>
         public DataRow()
             : base(StringComparer.OrdinalIgnoreCase)
         {
-        }
-
-        /// <summary>
-        /// 数据迭代器
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator<string> IEnumerable<string>.GetEnumerator()
-        {
-            return this.Values.GetEnumerator();
-        }
-
-        /// <summary>
-        /// 转换为强类型
-        /// </summary>
-        /// <typeparam name="TModel"></typeparam>
-        /// <returns></returns>
-        public TModel ToModel<TModel>() where TModel : new()
-        {
-            var model = new TModel();
-            var descriptor = ModelDescriptor.Get(typeof(TModel));
-
-            foreach (var property in descriptor.PropertyDescriptors)
-            {
-                if (this.TryGetValue(property.Name, out var value))
-                {
-                    property.SetValue(model, value!);
-                }
-            }
-            return model;
         }
     }
 }

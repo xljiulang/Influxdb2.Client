@@ -15,6 +15,11 @@ namespace Influxdb2.Client.Protocols
         private readonly Func<string?, object?>? valueConverter;
 
         /// <summary>
+        /// 是否为Field类型
+        /// </summary>
+        public bool IsFieldColumn { get; }
+
+        /// <summary>
         /// 模型属性描述器
         /// </summary>
         /// <param name="property"></param>
@@ -22,9 +27,13 @@ namespace Influxdb2.Client.Protocols
             : base(property)
         {
             var attr = property.GetCustomAttribute<ColumnTypeAttribute>();
-            if (attr != null && attr.ColumnType == ColumnType.Time)
+            if (attr != null)
             {
-                this.Name = "_time";
+                if (attr.ColumnType == ColumnType.Time)
+                {
+                    this.Name = "_time";
+                }
+                this.IsFieldColumn = attr.ColumnType == ColumnType.Field;
             }
 
             this.valueConverter = GetValueConverter(property.PropertyType);

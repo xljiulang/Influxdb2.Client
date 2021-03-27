@@ -1,13 +1,31 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Influxdb2.Client
 {
     /// <summary>
     /// 表示列的集合
     /// </summary>
-    public class Columns
+    public class Columns : IEnumerable<string>
     {
         private readonly string columnsString;
+
+        /// <summary>
+        /// 所有列
+        /// </summary>
+        private readonly IEnumerable<string> columns;
+
+        /// <summary>
+        /// 获取列的数量
+        /// </summary>
+        public int Count { get; }
+
+        /// <summary>
+        /// 获取是否为空
+        /// </summary>
+        public bool IsEmpty => this.Count == 0;
+
 
         /// <summary>
         /// 返回空集合
@@ -51,6 +69,8 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public Columns(params string[] columns)
         {
+            this.columns = columns;
+            this.Count = columns.Length;
             this.columnsString = $"[{string.Join(",", columns.Select(c => @$"""{c}"""))}]";
         }
 
@@ -61,6 +81,16 @@ namespace Influxdb2.Client
         public override string ToString()
         {
             return this.columnsString;
+        }
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            return this.columns.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.columns.GetEnumerator();
         }
     }
 }
