@@ -50,7 +50,7 @@ namespace Influxdb2.Client
         /// <summary>
         /// 包含_start和_stop列的集合
         /// </summary>
-        public static Columns StartStop { get; } = new Columns("_start", "_stop");
+        public static Columns StartStop { get; } = new Columns(Column.Start, Column.Stop);
 
         /// <summary>
         /// 创建多个列的结合
