@@ -1,5 +1,5 @@
 ﻿using System;
-using WebApiClientCore.Internals;
+using System.Text;
 
 namespace Influxdb2.Client.Datas
 {
@@ -20,15 +20,14 @@ namespace Influxdb2.Client.Datas
         public static string GetLineProtocol(object measurement)
         {
             var desciptor = MeasurementDesciptor.Get(measurement.GetType());
-            var builder = new ValueStringBuilder(stackalloc char[1024]);
+            var builder = new StringBuilder().Append(desciptor.Name);
 
-            builder.Append(desciptor.Name);
             foreach (var tag in desciptor.Tags)
             {
                 var tagValue = tag.GetValueString(measurement);
                 if (tagValue != null)
                 {
-                    builder = builder.Append(Comma).Append(tag.Name).Append('=').Append(tagValue);
+                    builder.Append(Comma).Append(tag.Name).Append('=').Append(tagValue);
                 }
             }
 
@@ -45,7 +44,7 @@ namespace Influxdb2.Client.Datas
                         fieldWrited = true;
                     }
 
-                    builder = builder.Append(divider).Append(field.Name).Append('=').Append(fieldValue);
+                    builder.Append(divider).Append(field.Name).Append('=').Append(fieldValue);
                 }
             }
 
@@ -59,7 +58,7 @@ namespace Influxdb2.Client.Datas
                 var timestamp = desciptor.Time.GetValueString(measurement);
                 if (timestamp != null)
                 {
-                    builder = builder.Append(Space).Append(timestamp);
+                    builder.Append(Space).Append(timestamp);
                 }
             }
 
