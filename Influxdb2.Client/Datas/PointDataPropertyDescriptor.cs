@@ -42,7 +42,7 @@ namespace Influxdb2.Client.Datas
             }
             else // 标签
             {
-                this.valueConverter = LineProtocolUtil.EncodeTagValue;
+                this.valueConverter = value => LineProtocolUtil.Encode(value?.ToString());
             }
         }
 

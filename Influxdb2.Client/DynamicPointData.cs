@@ -47,8 +47,7 @@ namespace Influxdb2.Client
         /// <exception cref="ArgumentNullException"></exception>
         public DynamicPointData(string measurement)
         {
-            var encodedMeasurement = LineProtocolUtil.EncodeMeasurement(measurement);
-            this.Measurement = encodedMeasurement ?? throw new ArgumentNullException(nameof(measurement));
+            this.Measurement = LineProtocolUtil.Encode(measurement);
         }
 
         /// <summary>
@@ -59,45 +58,46 @@ namespace Influxdb2.Client
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public DynamicPointData SetTag(string name, object value)
+        public DynamicPointData SetTag(string name, string value)
         {
-            var tagName = LineProtocolUtil.EncodeTagName(name);
-            if (string.IsNullOrEmpty(tagName))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            var tagValue = LineProtocolUtil.EncodeTagValue(value);
-            if (string.IsNullOrEmpty(tagValue))
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            this.tags.Add(tagName, tagValue);
+            name = LineProtocolUtil.Encode(name);
+            value = LineProtocolUtil.Encode(value);
+            this.tags.Add(name, value);
             return this;
         }
 
         /// <summary>
-        /// 添加一个字段
+        /// 添加文本字段
         /// </summary>
         /// <param name="name">字段名</param>
-        /// <param name="value">字段值</param>
+        /// <param name="value">文本值</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns></returns>
+        public DynamicPointData SetField(string name, string? value)
+        {
+            name = LineProtocolUtil.Encode(name);
+            value = LineProtocolUtil.EncodeFieldValue(value);
+            this.fields.Add(name, value);
+            return this;
+        }
+
+        /// <summary>
+        /// 添加非文本字段
+        /// </summary>
+        /// <param name="name">字段名</param>
+        /// <param name="value">非文本值</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
         public DynamicPointData SetField(string name, object value)
         {
-            var fileName = LineProtocolUtil.EncodeFielName(name);
-            if (string.IsNullOrEmpty(fileName))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
             if (value == null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
 
+            var fileName = LineProtocolUtil.Encode(name);
             var fieldValue = LineProtocolUtil.CreateFieldValueEncoder(value.GetType())(value);
             if (fieldValue == null)
             {
@@ -158,12 +158,12 @@ namespace Influxdb2.Client
                 builder.Append(',').Append(item.Column).Append('=').Append(item.Value);
             }
 
-            var index = 0;
+            var firstField = true;
             foreach (var item in this.Fields.OrderBy(item => item.Column))
             {
-                var divider = index == 0 ? ' ' : ',';
+                var divider = firstField ? ' ' : ',';
                 builder.Append(divider).Append(item.Column).Append('=').Append(item.Value);
-                index += 1;
+                firstField = false;
             }
 
             if (this.Timestamp != null)
@@ -213,7 +213,7 @@ namespace Influxdb2.Client
             /// <param name="column"></param>
             /// <param name="value"></param>
             /// <exception cref="ArgumentException"></exception>
-            public void Add(string column, string value)
+            public void Add(string column, string? value)
             {
                 if (this.columnValues.Any(item => item.Column == column))
                 {

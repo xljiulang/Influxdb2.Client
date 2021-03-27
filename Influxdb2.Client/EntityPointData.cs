@@ -1,5 +1,6 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 
@@ -43,31 +44,20 @@ namespace Influxdb2.Client
             foreach (var tag in desciptor.Tags)
             {
                 var value = tag.GetStringValue(this.Entity);
-                if (value != null)
+                if (value == null)
                 {
-                    builder.Append(',').Append(tag.Name).Append('=').Append(value);
+                    throw new NoNullAllowedException($"标签{tag.Name}的值不能为空");
                 }
+                builder.Append(',').Append(tag.Name).Append('=').Append(value);
             }
 
-            var fieldWrited = false;
+            var firstField = true;
             foreach (var field in desciptor.Fields)
             {
                 var value = field.GetStringValue(this.Entity);
-                if (value != null)
-                {
-                    var divider = ',';
-                    if (fieldWrited == false)
-                    {
-                        divider = ' ';
-                        fieldWrited = true;
-                    }
-                    builder.Append(divider).Append(field.Name).Append('=').Append(value);
-                }
-            }
-
-            if (fieldWrited == false)
-            {
-                throw new ArgumentException($"{this.Entity.GetType()}至少有一个{nameof(ColumnType.Field)}标记的属性值不为null");
+                var divider = firstField ? ' ' : ',';
+                builder.Append(divider).Append(field.Name).Append('=').Append(value);
+                firstField = false;
             }
 
             if (desciptor.Timestamp != null)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Text;
 
 namespace Influxdb2.Client.Datas
@@ -9,25 +10,16 @@ namespace Influxdb2.Client.Datas
     static class LineProtocolUtil
     {
         /// <summary>
-        /// 对Measurement编码
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static string? EncodeMeasurement(string? name)
-        {
-            return EncodeTagName(name);
-        }
-
-        /// <summary>
-        /// 对标签名进行编码
+        /// 对标签或字段名进行编码
         /// </summary>
         /// <param name="name">名称</param>
+        /// <exception cref="NoNullAllowedException"></exception>
         /// <returns></returns>
-        public static string? EncodeTagName(string? name)
+        public static string Encode(string? name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                return null;
+                throw new NoNullAllowedException($"标签或字段名的值不能为空");
             }
 
             var span = name.AsSpan();
@@ -49,28 +41,7 @@ namespace Influxdb2.Client.Datas
                 return buidler.ToString();
             }
             return name;
-        }
-
-        /// <summary>
-        /// 对标签值进行编码
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <returns></returns>
-        public static string? EncodeTagValue(object? value)
-        {
-            return EncodeTagName(value?.ToString());
-        }
-
-
-        /// <summary>
-        /// 对字段名进行编码
-        /// </summary>
-        /// <param name="name">字段名</param>
-        /// <returns></returns>
-        public static string? EncodeFielName(string? name)
-        {
-            return EncodeTagName(name);
-        }
+        }         
 
         /// <summary>
         /// 对字段内容进行编码
@@ -121,14 +92,14 @@ namespace Influxdb2.Client.Datas
                 fieldType == typeof(long) ||
                 typeof(Enum).IsAssignableFrom(fieldType))
             {
-                return value => value == null ? null : $"{value}i";
+                return value => value == null ? Throw() : $"{value}i";
             }
 
             if (fieldType == typeof(ushort) ||
                 fieldType == typeof(uint) ||
                 fieldType == typeof(ulong))
             {
-                return value => value == null ? null : $"{value}u";
+                return value => value == null ? Throw() : $"{value}u";
             }
 
             if (fieldType == typeof(bool) ||
@@ -136,7 +107,7 @@ namespace Influxdb2.Client.Datas
                 fieldType == typeof(float) ||
                 fieldType == typeof(double))
             {
-                return value => value?.ToString();
+                return value => value == null ? Throw() : value.ToString();
             }
 
             return value =>
@@ -144,6 +115,11 @@ namespace Influxdb2.Client.Datas
                 var encodeValue = EncodeFieldValue(value);
                 return encodeValue == null ? null : @$"""{encodeValue}""";
             };
+
+            static string? Throw()
+            {
+                throw new NoNullAllowedException("非文本字段的值不能为null");
+            }
         }
 
         /// <summary>
