@@ -11,7 +11,7 @@
         /// <param name="flux"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public static IFlux Count(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Count(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"count(column: '{column}')");
         }
@@ -22,7 +22,7 @@
         /// <param name="flux"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public static IFlux Mean(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Mean(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"mean(column: '{column}')");
         }
@@ -33,7 +33,7 @@
         /// <param name="flux"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public static IFlux Median(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Median(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"median(column: '{column}')");
         }
@@ -44,7 +44,7 @@
         /// <param name="flux"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public static IFlux Sum(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Sum(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"sum(column: '{column}')");
         }

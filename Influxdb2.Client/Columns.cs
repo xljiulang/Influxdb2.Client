@@ -35,17 +35,17 @@ namespace Influxdb2.Client
         /// <summary>
         /// 只包含_value列的集合
         /// </summary>
-        public static Columns Value { get; } = new Columns("_value");
+        public static Columns Value { get; } = new Columns(Column.Value);
 
         /// <summary>
         /// 只包含_time列的集合
         /// </summary>
-        public static Columns Time { get; } = new Columns("_time");
+        public static Columns Time { get; } = new Columns(Column.Time);
 
         /// <summary>
         /// 只包含_field列的集合
         /// </summary>
-        public static Columns Field { get; } = new Columns("_field");
+        public static Columns Field { get; } = new Columns(Column.Field);
 
         /// <summary>
         /// 包含_start和_stop列的集合

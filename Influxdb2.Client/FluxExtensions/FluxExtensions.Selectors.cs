@@ -6,11 +6,6 @@
     public static partial class FluxExtensions
     {
         /// <summary>
-        /// _value列名
-        /// </summary>
-        private const string ValueColumnName = "_value";
-
-        /// <summary>
         /// 保留最后n条 
         /// </summary>
         /// <param name="flux"></param>
@@ -74,7 +69,7 @@
         /// <param name="flux"></param>
         /// <param name="column">Column used to verify the existence of a value</param>
         /// <returns></returns>
-        public static IFlux Last(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Last(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"last(column:'{column}')");
         }
@@ -86,7 +81,7 @@
         /// <param name="flux"></param>
         /// <param name="column">The column to use to calculate the maximum value</param>
         /// <returns></returns>
-        public static IFlux Max(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Max(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"max(column:'{column}')");
         }
@@ -97,7 +92,7 @@
         /// <param name="flux"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public static IFlux Min(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Min(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"min(column:'{column}')");
         }
@@ -108,7 +103,7 @@
         /// <param name="flux"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public static IFlux Unique(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Unique(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"unique(column:'{column}')");
         }
@@ -119,7 +114,7 @@
         /// <param name="flux"></param>
         /// <param name="column">Column on which to track unique values</param>
         /// <returns></returns>
-        public static IFlux Distinct(this IFlux flux, string column = ValueColumnName)
+        public static IFlux Distinct(this IFlux flux, string column = Column.Value)
         {
             return flux.Pipe($"distinct('{column}')");
         }

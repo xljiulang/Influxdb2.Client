@@ -11,7 +11,7 @@
         /// <param name="flux"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static IFlux Fill(this IFlux flux, object value, string column = ValueColumnName)
+        public static IFlux Fill(this IFlux flux, object value, string column = Column.Value)
         {
             return value is string
                 ? flux.Pipe($"fill(column: '{column}', value: '{value}')")

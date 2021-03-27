@@ -30,7 +30,7 @@ namespace Influxdb2.Client.Datas
             {
                 if (attr.ColumnType == ColumnType.Timestamp)
                 {
-                    this.Name = "_time";
+                    this.Name = Column.Time;
                 }
                 this.IsFieldColumn = attr.ColumnType == ColumnType.Field;
             }

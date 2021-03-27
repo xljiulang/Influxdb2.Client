@@ -23,7 +23,7 @@
         /// <param name="columnKey"></param>
         /// <param name="valueColumn"></param>
         /// <returns></returns>
-        public static IFlux Pivot(this IFlux flux, Columns rawKey, Columns columnKey, string valueColumn = ValueColumnName)
+        public static IFlux Pivot(this IFlux flux, Columns rawKey, Columns columnKey, string valueColumn = Column.Value)
         {
             return flux.Pipe(@$"pivot(rowKey:{rawKey}, columnKey:{columnKey}, valueColumn:""{valueColumn}"")", SingleQuotesBehavior.NoReplace);
         }
