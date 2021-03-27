@@ -1,14 +1,21 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace Influxdb2.Client
 {
     /// <summary>
     /// 表示实体数据点
-    /// </summary>
+    /// </summary> 
+    [DebuggerDisplay("Measurement = {desciptor.Measurement}")]
     public class EntityPointData : IPointData
     {
+        /// <summary>
+        /// 数据点描述
+        /// </summary>
+        private readonly PointDataDesciptor desciptor;
+
         /// <summary>
         /// 获取数据实体
         /// </summary>
@@ -18,8 +25,10 @@ namespace Influxdb2.Client
         /// 实体数据点
         /// </summary>
         /// <param name="entity">ColumnTypeAttribute标记的实体</param>
+        /// <exception cref="ArgumentException"></exception>
         public EntityPointData(object entity)
         {
+            this.desciptor = PointDataDesciptor.Get(entity.GetType());
             this.Entity = entity;
         }
 
@@ -30,9 +39,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public string ToLineProtocol()
         {
-            var desciptor = PointDataDesciptor.Get(this.Entity.GetType());
-            var builder = new StringBuilder(desciptor.MeasurementName);
-
+            var builder = new StringBuilder(desciptor.Measurement);
             foreach (var tag in desciptor.Tags)
             {
                 var value = tag.GetStringValue(this.Entity);
@@ -60,7 +67,7 @@ namespace Influxdb2.Client
 
             if (fieldWrited == false)
             {
-                throw new ArgumentException($"{desciptor.MeasurementName}至少有一个{nameof(ColumnType.Field)}列不为null");
+                throw new ArgumentException($"{this.Entity.GetType()}至少有一个{nameof(ColumnType.Field)}标记的属性值不为null");
             }
 
             if (desciptor.Timestamp != null)

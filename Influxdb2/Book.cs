@@ -3,15 +3,10 @@ using System;
 
 namespace Influxdb2
 {
-
-    class M31
+    class Book
     {
         [ColumnType(ColumnType.Tag)]
-        public string CoId { get; set; }
-
-
-        [ColumnType(ColumnType.Tag)]
-        public string LabelId { get; set; }
+        public string Serie { get; set; }
 
 
         [ColumnType(ColumnType.Field)]
@@ -19,10 +14,11 @@ namespace Influxdb2
 
 
         [ColumnType(ColumnType.Field)]
-        public int? Age { get; set; }
+        public decimal Price { get; set; }
+
 
         [ColumnType(ColumnType.Field)]
-        public bool IsOk { get; set; }
+        public bool SpecialOffer { get; set; }
 
 
         [ColumnType(ColumnType.Timestamp)]

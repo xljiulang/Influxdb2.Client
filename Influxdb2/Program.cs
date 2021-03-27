@@ -10,14 +10,6 @@ namespace Influxdb2
     {
         static async Task Main(string[] args)
         {
-            var pd = CustomPointData
-                .Measurement("dfdf")
-                .SetField("fielx","http://www.abc.com")
-                .SetTag("标签1,23", "http://www.abc.com? key = value &#")
-                .SetTimestamp(DateTime.Now);
-
-            var pds = pd.ToString();
-
             var services = new ServiceCollection();
             services.AddLogging(c => c.AddConsole());
 
@@ -33,26 +25,51 @@ namespace Influxdb2
             using var scope = root.CreateScope();
             var infuxdb = scope.ServiceProvider.GetRequiredService<IInfuxdb>();
 
-            var model = new M31
+
+            // 写ColumnType标记的实体
+            var enitty = new Book
             {
-                Age = 30,
-                CoId = "coid001",
-                CreateTime = DateTimeOffset.Now,
-                LabelId = "lb001",
-                Name = "李4"
+                Serie = "科幻",
+                Name = "三体",
+                Price = 188.88M,
+                SpecialOffer = false,
+                CreateTime = DateTimeOffset.Now
             };
 
-            await infuxdb.WriteAsync(model);
+            await infuxdb.WriteAsync(enitty);
 
-            var flux = Flux
+            // 写动态定义的数据点
+            var pointData = DynamicPointData
+                .Create($"{nameof(Temperature)}")
+                .SetTag($"{nameof(Temperature.Location)}", "west")
+                .SetField($"{nameof(Temperature.Value)}", 26D)
+                .SetTimestamp(DateTimeOffset.Now);
+
+            await infuxdb.WriteAsync(pointData);
+
+
+            // 使用Flux对象查询
+            var booFlux = Flux
                 .From("v5")
-                .Range("-60h")
-                .Filter(FnBody.R.MeasurementEquals("M31"))
+                .Range("-24h")
+                .Filter(FnBody.R.MeasurementEquals($"{nameof(Book)}"))
                 .Limit(10)
                 ;
 
-            var tables = await infuxdb.QueryAsync(flux);
-            var models = tables.ToModels<M31>();
+            var bookTables = await infuxdb.QueryAsync(booFlux);
+            var books = bookTables.ToModels<Book>();
+
+
+            // 使用Flux对象查询
+            var tempFlux = Flux
+                .From("v5")
+                .Range(DateTimeOffset.Now.AddDays(-1d))
+                .Filter(FnBody.R.MeasurementEquals($"{nameof(Temperature)}"))
+                .Limit(10)
+                ;
+
+            var tempTables = await infuxdb.QueryAsync(booFlux);
+            var temperatures = bookTables.ToModels<Temperature>();
 
             Console.WriteLine("Hello World!");
         }

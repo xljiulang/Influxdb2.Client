@@ -9,10 +9,10 @@ using System.Text;
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示自定义数据点
+    /// 表示动态定义的数据点
     /// </summary>
-    [DebuggerDisplay("MeasurementName = {MeasurementName}")]
-    public class CustomPointData : IPointData
+    [DebuggerDisplay("Measurement = {Measurement}")]
+    public class DynamicPointData : IPointData
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly ColumnValueCollection tags = new ColumnValueCollection();
@@ -21,9 +21,9 @@ namespace Influxdb2.Client
         private readonly ColumnValueCollection fields = new ColumnValueCollection();
 
         /// <summary>
-        /// 获取umeasurement名称
+        /// 获取umeasurement
         /// </summary>
-        public string MeasurementName { get; }
+        public string Measurement { get; }
 
         /// <summary>
         /// 获取unix纳秒时间戳
@@ -41,14 +41,14 @@ namespace Influxdb2.Client
         public ICollection<ColumnValue> Fields => this.fields;
 
         /// <summary>
-        /// 自定义数据点
+        /// 动态定义的数据点
         /// </summary>
-        /// <param name="measurementName">measurement名称</param>
+        /// <param name="measurement">measurement</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CustomPointData(string measurementName)
+        public DynamicPointData(string measurement)
         {
-            var name = LineProtocolUtil.EncodeMeasurement(measurementName);
-            this.MeasurementName = name ?? throw new ArgumentNullException(nameof(measurementName));
+            var encodedMeasurement = LineProtocolUtil.EncodeMeasurement(measurement);
+            this.Measurement = encodedMeasurement ?? throw new ArgumentNullException(nameof(measurement));
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Influxdb2.Client
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public CustomPointData SetTag(string name, object value)
+        public DynamicPointData SetTag(string name, object value)
         {
             var tagName = LineProtocolUtil.EncodeTagName(name);
             if (string.IsNullOrEmpty(tagName))
@@ -85,7 +85,7 @@ namespace Influxdb2.Client
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public CustomPointData SetField(string name, object value)
+        public DynamicPointData SetField(string name, object value)
         {
             var fileName = LineProtocolUtil.EncodeFielName(name);
             if (string.IsNullOrEmpty(fileName))
@@ -113,7 +113,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="value">unix纳秒时间戳</param>
         /// <returns></returns>
-        public CustomPointData SetTimestamp(long? value)
+        public DynamicPointData SetTimestamp(long value)
         {
             this.Timestamp = value;
             return this;
@@ -124,7 +124,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="value">unix纳秒时间戳</param>
         /// <returns></returns>
-        public CustomPointData SetTimestamp(DateTimeOffset? value)
+        public DynamicPointData SetTimestamp(DateTimeOffset value)
         {
             this.Timestamp = LineProtocolUtil.GetNsTimestamp(value);
             return this;
@@ -135,7 +135,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="timestamp">unix纳秒时间戳</param>
         /// <returns></returns>
-        public CustomPointData SetTimestamp(DateTime? value)
+        public DynamicPointData SetTimestamp(DateTime value)
         {
             this.Timestamp = LineProtocolUtil.GetNsTimestamp(value);
             return this;
@@ -152,7 +152,7 @@ namespace Influxdb2.Client
                 throw new ArgumentException($"至少设置一个Field值");
             }
 
-            var builder = new StringBuilder(this.MeasurementName);
+            var builder = new StringBuilder(this.Measurement);
             foreach (var item in this.Tags.OrderBy(item => item.Column))
             {
                 builder.Append(',').Append(item.Column).Append('=').Append(item.Value);
@@ -184,14 +184,14 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 指定Measurement
+        /// 创建一个CustomPointData
         /// </summary>
-        /// <param name="measurementName">Measurement名</param>
+        /// <param name="measurement">measurement</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
-        public static CustomPointData Measurement(string measurementName)
+        public static DynamicPointData Create(string measurement)
         {
-            return new CustomPointData(measurementName);
+            return new DynamicPointData(measurement);
         }
 
 
