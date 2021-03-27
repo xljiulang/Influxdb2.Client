@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiClientCore;
@@ -23,7 +24,7 @@ namespace Influxdb2.Client.Datas
             var entity = context.ParameterValue;
             if (entity == null)
             {
-                throw new InfluxdbException($"值不能为null:{context.ParameterName}");
+                throw new ArgumentNullException(context.ParameterName);
             }
 
             var pointData = entity as IPointData;

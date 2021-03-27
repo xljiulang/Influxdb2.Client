@@ -29,7 +29,7 @@ namespace Influxdb2.Client.Datas
                     var error = await context.JsonDeserializeAsync(typeof(InfuxdbError));
                     if (error is InfuxdbError infuxdbError)
                     {
-                        throw new InfluxdbServiceException(infuxdbError);
+                        throw new InfluxdbException(infuxdbError);
                     }
                 }
 

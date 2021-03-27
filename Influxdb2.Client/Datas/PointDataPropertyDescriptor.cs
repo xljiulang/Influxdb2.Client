@@ -34,109 +34,47 @@ namespace Influxdb2.Client.Datas
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             if (this.ColumnType == ColumnType.Timestamp)
             {
-                this.valueConverter = this.GetTimeConverter(type);
+                this.valueConverter = GetTimestampConverter(type);
             }
             else if (this.ColumnType == ColumnType.Field)
             {
-                this.valueConverter = this.GetFieldConverter(type);
+                this.valueConverter = LineProtocolUtil.CreateFieldValueEncoder(type);
             }
-            else
+            else // 标签
             {
-                this.valueConverter = GetTagValueString;
+                this.valueConverter = LineProtocolUtil.EncodeTagValue;
             }
         }
 
         /// <summary>
-        /// 获取值的文本表示
+        /// 获取值
         /// </summary>
         /// <param name="instance">实例</param>
         /// <returns></returns>
-        public string? GetString(object instance)
+        public string? GetStringValue(object instance)
         {
             var value = base.GetValue(instance);
             return this.valueConverter.Invoke(value);
         }
 
-
-
         /// <summary>
-        /// 获取Tag的文本值
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private string? GetTagValueString(object? value)
-        {
-            var stringValue = value?.ToString();
-            return string.IsNullOrWhiteSpace(stringValue) ? null : stringValue;
-        }
-
-        /// <summary>
-        /// Field转换器
+        /// 获取时间戳转换器
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private Func<object?, string?> GetFieldConverter(Type type)
-        {
-            if (type == typeof(sbyte) ||
-                type == typeof(byte) ||
-                type == typeof(short) ||
-                type == typeof(int) ||
-                type == typeof(long) ||
-                typeof(Enum).IsAssignableFrom(type))
-            {
-                return value => value == null ? null : $"{value}i";
-            }
-
-            if (type == typeof(ushort) ||
-                type == typeof(uint) ||
-                type == typeof(ulong))
-            {
-                return value => value == null ? null : $"{value}u";
-            }
-
-            if (type == typeof(bool) ||
-                type == typeof(decimal) ||
-                type == typeof(float) ||
-                type == typeof(double))
-            {
-                return value => value?.ToString();
-            }
-
-            return value =>
-            {
-                var stringValue = value?.ToString();
-                return string.IsNullOrWhiteSpace(stringValue) ? null : stringValue;
-            };
-        }
-
-        /// <summary>
-        /// 时间转换器
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private Func<object?, string?> GetTimeConverter(Type type)
+        private Func<object?, string?> GetTimestampConverter(Type type)
         {
             if (type == typeof(DateTime))
             {
-                return value => GetNsTimestamp((DateTime?)value);
+                return value => LineProtocolUtil.GetNsTimestamp((DateTime?)value).ToString();
             }
 
             if (type == typeof(DateTimeOffset))
             {
-                return value => GetNsTimestamp((DateTimeOffset?)value);
+                return value => LineProtocolUtil.GetNsTimestamp((DateTimeOffset?)value)?.ToString();
             }
 
-            throw new InfluxdbFieldException($"不支持转换为时间类型：{type}", this.Name);
-        }
-
-        private static string? GetNsTimestamp(DateTime? value)
-        {
-            return value == null ? null : GetNsTimestamp(new DateTimeOffset(value.Value));
-        }
-
-        private static string? GetNsTimestamp(DateTimeOffset? value)
-        {
-            return value == null ? null : (value.Value.Subtract(DateTimeOffset.UnixEpoch).Ticks * 100).ToString();
+            throw new NotSupportedException($"属性{type} {this.Name}不支持转换为Timestamp");
         }
     }
 }

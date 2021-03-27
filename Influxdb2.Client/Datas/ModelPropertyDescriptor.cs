@@ -262,16 +262,16 @@ namespace Influxdb2.Client.Datas
         /// 设置值
         /// </summary>
         /// <param name="instance"></param>
-        /// <param name="value"></param>
-        public void SetString(object instance, string? value)
+        /// <param name="stringValue"></param>
+        public void SetStringValue(object instance, string? stringValue)
         {
             if (this.valueConverter == null)
             {
                 throw new NotSupportedException($"不支持将文本值转换为类型{this.Info.PropertyType}");
             }
 
-            var valueCast = this.valueConverter.Invoke(value);
-            base.SetValue(instance, valueCast);
+            var value = this.valueConverter.Invoke(stringValue);
+            base.SetValue(instance, value);
         }
     }
 }

@@ -11,9 +11,9 @@ namespace Influxdb2.Client.Datas
     sealed class PointDataDesciptor
     {
         /// <summary>
-        /// 获取Measurement
+        /// 获取Measurement名称
         /// </summary>
-        public string Measurement { get; }
+        public string MeasurementName { get; }
 
         /// <summary>
         /// 获取所有字段
@@ -28,7 +28,7 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// 获取时间点
         /// </summary>
-        public PointDataPropertyDescriptor? Time { get; }
+        public PointDataPropertyDescriptor? Timestamp { get; }
 
 
         /// <summary>
@@ -44,8 +44,8 @@ namespace Influxdb2.Client.Datas
                 .OrderBy(item => item.Name)
                 .ToArray();
 
-            var times = properties.Where(item => item.ColumnType == ColumnType.Timestamp).ToArray();
-            if (times.Length > 1)
+            var timestamps = properties.Where(item => item.ColumnType == ColumnType.Timestamp).ToArray();
+            if (timestamps.Length > 1)
             {
                 throw new ArgumentException($"{entityType}至多只能声明一个{nameof(ColumnType.Timestamp)}列的属性");
             }
@@ -56,10 +56,10 @@ namespace Influxdb2.Client.Datas
                 throw new ArgumentException($"{entityType}至少声明一个{nameof(ColumnType.Field)}列的属性");
             }
 
-            this.Time = times.FirstOrDefault();
+            this.Timestamp = timestamps.FirstOrDefault();
             this.Fields = fields;
             this.Tags = properties.Where(item => item.ColumnType == ColumnType.Tag).ToArray();
-            this.Measurement = entityType.Name;
+            this.MeasurementName = entityType.Name;
         }
 
         /// <summary>

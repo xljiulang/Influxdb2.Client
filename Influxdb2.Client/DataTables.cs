@@ -99,7 +99,7 @@ namespace Influxdb2.Client
                 {
                     if (firstRow.TryGetValue(property.Name, out var value))
                     {
-                        property.SetString(model, value);
+                        property.SetStringValue(model, value);
                     }
                     else if (property.IsFieldColumn == true)
                     {
@@ -110,7 +110,7 @@ namespace Influxdb2.Client
 
                         if (fieldValueMap.TryGetValue(property.Name, out value))
                         {
-                            property.SetString(model, value);
+                            property.SetStringValue(model, value);
                         }
                     }
                 }

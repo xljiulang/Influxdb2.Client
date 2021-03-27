@@ -3,27 +3,23 @@
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示Influxdb异常
+    /// 表示Influxdb服务器异常
     /// </summary>
     public class InfluxdbException : Exception
     {
         /// <summary>
-        /// Influxdb异常
+        /// 错误内容
         /// </summary>
-        /// <param name="message"></param>
-        public InfluxdbException(string message)
-            : base(message)
-        {
-        }
+        public InfuxdbError Error { get; }
 
         /// <summary>
-        /// Influxdb异常
+        /// Influxdb服务器异常
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="inner"></param>
-        public InfluxdbException(string message, Exception inner)
-            : base(message, inner)
+        /// <param name="infuxdbError"></param>
+        public InfluxdbException(InfuxdbError infuxdbError)
+            : base(infuxdbError.ToString())
         {
+            this.Error = infuxdbError;
         }
     }
 }

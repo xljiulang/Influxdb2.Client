@@ -10,6 +10,14 @@ namespace Influxdb2
     {
         static async Task Main(string[] args)
         {
+            var pd = CustomPointData
+                .Measurement("dfdf")
+                .SetField("fielx","http://www.abc.com")
+                .SetTag("标签1,23", "http://www.abc.com? key = value &#")
+                .SetTimestamp(DateTime.Now);
+
+            var pds = pd.ToString();
+
             var services = new ServiceCollection();
             services.AddLogging(c => c.AddConsole());
 

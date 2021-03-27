@@ -25,28 +25,28 @@ namespace Influxdb2.Client
 
         /// <summary>
         /// 转换为LineProtocol
+        /// 因为c#语法关系，所有字属性名不用编码
         /// </summary>
         /// <returns></returns>
         public string ToLineProtocol()
         {
             var desciptor = PointDataDesciptor.Get(this.Entity.GetType());
-            var builder = new StringBuilder().Append(desciptor.Measurement);
+            var builder = new StringBuilder(desciptor.MeasurementName);
 
             foreach (var tag in desciptor.Tags)
             {
-                var tagValue = tag.GetString(this.Entity);
-                if (tagValue != null)
+                var value = tag.GetStringValue(this.Entity);
+                if (value != null)
                 {
-                    var encodeValue = LineProtocolUtil.EncodeName(tagValue);
-                    builder.Append(',').Append(tag.Name).Append('=').Append(encodeValue);
+                    builder.Append(',').Append(tag.Name).Append('=').Append(value);
                 }
             }
 
             var fieldWrited = false;
             foreach (var field in desciptor.Fields)
             {
-                var fieldValue = field.GetString(this.Entity);
-                if (fieldValue != null)
+                var value = field.GetStringValue(this.Entity);
+                if (value != null)
                 {
                     var divider = ',';
                     if (fieldWrited == false)
@@ -54,20 +54,18 @@ namespace Influxdb2.Client
                         divider = ' ';
                         fieldWrited = true;
                     }
-
-                    var encodeValue = LineProtocolUtil.EncodeValue(fieldValue);
-                    builder.Append(divider).Append(field.Name).Append('=').Append('"').Append(encodeValue).Append('"');
+                    builder.Append(divider).Append(field.Name).Append('=').Append(value);
                 }
             }
 
             if (fieldWrited == false)
             {
-                throw new ArgumentException($"{desciptor.Measurement}至少有一个{nameof(ColumnType.Field)}列不为null");
+                throw new ArgumentException($"{desciptor.MeasurementName}至少有一个{nameof(ColumnType.Field)}列不为null");
             }
 
-            if (desciptor.Time != null)
+            if (desciptor.Timestamp != null)
             {
-                var timestamp = desciptor.Time.GetString(this.Entity);
+                var timestamp = desciptor.Timestamp.GetStringValue(this.Entity);
                 if (timestamp != null)
                 {
                     builder.Append(' ').Append(timestamp);
@@ -75,6 +73,15 @@ namespace Influxdb2.Client
             }
 
             return builder.ToString();
+        }
+
+        /// <summary>
+        /// 转换为文本
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.ToLineProtocol();
         }
     }
 }
