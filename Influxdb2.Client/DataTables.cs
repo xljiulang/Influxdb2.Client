@@ -9,7 +9,7 @@ namespace Influxdb2.Client
     /// <summary>
     /// 表示查询结果
     /// </summary>
-    public class TablesResult : IEnumerable<IDataTable>
+    public class DataTables : IEnumerable<IDataTable>
     {
         /// <summary>
         /// 所有表格
@@ -20,8 +20,8 @@ namespace Influxdb2.Client
         /// 查询结果
         /// </summary>
         /// <param name="tables">表格</param>
-        public TablesResult(IList<IDataTable> tables)
-        {
+        public DataTables(IList<IDataTable> tables)
+        { 
             this.tables = tables;
         }
 

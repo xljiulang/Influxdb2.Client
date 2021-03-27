@@ -20,5 +20,15 @@ namespace Influxdb2.Client
         [WriteReturn]
         [HttpPost("/api/v2/write")]
         Task WriteAsync([Required, LineProtocolContent] object measurement, [Required] string org, [Required] string bucket);
+
+        /// <summary>
+        /// 查询数据
+        /// </summary>
+        /// <param name="flux"></param>
+        /// <param name="org"></param>
+        /// <returns></returns>
+        [QueryReturn]
+        [HttpPost("/api/v2/query")]
+        Task<DataTables> QueryAsync([Required, FluxContent] IFlux flux, [Required] string org);
     }
 }

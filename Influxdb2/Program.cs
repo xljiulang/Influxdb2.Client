@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Influxdb2
@@ -10,16 +9,7 @@ namespace Influxdb2
     class Program
     {
         static async Task Main(string[] args)
-        {            
-            var flux = Flux
-                .From("v5")
-                .Range("-60h")
-                .Filter(FnBody.R.MeasurementEquals("M7"))
-                .Pivot();
-
-            var sql = flux.ToString();
-
-
+        {
             var services = new ServiceCollection();
             services.AddLogging(c => c.AddConsole());
 
@@ -41,7 +31,17 @@ namespace Influxdb2
                 LabelId = "lb001",
                 Name = "李4"
             };
+
             await infuxdb.WriteAsync(model, "v5", "v5");
+
+
+            var flux = Flux
+                .From("v5")
+                .Range("-60h")
+                .Filter(FnBody.R.MeasurementEquals("M3"));
+
+            var tables = await infuxdb.QueryAsync(flux, "v5");
+            var models = tables.ToModels<M3>();
 
             Console.WriteLine("Hello World!");
         }

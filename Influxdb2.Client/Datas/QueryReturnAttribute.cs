@@ -5,12 +5,12 @@ using WebApiClientCore.Attributes;
 namespace Influxdb2.Client.Datas
 {
     /// <summary>
-    /// 写入返回检测
+    /// 查询返回处理
     /// </summary>
-    sealed class WriteReturnAttribute : SpecialReturnAttribute
+    sealed class QueryReturnAttribute : SpecialReturnAttribute
     {
         /// <summary>
-        /// 检测结果的正确性
+        /// 设置结果
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
@@ -19,7 +19,12 @@ namespace Influxdb2.Client.Datas
             if (context.ResultStatus == ResultStatus.None)
             {
                 var response = context.HttpContext.ResponseMessage;
-                if (response != null && response.IsSuccessStatusCode == false)
+                if (response == null)
+                {
+                    return;
+                }
+
+                if (response.IsSuccessStatusCode == false)
                 {
                     var error = await context.JsonDeserializeAsync(typeof(InfuxdbError));
                     if (error is InfuxdbError infuxdbError)
@@ -27,6 +32,11 @@ namespace Influxdb2.Client.Datas
                         throw new InfluxdbServiceException(infuxdbError);
                     }
                 }
+
+                var stream = await response.Content.ReadAsStreamAsync();
+                var csvReader = new CsvReader(stream);
+                var tables = await csvReader.ReadDataTablesAsync();
+                context.Result = new DataTables(tables);
             }
         }
     }

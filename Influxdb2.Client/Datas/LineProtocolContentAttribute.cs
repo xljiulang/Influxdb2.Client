@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
@@ -9,7 +10,9 @@ namespace Influxdb2.Client.Datas
     /// LineProtocol内容
     /// </summary>
     sealed class LineProtocolContentAttribute : HttpContentAttribute
-    { 
+    {
+        private const string mediaType = "text/plain";
+
         /// <summary>
         /// 写入内容
         /// </summary>
@@ -24,7 +27,7 @@ namespace Influxdb2.Client.Datas
             }
 
             var lineString = LineProtocol.GetLineProtocol(measurement);
-            context.HttpContext.RequestMessage.Content = new StringContent(lineString);
+            context.HttpContext.RequestMessage.Content = new StringContent(lineString, Encoding.UTF8, mediaType);
             return Task.CompletedTask;
         }
     }

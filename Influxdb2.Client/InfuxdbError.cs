@@ -1,11 +1,9 @@
-﻿using System.Net;
-
-namespace Influxdb2.Client
+﻿namespace Influxdb2.Client
 {
     /// <summary>
-    /// 写入异常
+    /// Infuxdb错误信息
     /// </summary>
-    public class WriteError
+    public class InfuxdbError
     {
         /// <summary>
         /// 业务码
