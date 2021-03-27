@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -45,7 +44,7 @@ namespace Influxdb2.Client
         /// 动态定义的数据点
         /// </summary>
         /// <param name="measurement">measurement</param>
-        /// <exception cref="NoNullAllowedException"></exception>
+        /// <exception cref="ProtocolException"></exception>
         public DynamicPointData(string measurement)
         {
             this.Measurement = LineProtocolUtil.Encode(measurement);
@@ -56,7 +55,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="name">标签名</param>
         /// <param name="value">标签值，所有类型都当作文本处理</param>
-        /// <exception cref="NoNullAllowedException"></exception>
+        /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
         public DynamicPointData SetTag(string name, string value)
@@ -72,7 +71,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="name">字段名</param>
         /// <param name="value">文本值</param>
-        /// <exception cref="NoNullAllowedException"></exception>
+        /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
         public DynamicPointData SetField(string name, string? value)
@@ -89,7 +88,7 @@ namespace Influxdb2.Client
         /// <param name="name">字段名</param>
         /// <param name="value">非文本值</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="NoNullAllowedException"></exception>
+        /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
         public DynamicPointData SetField(string name, object value)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Text;
 
 namespace Influxdb2.Client.Datas
@@ -13,13 +12,13 @@ namespace Influxdb2.Client.Datas
         /// 对标签或字段名进行编码
         /// </summary>
         /// <param name="name">名称</param>
-        /// <exception cref="NoNullAllowedException"></exception>
+        /// <exception cref="ProtocolException"></exception>
         /// <returns></returns>
         public static string Encode(string? name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new NoNullAllowedException($"标签或字段名的值不能为空");
+                throw new ProtocolException($"标签或字段名的值不能为空");
             }
 
             var span = name.AsSpan();
@@ -117,7 +116,7 @@ namespace Influxdb2.Client.Datas
 
             static string? Throw()
             {
-                throw new NoNullAllowedException("非文本字段的值不能为null");
+                throw new ProtocolException("非文本字段的值不能为null");
             }
         }
 
