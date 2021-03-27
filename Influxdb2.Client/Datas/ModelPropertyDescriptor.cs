@@ -226,6 +226,18 @@ namespace Influxdb2.Client.Datas
                 }
             }
 
+            if (targetType == typeof(Guid))
+            {
+                if (canbeNull == true)
+                {
+                    return value => value == null ? default(object) : Guid.Parse(value);
+                }
+                else
+                {
+                    return value => value == null ? Throw() : Guid.Parse(value);
+                }
+            }
+
             object Throw()
             {
                 throw new NotSupportedException($"不支持将文本值转换为类型{targetType}");

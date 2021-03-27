@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Influxdb2.Client
@@ -38,6 +39,23 @@ namespace Influxdb2.Client
         public DataTables(IList<IDataTable> tables)
         {
             this.tables = tables;
+        }
+
+        /// <summary>
+        /// 尝试获取第一个表格的第一行的指定列的值
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="column">指定列</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public bool TryGetFirstValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value)
+        {
+            if (this.Count == 0 || this[0].IsEmpty)
+            {
+                value = default;
+                return false;
+            }
+            return this.First().Rows.First().TryGetValue<TValue>(column, out value);
         }
 
         /// <summary>
