@@ -48,14 +48,14 @@ namespace Influxdb2.Client
         /// <param name="column">指定列</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public bool TryGetFirstValue<TValue>(string column, [MaybeNull] out TValue value)
+        public bool TryGetFirstValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value)
         {
             if (this.Count == 0 || this[0].IsEmpty)
             {
                 value = default;
                 return false;
             }
-            return this.First().Rows.First().TryGetValue<TValue>(column, out value);
+            return this.First().Rows.First().TryGetValue(column, out value);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Influxdb2.Client
                     {
                         property.SetStringValue(model, value);
                     }
-                    else if (property.IsFieldColumn == true)
+                    else if (property.IsFieldColumn != false)
                     {
                         if (fieldValueMap == null)
                         {
@@ -129,14 +129,14 @@ namespace Influxdb2.Client
         private static Dictionary<string, string?> CreateFiledValueMap(IEnumerable<IDataRow> rows)
         {
             const string FieldName = "_field";
-            const string Valuename = "_value";
+            const string ValueName = "_value";
 
             var fieldValues = new Dictionary<string, string?>();
             foreach (var row in rows)
             {
                 if (row.TryGetValue(FieldName, out var _field))
                 {
-                    if (_field != null && row.TryGetValue(Valuename, out var _value))
+                    if (_field != null && row.TryGetValue(ValueName, out var _value))
                     {
                         fieldValues.TryAdd(_field, _value);
                     }

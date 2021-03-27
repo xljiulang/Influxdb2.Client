@@ -47,20 +47,23 @@ namespace Influxdb2.Client.Datas
         /// <param name="column">列名</param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool TryGetValue<TValue>(string column, [MaybeNull] out TValue value)
+        public bool TryGetValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value)
         {
             if (base.TryGetValue(column, out var stringValue))
             {
-                if (typeof(TValue) == typeof(string))
+                if (stringValue != null)
                 {
-                    value = Unsafe.As<string?, TValue>(ref stringValue);
+                    if (typeof(TValue) == typeof(string))
+                    {
+                        value = Unsafe.As<string, TValue>(ref stringValue);
+                    }
+                    else
+                    {
+                        var castValue = ConvertToType(stringValue, typeof(TValue));
+                        value = (TValue)castValue;
+                    }
+                    return true;
                 }
-                else
-                {
-                    var castValue = ConvertToType(stringValue, typeof(TValue));
-                    value = (TValue)castValue;
-                }
-                return true;
             }
 
             value = default;
@@ -74,25 +77,13 @@ namespace Influxdb2.Client.Datas
         /// <param name="targetType">转换的目标类型</param>
         /// <exception cref="NotSupportedException"></exception>
         /// <returns></returns>
-        private static object? ConvertToType(string? value, Type targetType)
+        private static object ConvertToType(string value, Type targetType)
         {
-            var canbeNull = false;
             var underlyingType = Nullable.GetUnderlyingType(targetType);
             if (underlyingType != null)
             {
-                canbeNull = true;
                 targetType = underlyingType;
-            }
-
-            if (value == null)
-            {
-                return null;
-            }
-            else if (canbeNull == false)
-            {
-                throw new NotSupportedException($"不支持将Null值转换为{targetType}");
-            }
-
+            }             
 
             if (targetType.IsEnum == true)
             {

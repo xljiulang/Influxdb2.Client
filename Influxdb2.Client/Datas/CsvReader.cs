@@ -190,12 +190,12 @@ namespace Influxdb2.Client.Datas
 
             if (span[0] == '"')
             {
-                span = span.Slice(1);
+                span = span[1..];
             }
 
-            if (span[span.Length - 1] == '"')
+            if (span[^1] == '"')
             {
-                span = span.Slice(0, span.Length - 1);
+                span = span[0..^1];
             }
 
             var value = span.Contains("\"\"", StringComparison.InvariantCulture)

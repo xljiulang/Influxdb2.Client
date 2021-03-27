@@ -27,8 +27,7 @@ namespace Influxdb2.Client.Datas
                 throw new ArgumentNullException(context.ParameterName);
             }
 
-            var pointData = entity as IPointData;
-            if (pointData == null)
+            if (entity is not IPointData pointData)
             {
                 pointData = new EntityPointData(entity);
             }

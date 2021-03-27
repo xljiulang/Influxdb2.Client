@@ -13,7 +13,7 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// 描述缓存
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, PointDataDesciptor> cache = new ConcurrentDictionary<Type, PointDataDesciptor>();
+        private static readonly ConcurrentDictionary<Type, PointDataDesciptor> cache = new();
 
         /// <summary>
         /// 获取数据点描述

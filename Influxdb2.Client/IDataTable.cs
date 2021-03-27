@@ -25,6 +25,6 @@ namespace Influxdb2.Client
         /// <param name="column">指定列</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        bool TryGetFirstValue<TValue>(string column, [MaybeNull] out TValue value);
+        bool TryGetFirstValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value);
     }
 }

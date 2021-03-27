@@ -11,12 +11,12 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// 值转换器
         /// </summary>
-        private readonly Func<string?, object?>? valueConverter;
+        private readonly Func<string?, object?> valueConverter;
 
         /// <summary>
         /// 是否为Field类型
         /// </summary>
-        public bool IsFieldColumn { get; }
+        public bool? IsFieldColumn { get; }
 
         /// <summary>
         /// 模型属性描述器
@@ -35,15 +35,26 @@ namespace Influxdb2.Client.Datas
                 this.IsFieldColumn = attr.ColumnType == ColumnType.Field;
             }
 
-            this.valueConverter = GetValueConverter(property.PropertyType);
+            this.valueConverter = CreateValueConverter(property.PropertyType);
         }
 
         /// <summary>
-        /// 获取转换器
+        /// 设置值
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="value"></param>
+        public void SetStringValue(object instance, string? value)
+        {
+            var castValue = this.valueConverter.Invoke(value);
+            base.SetValue(instance, castValue);
+        }
+
+        /// <summary>
+        /// 创建转换器
         /// </summary>
         /// <param name="targetType"></param>
         /// <returns></returns>
-        private static Func<string?, object?>? GetValueConverter(Type targetType)
+        private static Func<string?, object?> CreateValueConverter(Type targetType)
         {
             var canbeNull = false;
             var underlyingType = Nullable.GetUnderlyingType(targetType);
@@ -60,218 +71,122 @@ namespace Influxdb2.Client.Datas
 
             if (targetType == typeof(bool))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : bool.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : bool.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : bool.Parse(value))
+                    : (value => value == null ? Throw(value) : bool.Parse(value));
             }
 
             if (targetType == typeof(sbyte))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : sbyte.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : sbyte.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : sbyte.Parse(value))
+                    : (value => value == null ? Throw(value) : sbyte.Parse(value));
             }
 
             if (targetType == typeof(byte))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : byte.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : byte.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : byte.Parse(value))
+                    : (value => value == null ? Throw(value) : byte.Parse(value));
             }
 
             if (targetType == typeof(short))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : short.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : short.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : short.Parse(value))
+                    : (value => value == null ? Throw(value) : short.Parse(value));
             }
 
             if (targetType == typeof(int))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : int.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : int.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : int.Parse(value))
+                    : (value => value == null ? Throw(value) : int.Parse(value));
             }
 
             if (targetType == typeof(long))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : long.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : long.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : long.Parse(value))
+                    : (value => value == null ? Throw(value) : long.Parse(value));
             }
 
             if (targetType == typeof(ushort))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : ushort.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : ushort.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : ushort.Parse(value))
+                    : (value => value == null ? Throw(value) : ushort.Parse(value));
             }
 
             if (targetType == typeof(uint))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : uint.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : uint.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : uint.Parse(value))
+                    : (value => value == null ? Throw(value) : uint.Parse(value));
             }
 
             if (targetType == typeof(ulong))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : ulong.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : ulong.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : ulong.Parse(value))
+                    : (value => value == null ? Throw(value) : ulong.Parse(value));
             }
 
             if (targetType == typeof(float))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : float.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : float.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : float.Parse(value))
+                    : (value => value == null ? Throw(value) : float.Parse(value));
             }
 
             if (targetType == typeof(decimal))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : decimal.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : decimal.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : decimal.Parse(value))
+                    : (value => value == null ? Throw(value) : decimal.Parse(value));
             }
 
             if (targetType == typeof(double))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : double.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : double.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : double.Parse(value))
+                    : (value => value == null ? Throw(value) : double.Parse(value));
             }
 
             if (targetType == typeof(DateTime))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : DateTime.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : DateTime.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : DateTime.Parse(value))
+                    : (value => value == null ? Throw(value) : DateTime.Parse(value));
             }
 
             if (targetType == typeof(DateTimeOffset))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : DateTimeOffset.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : DateTimeOffset.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : DateTimeOffset.Parse(value))
+                    : (value => value == null ? Throw(value) : DateTimeOffset.Parse(value));
             }
 
             if (typeof(Enum).IsAssignableFrom(targetType) == true)
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? null : Enum.Parse(targetType, value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : Enum.Parse(targetType, value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? null : Enum.Parse(targetType, value))
+                    : (value => value == null ? Throw(value) : Enum.Parse(targetType, value));
             }
 
             if (targetType == typeof(Guid))
             {
-                if (canbeNull == true)
-                {
-                    return value => value == null ? default(object) : Guid.Parse(value);
-                }
-                else
-                {
-                    return value => value == null ? Throw() : Guid.Parse(value);
-                }
+                return canbeNull == true
+                    ? (value => value == null ? default(object) : Guid.Parse(value))
+                    : (value => value == null ? Throw(value) : Guid.Parse(value));
             }
 
-            object Throw()
+            return value => Throw(value);
+
+            object Throw(string? value)
             {
-                throw new NotSupportedException($"不支持将文本值转换为类型{targetType}");
+                throw new NotSupportedException($"不支持将文本值{value}转换为类型{targetType}");
             }
-
-            return null;
-        }
-
-        /// <summary>
-        /// 设置值
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <param name="stringValue"></param>
-        public void SetStringValue(object instance, string? stringValue)
-        {
-            if (this.valueConverter == null)
-            {
-                throw new NotSupportedException($"不支持将文本值转换为类型{this.Info.PropertyType}");
-            }
-
-            var value = this.valueConverter.Invoke(stringValue);
-            base.SetValue(instance, value);
         }
     }
 }

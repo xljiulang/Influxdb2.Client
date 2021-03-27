@@ -34,7 +34,7 @@ namespace Influxdb2.Client.Datas
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             if (this.ColumnType == ColumnType.Timestamp)
             {
-                this.valueConverter = GetTimestampConverter(type);
+                this.valueConverter = CreateTimestampConverter(type);
             }
             else if (this.ColumnType == ColumnType.Field)
             {
@@ -62,7 +62,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private Func<object?, string?> GetTimestampConverter(Type type)
+        private Func<object?, string?> CreateTimestampConverter(Type type)
         {
             if (type == typeof(DateTime))
             {

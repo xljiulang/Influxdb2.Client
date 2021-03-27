@@ -33,7 +33,7 @@ namespace Influxdb2.Client
         /// </summary>
         private class FluxImpl : IFlux
         {
-            private readonly StringBuilder builder = new StringBuilder();
+            private readonly StringBuilder builder = new();
 
             /// <summary>
             /// Flux实现

@@ -12,7 +12,7 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// ModelDescriptor缓存
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, ModelDescriptor> cache = new ConcurrentDictionary<Type, ModelDescriptor>();
+        private static readonly ConcurrentDictionary<Type, ModelDescriptor> cache = new();
 
         /// <summary>
         /// 获取ModelDescriptor描述

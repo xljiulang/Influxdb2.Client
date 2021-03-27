@@ -15,10 +15,10 @@ namespace Influxdb2.Client
     public class DynamicPointData : IPointData
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly ColumnValueCollection tags = new ColumnValueCollection();
+        private readonly ColumnValueCollection tags = new();
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly ColumnValueCollection fields = new ColumnValueCollection();
+        private readonly ColumnValueCollection fields = new();
 
         /// <summary>
         /// 获取umeasurement
@@ -201,7 +201,7 @@ namespace Influxdb2.Client
         private class ColumnValueCollection : ICollection<ColumnValue>
         {
             [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-            private readonly List<ColumnValue> columnValues = new List<ColumnValue>();
+            private readonly List<ColumnValue> columnValues = new();
 
             int ICollection<ColumnValue>.Count => this.columnValues.Count;
 

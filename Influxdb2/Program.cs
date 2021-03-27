@@ -16,7 +16,7 @@ namespace Influxdb2
             services.AddInfuxdb(db =>
             {
                 db.DefaultOrg = "v5";
-                db.DefaultBucket = "v5";
+                db.DefaultBucket = "v6";
                 db.Host = new Uri("http://v5.taichuan.net:8086");
                 db.Token = "jM6KYmfy6iryQc_0Rms16hJnZjVieFYPRW4RrkeENnLiMdaRZMQ_g4mP8Xi_Cbmp6A1varU8E7E8VdC5NmRQaQ==";
             });
@@ -50,7 +50,7 @@ namespace Influxdb2
 
             // 使用Flux对象查询
             var booFlux = Flux
-                .From("v5")
+                .From("v6")
                 .Range("-24h")
                 .Filter(FnBody.R.MeasurementEquals($"{nameof(Book)}"))
                 .Limit(10)
@@ -62,14 +62,24 @@ namespace Influxdb2
 
             // 使用Flux对象查询
             var tempFlux = Flux
-                .From("v5")
+                .From("v6")
                 .Range(DateTimeOffset.Now.AddDays(-1d))
                 .Filter(FnBody.R.MeasurementEquals($"{nameof(Temperature)}"))
+                .Sort(desc: true)
                 .Limit(10)
                 ;
 
-            var tempTables = await infuxdb.QueryAsync(booFlux);
-            var temperatures = bookTables.ToModels<Temperature>();
+            var tempTables = await infuxdb.QueryAsync(tempFlux);
+            var temperatures = tempTables.ToModels<Temperature>();
+
+            var meanTempFulx = Flux
+                .From("v6")
+                .Range(DateTimeOffset.Now.AddDays(-1d))
+                .Filter(FnBody.R.MeasurementEquals($"{nameof(Temperature)}").And().FieldEquals("Value"))
+                .Mean();
+
+            var sumTables = await infuxdb.QueryAsync(meanTempFulx);
+            sumTables.TryGetFirstValue<double>("_value", out var meanTemp);
 
             Console.WriteLine("Hello World!");
         }

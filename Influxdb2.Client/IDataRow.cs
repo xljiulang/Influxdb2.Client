@@ -40,6 +40,6 @@ namespace Influxdb2.Client
         /// <param name="column">列名</param>
         /// <param name="value"></param>
         /// <returns></returns>
-        bool TryGetValue<TValue>(string column, [MaybeNull] out TValue value);
+        bool TryGetValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value);
     }
 }

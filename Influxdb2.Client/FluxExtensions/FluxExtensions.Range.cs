@@ -8,7 +8,7 @@ namespace Influxdb2.Client
     public static partial class FluxExtensions
     {
         /// <summary>
-        /// Range
+        /// 时间范围
         /// </summary>
         /// <param name="flux"></param>
         /// <param name="start"></param>
@@ -19,7 +19,7 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// Range
+        /// 时间范围
         /// </summary>
         /// <param name="flux"></param>
         /// <param name="start"></param>
@@ -31,7 +31,7 @@ namespace Influxdb2.Client
 
 
         /// <summary>
-        /// Range
+        /// 时间范围
         /// </summary>
         /// <remarks>* start小于stop</remarks>
         /// <param name="flux"></param>
@@ -45,7 +45,7 @@ namespace Influxdb2.Client
 
 
         /// <summary>
-        /// Range
+        /// 时间范围
         /// </summary>
         /// <remarks>* start小于stop</remarks>
         /// <param name="flux"></param>
@@ -60,7 +60,7 @@ namespace Influxdb2.Client
 
 
         /// <summary>
-        /// Range
+        /// 时间范围
         /// </summary>
         /// <remarks>* start小于stop</remarks>
         /// <param name="flux"></param>
@@ -74,7 +74,7 @@ namespace Influxdb2.Client
 
 
         /// <summary>
-        /// Range
+        /// 时间范围
         /// </summary>
         /// <remarks>* start小于stop</remarks>
         /// <param name="flux"></param>
