@@ -1,5 +1,4 @@
-﻿using Influxdb2.Client.Protocols;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
 

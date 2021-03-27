@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Influxdb2.Client.Datas
 {
@@ -11,7 +10,12 @@ namespace Influxdb2.Client.Datas
         /// <summary>
         /// 获取所有列名
         /// </summary>
-        public string[] Columns => this.Keys.ToArray();
+        ICollection<string> IDataRow.Columns => this.Keys;
+
+        /// <summary>
+        /// 获取所有值
+        /// </summary>
+        ICollection<string?> IDataRow.Values => this.Values;
 
         /// <summary>
         /// 获取多列的值

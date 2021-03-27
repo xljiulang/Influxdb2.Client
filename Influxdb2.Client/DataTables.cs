@@ -2,22 +2,37 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示查询结果
+    /// 表示表格集合
     /// </summary>
+    [DebuggerDisplay("Count = {Count}")]
     public class DataTables : IEnumerable<IDataTable>
     {
         /// <summary>
         /// 所有表格
         /// </summary>
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly IList<IDataTable> tables;
 
         /// <summary>
-        /// 查询结果
+        /// 获取表格的数量
+        /// </summary>
+        public int Count => this.tables.Count;
+
+        /// <summary>
+        /// 通过索引获取表格
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public IDataTable this[int index] => this.tables[index];
+
+        /// <summary>
+        /// 表格集合
         /// </summary>
         /// <param name="tables">表格</param>
         public DataTables(IList<IDataTable> tables)

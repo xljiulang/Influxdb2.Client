@@ -1,8 +1,7 @@
-﻿using Influxdb2.Client.Datas;
-using System;
+﻿using System;
 using System.Reflection;
 
-namespace Influxdb2.Client.Protocols
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// 模型属性描述器

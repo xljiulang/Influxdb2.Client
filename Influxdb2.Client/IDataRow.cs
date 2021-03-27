@@ -1,4 +1,6 @@
-﻿namespace Influxdb2.Client
+﻿using System.Collections.Generic;
+
+namespace Influxdb2.Client
 {
     /// <summary>
     /// 数据行
@@ -8,7 +10,12 @@
         /// <summary>
         /// 获取所有列名
         /// </summary>
-        string[] Columns { get; }
+        ICollection<string> Columns { get; }
+
+        /// <summary>
+        /// 获取所有值
+        /// </summary>
+        ICollection<string?> Values { get; }
 
         /// <summary>
         /// 获取多列的值
@@ -23,6 +30,6 @@
         /// <param name="column">列名</param>
         /// <param name="value"></param>
         /// <returns></returns>
-        bool TryGetValue(string column, out string? value); 
+        bool TryGetValue(string column, out string? value);
     }
 }

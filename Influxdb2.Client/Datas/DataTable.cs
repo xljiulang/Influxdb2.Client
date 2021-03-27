@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Influxdb2.Client.Datas
@@ -7,7 +6,6 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 数据表
     /// </summary>
-    [DebuggerDisplay("RowCount = {Rows.Count}")]
     sealed class DataTable : IDataTable
     {
         /// <summary>
