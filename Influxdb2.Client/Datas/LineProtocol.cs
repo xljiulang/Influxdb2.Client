@@ -8,16 +8,13 @@ namespace Influxdb2.Client.Datas
     /// </summary>
     static class LineProtocol
     {
-        private const char Comma = ',';
-        private const char Space = ' ';
-
         /// <summary>
-        /// 从measurement转换得到
+        /// 解析Measurement
         /// </summary>
         /// <param name="measurement"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public static string GetLineProtocol(object measurement)
+        public static string ParseMeasurement(object measurement)
         {
             var desciptor = MeasurementDesciptor.Get(measurement.GetType());
             var builder = new StringBuilder().Append(desciptor.Name);
@@ -27,7 +24,8 @@ namespace Influxdb2.Client.Datas
                 var tagValue = tag.GetString(measurement);
                 if (tagValue != null)
                 {
-                    builder.Append(Comma).Append(tag.Name).Append('=').Append(tagValue);
+                    var encodeValue = EncodeName(tagValue);
+                    builder.Append(',').Append(tag.Name).Append('=').Append(encodeValue);
                 }
             }
 
@@ -37,14 +35,15 @@ namespace Influxdb2.Client.Datas
                 var fieldValue = field.GetString(measurement);
                 if (fieldValue != null)
                 {
-                    var divider = Comma;
+                    var divider = ',';
                     if (fieldWrited == false)
                     {
-                        divider = Space;
+                        divider = ' ';
                         fieldWrited = true;
                     }
 
-                    builder.Append(divider).Append(field.Name).Append('=').Append(fieldValue);
+                    var encodeValue = EncodeValue(fieldValue);
+                    builder.Append(divider).Append(field.Name).Append('=').Append('"').Append(encodeValue).Append('"');
                 }
             }
 
@@ -58,12 +57,68 @@ namespace Influxdb2.Client.Datas
                 var timestamp = desciptor.Time.GetString(measurement);
                 if (timestamp != null)
                 {
-                    builder.Append(Space).Append(timestamp);
+                    builder.Append(' ').Append(timestamp);
                 }
             }
 
             return builder.ToString();
         }
 
+
+        /// <summary>
+        /// 对名称进行编码
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private static string EncodeName(string name)
+        {
+            var span = name.AsSpan();
+            if (span.IndexOfAny(",= \r\n") >= 0)
+            {
+                var buidler = new StringBuilder();
+                foreach (var c in span)
+                {
+                    if (c == '\r' || c == '\n')
+                    {
+                        continue;
+                    }
+                    if (c == ',' || c == '=' || c == ' ')
+                    {
+                        buidler.Append('\\');
+                    }
+                    buidler.Append(c);
+                }
+                return buidler.ToString();
+            }
+            return name;
+        }
+
+        /// <summary>
+        /// 对内容进行编码
+        /// </summary>
+        /// <param name="value"></param> 
+        /// <returns></returns>
+        private static string EncodeValue(string value)
+        {
+            var span = value.AsSpan();
+            if (span.IndexOfAny("\"\r\n") >= 0)
+            {
+                var buidler = new StringBuilder();
+                foreach (var c in span)
+                {
+                    if (c == '\r' || c == '\n')
+                    {
+                        continue;
+                    }
+                    if (c == '"')
+                    {
+                        buidler.Append('\\');
+                    }
+                    buidler.Append(c);
+                }
+                return buidler.ToString();
+            }
+            return value;
+        }
     }
 }

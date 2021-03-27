@@ -93,7 +93,7 @@ namespace Influxdb2.Client
             {
                 var model = new TModel();
                 var firstRow = group.First(); // 同一组的非field属性，共用分组的第一条记录的值              
-                var fieldValueMap = default(Dictionary<string, string?>?);
+                var fieldValueMap = default(Dictionary<string, string?>);
 
                 foreach (var property in descriptor.PropertyDescriptors)
                 {

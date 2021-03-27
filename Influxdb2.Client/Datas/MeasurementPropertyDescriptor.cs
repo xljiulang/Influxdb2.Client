@@ -57,6 +57,8 @@ namespace Influxdb2.Client.Datas
             return this.valueConverter.Invoke(value);
         }
 
+
+
         /// <summary>
         /// 获取Tag的文本值
         /// </summary>
@@ -103,7 +105,7 @@ namespace Influxdb2.Client.Datas
             return value =>
             {
                 var stringValue = value?.ToString();
-                return string.IsNullOrWhiteSpace(stringValue) ? null : $@"""{stringValue}""";
+                return string.IsNullOrWhiteSpace(stringValue) ? null : stringValue;
             };
         }
 
