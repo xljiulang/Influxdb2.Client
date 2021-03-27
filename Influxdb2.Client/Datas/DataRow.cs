@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Influxdb2.Client.Datas
@@ -24,23 +23,15 @@ namespace Influxdb2.Client.Datas
             get
             {
                 var index = 0;
-                var columnValues = new ColumnValue[columns.Count];
-                foreach (var item in columns)
+                var array = new ColumnValue[columns.Count];
+                foreach (var column in columns)
                 {
-                    this.TryGetValue(item, out var value);
-                    columnValues[index] = new ColumnValue(item, value);
+                    this.TryGetValue(column, out var value);
+                    array[index] = new ColumnValue(column, value);
                     index += 1;
                 }
-                return columnValues;
+                return array;
             }
-        }
-
-        /// <summary>
-        /// 数据行
-        /// </summary>
-        public DataRow()
-            : base(StringComparer.OrdinalIgnoreCase)
-        {
         }
     }
 }

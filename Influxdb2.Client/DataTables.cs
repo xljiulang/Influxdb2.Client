@@ -72,7 +72,7 @@ namespace Influxdb2.Client
                     {
                         if (fieldValueMap == null)
                         {
-                            fieldValueMap = GetFiledValueMap(group);
+                            fieldValueMap = CreateFiledValueMap(group);
                         }
 
                         if (fieldValueMap.TryGetValue(property.Name, out value))
@@ -89,11 +89,11 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 获取_field与_value的映射关系
+        /// 创建_field与_value的映射关系
         /// </summary>
         /// <param name="rows"></param>
         /// <returns></returns>
-        private static Dictionary<string, string?> GetFiledValueMap(IEnumerable<IDataRow> rows)
+        private static Dictionary<string, string?> CreateFiledValueMap(IEnumerable<IDataRow> rows)
         {
             const string FieldName = "_field";
             const string Valuename = "_value";

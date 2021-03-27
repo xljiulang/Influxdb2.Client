@@ -37,7 +37,6 @@ namespace Influxdb2.Client.Datas
         /// 获取ModelDescriptor描述
         /// </summary>
         /// <param name="type"></param>
-        /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
         public static ModelDescriptor Get(Type type)
         {

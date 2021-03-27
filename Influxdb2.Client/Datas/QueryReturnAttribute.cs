@@ -35,7 +35,7 @@ namespace Influxdb2.Client.Datas
 
                 var stream = await response.Content.ReadAsStreamAsync();
                 var csvReader = new CsvReader(stream);
-                var tables = await csvReader.ReadDataTablesAsync();
+                var tables = await DataTable.FromCsvAsync(csvReader);
                 context.Result = new DataTables(tables);
             }
         }

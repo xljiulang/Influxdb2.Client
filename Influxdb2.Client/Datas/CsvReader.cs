@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -206,48 +205,6 @@ namespace Influxdb2.Client.Datas
         public override string ToString()
         {
             return $"Table[{this.TableIndex}].Row[{this.RowIndex}].{this.Column} = {this.Value}";
-        }
-
-
-        /// <summary>
-        /// 读取为多个表
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        public async Task<IList<IDataTable>> ReadDataTablesAsync()
-        {
-            var rowIndex = -1;
-            var tableIndex = -1;
-
-            var row = new DataRow();
-            var table = new DataTable();
-
-            var tables = new List<IDataTable>();
-            while (await this.ReadAsync())
-            {
-                if (this.TableIndex != tableIndex)
-                {
-                    rowIndex = -1;
-                    table = new DataTable();
-                    tables.Add(table);
-                }
-
-                if (this.RowIndex != rowIndex)
-                {
-                    row = new DataRow();
-                    table.Rows.Add(row);
-                }
-
-                if (string.IsNullOrEmpty(this.Column) == false)
-                {
-                    row.TryAdd(this.Column, this.Value);
-                }
-
-                rowIndex = this.RowIndex;
-                tableIndex = this.TableIndex;
-            }
-
-            return tables;
         }
     }
 }
