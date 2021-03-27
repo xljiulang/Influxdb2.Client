@@ -25,7 +25,7 @@ namespace Influxdb2
             using var scope = root.CreateScope();
             var infuxdb = scope.ServiceProvider.GetRequiredService<IInfuxdb>();
 
-            var model = new M3
+            var model = new M31
             {
                 Age = 30,
                 CoId = "coid001",
@@ -39,12 +39,12 @@ namespace Influxdb2
             var flux = Flux
                 .From("v5")
                 .Range("-60h")
-                .Filter(FnBody.R.MeasurementEquals("M3"))
+                .Filter(FnBody.R.MeasurementEquals("M31"))
                 .Limit(10)
                 ;
 
             var tables = await infuxdb.QueryAsync(flux);
-            var models = tables.ToModels<M3>();
+            var models = tables.ToModels<M31>();
 
             Console.WriteLine("Hello World!");
         }

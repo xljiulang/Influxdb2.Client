@@ -26,8 +26,8 @@ namespace Influxdb2.Client.Datas
                 throw new InfluxdbException($"值不能为null:{context.ParameterName}");
             }
 
-            var lineString = LineProtocol.GetLineProtocol(measurement);
-            context.HttpContext.RequestMessage.Content = new StringContent(lineString, Encoding.UTF8, mediaType);
+            var lineProtocol = LineProtocol.GetLineProtocol(measurement);
+            context.HttpContext.RequestMessage.Content = new StringContent(lineProtocol, Encoding.UTF8, mediaType);
             return Task.CompletedTask;
         }
     }

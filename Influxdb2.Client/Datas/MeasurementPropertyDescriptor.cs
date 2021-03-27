@@ -32,7 +32,7 @@ namespace Influxdb2.Client.Datas
             }
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-            if (this.ColumnType == ColumnType.Time)
+            if (this.ColumnType == ColumnType.Timestamp)
             {
                 this.valueConverter = this.GetTimeConverter(type);
             }
@@ -92,7 +92,8 @@ namespace Influxdb2.Client.Datas
                 return value => value == null ? null : $"{value}u";
             }
 
-            if (type == typeof(decimal) ||
+            if (type == typeof(bool) ||
+                type == typeof(decimal) ||
                 type == typeof(float) ||
                 type == typeof(double))
             {

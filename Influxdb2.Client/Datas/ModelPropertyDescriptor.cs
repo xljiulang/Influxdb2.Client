@@ -28,7 +28,7 @@ namespace Influxdb2.Client.Datas
             var attr = property.GetCustomAttribute<ColumnTypeAttribute>();
             if (attr != null)
             {
-                if (attr.ColumnType == ColumnType.Time)
+                if (attr.ColumnType == ColumnType.Timestamp)
                 {
                     this.Name = "_time";
                 }
@@ -56,6 +56,18 @@ namespace Influxdb2.Client.Datas
             if (targetType == typeof(string))
             {
                 return value => value;
+            }
+
+            if (targetType == typeof(bool))
+            {
+                if (canbeNull == true)
+                {
+                    return value => value == null ? default(object) : bool.Parse(value);
+                }
+                else
+                {
+                    return value => value == null ? Throw() : bool.Parse(value);
+                }
             }
 
             if (targetType == typeof(sbyte))

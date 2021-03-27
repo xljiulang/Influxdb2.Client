@@ -41,12 +41,13 @@ namespace Influxdb2.Client.Datas
             var properties = type.GetProperties()
                 .Where(item => item.CanRead && item.IsDefined(typeof(ColumnTypeAttribute)))
                 .Select(p => new MeasurementPropertyDescriptor(p))
+                .OrderBy(item => item.Name)
                 .ToArray();
 
-            var times = properties.Where(item => item.ColumnType == ColumnType.Time).ToArray();
+            var times = properties.Where(item => item.ColumnType == ColumnType.Timestamp).ToArray();
             if (times.Length > 1)
             {
-                throw new ArgumentException($"{type}至多只能声明一个{nameof(ColumnType.Time)}列的属性");
+                throw new ArgumentException($"{type}至多只能声明一个{nameof(ColumnType.Timestamp)}列的属性");
             }
 
             var fields = properties.Where(item => item.ColumnType == ColumnType.Field).ToArray();
