@@ -34,11 +34,12 @@ namespace Influxdb2
 
             await infuxdb.WriteAsync(model, "v5", "v5");
 
-
             var flux = Flux
                 .From("v5")
                 .Range("-60h")
-                .Filter(FnBody.R.MeasurementEquals("M3"));
+                .Filter(FnBody.R.MeasurementEquals("M3"))
+                .Limit(10)
+                ;
 
             var tables = await infuxdb.QueryAsync(flux, "v5");
             var models = tables.ToModels<M3>();

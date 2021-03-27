@@ -8,6 +8,11 @@ namespace Influxdb2.Client
     public interface IDataTable
     {
         /// <summary>
+        /// 获取是否为空
+        /// </summary>
+        bool IsEmpty { get; }
+
+        /// <summary>
         /// 获取所有数据行
         /// </summary>
         IList<IDataRow> Rows { get; }

@@ -21,7 +21,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="tables">表格</param>
         public DataTables(IList<IDataTable> tables)
-        { 
+        {
             this.tables = tables;
         }
 
@@ -59,19 +59,8 @@ namespace Influxdb2.Client
             foreach (var group in rowGroups)
             {
                 var model = new TModel();
-                var firstRow = group.First();
-                var fieldValues = new Dictionary<string, string?>();
-
-                foreach (var row in group)
-                {
-                    if (row.TryGetValue("_field", out var field))
-                    {
-                        if (field != null && row.TryGetValue("_value", out var value))
-                        {
-                            fieldValues.TryAdd(field, value);
-                        }
-                    }
-                }
+                var firstRow = group.First(); // 同一组的非field属性，共用分组的第一条记录的值              
+                var fieldValueMap = default(Dictionary<string, string?>?);
 
                 foreach (var property in descriptor.PropertyDescriptors)
                 {
@@ -79,9 +68,17 @@ namespace Influxdb2.Client
                     {
                         property.SetValue(model, value!);
                     }
-                    else if (property.IsFieldColumn && fieldValues.TryGetValue(property.Name, out value))
+                    else if (property.IsFieldColumn == true)
                     {
-                        property.SetValue(model, value!);
+                        if (fieldValueMap == null)
+                        {
+                            fieldValueMap = GetFiledValueMap(group);
+                        }
+
+                        if (fieldValueMap.TryGetValue(property.Name, out value))
+                        {
+                            property.SetValue(model, value!);
+                        }
                     }
                 }
 
@@ -91,6 +88,29 @@ namespace Influxdb2.Client
             return result;
         }
 
+        /// <summary>
+        /// 获取_field与_value的映射关系
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <returns></returns>
+        private static Dictionary<string, string?> GetFiledValueMap(IEnumerable<IDataRow> rows)
+        {
+            const string FieldName = "_field";
+            const string Valuename = "_value";
+
+            var fieldValues = new Dictionary<string, string?>();
+            foreach (var row in rows)
+            {
+                if (row.TryGetValue(FieldName, out var _field))
+                {
+                    if (_field != null && row.TryGetValue(Valuename, out var _value))
+                    {
+                        fieldValues.TryAdd(_field, _value);
+                    }
+                }
+            }
+            return fieldValues;
+        }
 
         /// <summary>
         /// 获取迭代器

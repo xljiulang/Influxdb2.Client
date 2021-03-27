@@ -216,8 +216,8 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         public async Task<IList<IDataTable>> ReadDataTablesAsync()
         {
-            var rowIndex = int.MinValue;
-            var tableIndex = int.MinValue;
+            var rowIndex = -1;
+            var tableIndex = -1;
 
             var row = new DataRow();
             var table = new DataTable();
@@ -225,8 +225,9 @@ namespace Influxdb2.Client.Datas
             var tables = new List<IDataTable>();
             while (await this.ReadAsync())
             {
-                if (this.TableIndex > tableIndex)
+                if (this.TableIndex != tableIndex)
                 {
+                    rowIndex = -1;
                     table = new DataTable();
                     tables.Add(table);
                 }

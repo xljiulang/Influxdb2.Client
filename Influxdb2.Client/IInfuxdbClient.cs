@@ -8,7 +8,7 @@ namespace Influxdb2.Client
     /// <summary>
     /// InfuxdbClient的接口
     /// </summary>
-    [LoggingFilter]
+    [LoggingFilter(LogRequest = false, LogResponse = false)]
     public interface IInfuxdbClient
     {
         /// <summary>
