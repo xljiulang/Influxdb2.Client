@@ -27,12 +27,12 @@ namespace Influxdb2.Client.Datas
                 throw new ArgumentNullException(context.ParameterName);
             }
 
-            if (entity is not IPointData pointData)
+            if (entity is not IPoint point)
             {
-                pointData = new EntityPointData(entity);
+                point = new AutoManualPoint(entity);
             }
 
-            var lineProtocol = pointData.ToLineProtocol();
+            var lineProtocol = point.ToLineProtocol();
             context.HttpContext.RequestMessage.Content = new StringContent(lineProtocol, Encoding.UTF8, mediaType);
             return Task.CompletedTask;
         }

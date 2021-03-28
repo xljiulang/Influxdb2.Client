@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Influxdb2
@@ -27,7 +28,7 @@ namespace Influxdb2
 
 
             // 写ColumnType标记的实体
-            var enitty = new Book
+            var entity = new Book
             {
                 Serie = "科幻",
                 Name = "三体",
@@ -36,16 +37,17 @@ namespace Influxdb2
                 CreateTime = DateTimeOffset.Now
             };
 
-            await infuxdb.WriteAsync(enitty);
+            // await infuxdb.WriteAsync(new AutoManualPoint(enitty));
+            await infuxdb.WriteAsync(entity);
 
-            // 写动态定义的数据点
-            var pointData = DynamicPointData
-                .Create($"{nameof(Temperature)}")
+
+            // 写手工定义的数据点
+            var manualPoint = new ManualPoint($"{nameof(Temperature)}")
                 .SetTag($"{nameof(Temperature.Location)}", "west")
                 .SetField($"{nameof(Temperature.Value)}", 26D)
                 .SetTimestamp(DateTimeOffset.Now);
 
-            await infuxdb.WriteAsync(pointData);
+            await infuxdb.WriteAsync(manualPoint);
 
 
             // 使用Flux对象查询
@@ -69,8 +71,16 @@ namespace Influxdb2
                 .Limit(10)
                 ;
 
+
             var tempTables = await infuxdb.QueryAsync(tempFlux);
             var temperatures = tempTables.ToModels<Temperature>();
+
+            var w = new Stopwatch();
+            w.Start();
+
+            tempTables = await infuxdb.QueryAsync(tempFlux);
+            temperatures = tempTables.ToModels<Temperature>();
+            w.Stop();
 
             var meanTempFulx = Flux
                 .From("v6")

@@ -59,7 +59,7 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 以_time列为rowKey，转换为强类型
+        /// 以_time列为分组条件合并所有数据行并转换为指定强类型模型
         /// </summary>
         /// <typeparam name="TModel"></typeparam>
         /// <exception cref="ArgumentException"></exception>
@@ -70,15 +70,15 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 转换为强类型
+        /// 以指定多列为分组条件合并所有数据行并转换为指定强类型模型
         /// </summary>
         /// <typeparam name="TModel"></typeparam>
-        /// <param name="rowKey">rowKey值相同的行，将整合到一个model实例</param>
+        /// <param name="groupColumns">列值相同的行，将整合到一个model实例</param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public IList<TModel> ToModels<TModel>(Columns rowKey) where TModel : new()
+        public IList<TModel> ToModels<TModel>(Columns groupColumns) where TModel : new()
         {
-            if (rowKey.IsEmpty)
+            if (groupColumns.IsEmpty)
             {
                 throw new ArgumentException("必须指定至少一个column");
             }
@@ -87,7 +87,7 @@ namespace Influxdb2.Client
             var descriptor = ModelDescriptor.Get(typeof(TModel));
             var rowGroups = this
                 .SelectMany(item => item.Rows)
-                .GroupBy(item => item[rowKey], ColumnValuesEqualityComparer.Instance);
+                .GroupBy(item => item[groupColumns], ColumnValuesEqualityComparer.Instance);
 
             foreach (var group in rowGroups)
             {
@@ -128,17 +128,14 @@ namespace Influxdb2.Client
         /// <returns></returns>
         private static Dictionary<string, string?> CreateFiledValueMap(IEnumerable<IDataRow> rows)
         {
-            const string FieldName = "_field";
-            const string ValueName = "_value";
-
             var fieldValues = new Dictionary<string, string?>();
             foreach (var row in rows)
             {
-                if (row.TryGetValue(FieldName, out var _field))
+                if (row.TryGetValue(Column.Field, out var field))
                 {
-                    if (_field != null && row.TryGetValue(ValueName, out var _value))
+                    if (field != null && row.TryGetValue(Column.Value, out var value))
                     {
-                        fieldValues.TryAdd(_field, _value);
+                        fieldValues.TryAdd(field, value);
                     }
                 }
             }

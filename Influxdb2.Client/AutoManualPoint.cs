@@ -6,10 +6,10 @@ using System.Text;
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示实体数据点
+    /// 表示自动完成的数据点 
     /// </summary> 
     [DebuggerDisplay("Measurement = {desciptor.Measurement}")]
-    public class EntityPointData : IPointData
+    public class AutoManualPoint : IPoint
     {
         /// <summary>
         /// 实体描述
@@ -22,11 +22,11 @@ namespace Influxdb2.Client
         public object Entity { get; }
 
         /// <summary>
-        /// 实体数据点
+        /// 自动完成的数据点 
         /// </summary>
-        /// <param name="entity">ColumnTypeAttribute标记的实体</param>
+        /// <param name="entity">由ColumnTypeAttribute标记属性的实体</param>
         /// <exception cref="ArgumentException"></exception>
-        public EntityPointData(object entity)
+        public AutoManualPoint(object entity)
         {
             this.desciptor = EntityDesciptor.Get(entity.GetType());
             this.Entity = entity;

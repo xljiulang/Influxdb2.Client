@@ -3,7 +3,7 @@
     /// <summary>
     /// 表示一个数据点
     /// </summary>
-    public interface IPointData
+    public interface IPoint
     {
         /// <summary>
         /// 转换为LineProtocol

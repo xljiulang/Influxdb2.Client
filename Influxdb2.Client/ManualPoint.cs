@@ -9,10 +9,10 @@ using System.Text;
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示动态定义的数据点
+    /// 表示手工定义的数据点
     /// </summary>
     [DebuggerDisplay("Measurement = {Measurement}")]
-    public class DynamicPointData : IPointData
+    public class ManualPoint : IPoint
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly ColumnValueCollection tags = new();
@@ -41,11 +41,11 @@ namespace Influxdb2.Client
         public ICollection<ColumnValue> Fields => this.fields;
 
         /// <summary>
-        /// 动态定义的数据点
+        /// 手工定义的数据点
         /// </summary>
         /// <param name="measurement">measurement</param>
         /// <exception cref="ProtocolException"></exception>
-        public DynamicPointData(string measurement)
+        public ManualPoint(string measurement)
         {
             this.Measurement = LineProtocolUtil.Encode(measurement);
         }
@@ -58,7 +58,7 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public DynamicPointData SetTag(string name, string value)
+        public ManualPoint SetTag(string name, string value)
         {
             name = LineProtocolUtil.Encode(name);
             value = LineProtocolUtil.Encode(value);
@@ -74,7 +74,7 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public DynamicPointData SetField(string name, string? value)
+        public ManualPoint SetField(string name, string? value)
         {
             name = LineProtocolUtil.Encode(name);
             value = LineProtocolUtil.EncodeFieldValue(value);
@@ -91,7 +91,7 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public DynamicPointData SetField(string name, object value)
+        public ManualPoint SetField(string name, object value)
         {
             if (value == null)
             {
@@ -109,7 +109,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="value">unix纳秒时间戳</param>
         /// <returns></returns>
-        public DynamicPointData SetTimestamp(long value)
+        public ManualPoint SetTimestamp(long value)
         {
             this.Timestamp = value;
             return this;
@@ -120,7 +120,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="value">unix纳秒时间戳</param>
         /// <returns></returns>
-        public DynamicPointData SetTimestamp(DateTimeOffset value)
+        public ManualPoint SetTimestamp(DateTimeOffset value)
         {
             this.Timestamp = LineProtocolUtil.GetNsTimestamp(value);
             return this;
@@ -131,7 +131,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="timestamp">unix纳秒时间戳</param>
         /// <returns></returns>
-        public DynamicPointData SetTimestamp(DateTime value)
+        public ManualPoint SetTimestamp(DateTime value)
         {
             this.Timestamp = LineProtocolUtil.GetNsTimestamp(value);
             return this;
@@ -177,17 +177,6 @@ namespace Influxdb2.Client
         public override string ToString()
         {
             return this.ToLineProtocol();
-        }
-
-        /// <summary>
-        /// 创建一个CustomPointData
-        /// </summary>
-        /// <param name="measurement">measurement</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns></returns>
-        public static DynamicPointData Create(string measurement)
-        {
-            return new DynamicPointData(measurement);
         }
 
 
