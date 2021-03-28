@@ -13,6 +13,11 @@ namespace Influxdb2.Client
         IList<string> Columns { get; }
 
         /// <summary>
+        /// 获取值集合
+        /// </summary>
+        IList<string?> Values { get; }
+
+        /// <summary>
         /// 通过列索引获取值
         /// </summary>
         /// <param name="index"></param>

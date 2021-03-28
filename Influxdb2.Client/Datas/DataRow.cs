@@ -16,22 +16,22 @@ namespace Influxdb2.Client.Datas
         private readonly Dictionary<string, string?> map = new();
 
         /// <summary>
-        /// 所有值
-        /// </summary>
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly IList<string> values;
-
-        /// <summary>
         /// 所有列
         /// </summary>
         public IList<string> Columns { get; }
+
+        /// <summary>
+        /// 所有值
+        /// </summary>
+        public IList<string?> Values { get; }
+
 
         /// <summary>
         /// 通过列索引获取值
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public string? this[int columnIndex] => this.GetValue(columnIndex);
+        public string? this[int columnIndex] => this.Values[columnIndex];
 
         /// <summary>
         /// 获取多列的值
@@ -61,31 +61,37 @@ namespace Influxdb2.Client.Datas
         /// <param name="values"></param>
         public DataRow(IList<string> columns, IList<string> values)
         {
-            this.Columns = columns;
-            this.values = values;
-
+            var _values = TransformValues(values, columns.Count);
             for (var i = 0; i < columns.Count; i++)
             {
-                var column = columns[i];
-                var value = this.GetValue(i);
-                this.map.TryAdd(column, value);
+                this.map.TryAdd(columns[i], _values[i]);
             }
+
+            this.Columns = columns;
+            this.Values = _values;
         }
 
         /// <summary>
-        /// 获取指定列索引对应的Null处理的值
-        /// </summary> 
-        /// <param name="columnIndex">列索引</param>
-        /// <returns></returns> 
-        private string? GetValue(int columnIndex)
+        /// 变换所有值
+        /// </summary>
+        /// <param name="values"></param>
+        /// <param name="columnCount">列的数量</param>
+        /// <returns></returns>
+        private static IList<string?> TransformValues(IList<string> values, int columnCount)
         {
-            if (columnIndex > this.values.Count)
+            var result = new List<string?>(columnCount);
+            foreach (var value in values)
             {
-                return null;
+                if (value.Length == 0)
+                {
+                    result.Add(null);
+                }
+                else
+                {
+                    result.Add(value);
+                }
             }
-
-            var value = this.values[columnIndex];
-            return value.Length == 0 ? null : value;
+            return result;
         }
 
         /// <summary>
@@ -98,6 +104,8 @@ namespace Influxdb2.Client.Datas
         {
             return this.map.TryGetValue(column, out value);
         }
+
+
 
         /// <summary>
         /// 获取迭代器
@@ -118,7 +126,7 @@ namespace Influxdb2.Client.Datas
             for (var i = 0; i < this.Columns.Count; i++)
             {
                 var column = this.Columns[i];
-                var value = this.GetValue(i);
+                var value = this.Values[i];
                 yield return new ColumnValue(column, value);
             }
         }

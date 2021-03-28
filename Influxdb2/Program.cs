@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Influxdb2
@@ -74,13 +73,7 @@ namespace Influxdb2
 
             var tempTables = await infuxdb.QueryAsync(tempFlux);
             var temperatures = tempTables.ToModels<Temperature>();
-
-            var w = new Stopwatch();
-            w.Start();
-
-            tempTables = await infuxdb.QueryAsync(tempFlux);
-            temperatures = tempTables.ToModels<Temperature>();
-            w.Stop();
+             
 
             var meanTempFulx = Flux
                 .From("v6")
