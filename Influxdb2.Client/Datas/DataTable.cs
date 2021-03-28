@@ -34,7 +34,7 @@ namespace Influxdb2.Client.Datas
                 value = default;
                 return false;
             }
-            return this.Rows.First().TryGetValue<TValue>(column, out value);
+            return this.Rows.First().TryGetValue(column, out value);
         }
 
         /// <summary>
@@ -42,40 +42,73 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public static async Task<List<IDataTable>> FromCsvAsync(CsvReader reader)
+        public static async Task<IList<IDataTable>> ParseAsync(CsvReader reader)
         {
-            var rowIndex = -1;
-            var tableIndex = -1;
-
-            var row = new DataRow();
-            var table = new DataTable();
-
+            var columns = default(IList<string>);
+            var table = default(DataTable);
             var tables = new List<IDataTable>();
-            while (await reader.ReadAsync())
+
+            while (reader.CanRead == true)
             {
-                if (reader.TableIndex != tableIndex)
+                var csvLine = await reader.ReadlineAsync();
+                if (IsValidLine(csvLine) == false)
                 {
-                    rowIndex = -1;
+                    columns = null;
+                    table = null;
+                    continue;
+                }
+
+                if (columns == null)
+                {
+                    columns = csvLine;
+                    continue;
+                }
+
+                var row = new DataRow();
+                for (var i = 1; i < csvLine.Count; i++)
+                {
+                    var column = columns[i];
+                    var value = csvLine[i];
+                    if (value.Length == 0)
+                    {
+                        value = null;
+                    }
+                    row.TryAdd(column, value);
+                }
+
+                if (table == null)
+                {
                     table = new DataTable();
                     tables.Add(table);
                 }
-
-                if (reader.RowIndex != rowIndex)
-                {
-                    row = new DataRow();
-                    table.Rows.Add(row);
-                }
-
-                if (string.IsNullOrEmpty(reader.Column) == false)
-                {
-                    row.TryAdd(reader.Column, reader.Value);
-                }
-
-                rowIndex = reader.RowIndex;
-                tableIndex = reader.TableIndex;
+                table.Rows.Add(row);
             }
 
             return tables;
+        }
+
+
+
+        /// <summary>
+        /// csvLine是否有效
+        /// </summary> 
+        /// <returns></returns>
+        private static bool IsValidLine(IList<string> csvLine)
+        {
+            const string Error = "error";
+
+            if (csvLine.Count == 0)
+            {
+                return false;
+            }
+
+            var value = csvLine[0];
+            if (value.StartsWith('#') || value == Error)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

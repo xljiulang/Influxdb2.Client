@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,41 +9,19 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// Csv读取器
     /// </summary>
-    sealed class CsvReader
+    public sealed class CsvReader
     {
         private readonly StreamReader reader;
 
-        private string[] columns = Array.Empty<string>();
-
-        private int columnIndex = -1;
-
-        private int valuePostion = 0;
+        /// <summary>
+        /// 空白行
+        /// </summary>
+        private static readonly IList<string> emptyLine = new List<string>().AsReadOnly();
 
         /// <summary>
-        /// 当前行的文本
+        /// 获取是否可以读取
         /// </summary>
-        private string currentLine = string.Empty;
-
-
-        /// <summary>
-        /// 获取值
-        /// </summary>
-        public string? Value { get; private set; }
-
-        /// <summary>
-        /// 获取列名
-        /// </summary>
-        public string Column { get; private set; } = string.Empty;
-
-        /// <summary>
-        /// 获取行的索引
-        /// </summary>
-        public int RowIndex { get; private set; } = -1;
-
-        /// <summary>
-        /// 获取表格的索引
-        /// </summary>
-        public int TableIndex { get; private set; } = -1;
+        public bool CanRead => this.reader.EndOfStream == false;
 
         /// <summary>
         /// Csv读取器
@@ -54,111 +33,67 @@ namespace Influxdb2.Client.Datas
         }
 
         /// <summary>
-        /// 读取一次，读取成功则返回true
+        /// 读取一行
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> ReadAsync()
+        public async Task<IList<string>> ReadlineAsync()
         {
-            if (this.valuePostion >= this.currentLine.Length)
-            {
-                if (this.reader.EndOfStream == true)
-                {
-                    return false;
-                }
-
-                // #注释，忽略
-                var lineString = await this.reader.ReadLineAsync();
-                if (lineString.StartsWith('#') == true)
-                {
-                    return await ReadAsync();
-                }
-
-                this.valuePostion = 0;
-                this.currentLine = lineString;
-
-                // 空行表示新的表格
-                if (string.IsNullOrEmpty(this.currentLine) == true)
-                {
-                    this.columnIndex = -1;
-                    return await ReadAsync();
-                }
-            }
-
-            // 新表格初始化columns
-            if (this.columnIndex < 0)
-            {
-                this.RowIndex = 0;
-                this.TableIndex += 1;
-
-                this.columnIndex = 0;
-                this.columns = this.currentLine.Split(',');
-                this.currentLine = string.Empty;
-            }
-
-            // 读完所有列，重新读取（行可能没有读完)
-            if (this.columnIndex >= this.columns.Length)
-            {
-                this.RowIndex += 1;
-                this.columnIndex = 0;
-                return await ReadAsync();
-            }
-
-            // 读完一行，重新读取（列可能没有读完)
-            if (this.valuePostion >= this.currentLine.Length)
-            {
-                this.RowIndex += 1;
-                return await ReadAsync();
-            }
-
-            ReadColumnValue();
-
-            return true;
+            var content = await this.reader.ReadLineAsync();
+            return string.IsNullOrEmpty(content) ? emptyLine : Parse(content);
         }
 
         /// <summary>
-        /// 读取列与值
-        /// </summary>   
-        private void ReadColumnValue()
+        /// 解析内容
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        private static IList<string> Parse(ReadOnlySpan<char> content)
         {
-            this.Column = this.columns[this.columnIndex];
-            this.columnIndex += 1;
+            var cells = new List<string>();
+            while (true)
+            {
+                var length = GetCellValueLength(content);
+                if (length < 0)
+                {
+                    var stringValue = DecodeCellValue(content);
+                    cells.Add(stringValue);
+                    break;
+                }
+                else
+                {
+                    var value = content.Slice(0, length);
+                    var stringValue = DecodeCellValue(value);
+                    cells.Add(stringValue);
+                    content = content[(length + 1)..];
+                }
+            }
 
-            var valueSpan = this.currentLine.AsSpan(this.valuePostion);
-            var index = FindValueIndex(valueSpan);
-            if (index < 0)
-            {
-                this.Value = DecodeValue(valueSpan);
-                this.valuePostion += valueSpan.Length;
-            }
-            else
-            {
-                this.Value = DecodeValue(valueSpan.Slice(0, index));
-                this.valuePostion += index + 1;
-            }
+            return cells;
         }
 
+
         /// <summary>
-        /// 查找值的分隔索引
+        /// 从内容查找单元的值长度
         /// </summary>
-        /// <param name="span"></param>
+        /// <param name="content">内容</param>
         /// <returns></returns>
-        private static int FindValueIndex(ReadOnlySpan<char> span)
+        private static int GetCellValueLength(ReadOnlySpan<char> content)
         {
-            if (span.IsEmpty)
+            if (content.IsEmpty == true)
             {
                 return -1;
             }
 
-            if (span[0] != '"')
+            if (content[0] != '"')
             {
-                return span.IndexOf(',');
+                return content.IndexOf(',');
             }
 
             var i = 1;
-            while (i < span.Length - 1)
+            while (i < content.Length - 1)
             {
-                var c = span[i];
-                var n = span[i + 1];
+                var c = content[i];
+                var n = content[i + 1];
                 if (c == n && c == '"')
                 {
                     i += 2;
@@ -177,41 +112,23 @@ namespace Influxdb2.Client.Datas
         }
 
         /// <summary>
-        /// 值解码
+        /// 解码单元的值
         /// </summary>
-        /// <param name="span"></param>
+        /// <param name="value">值</param>
         /// <returns></returns>
-        private static string? DecodeValue(ReadOnlySpan<char> span)
+        private static string DecodeCellValue(ReadOnlySpan<char> value)
         {
-            if (span.IsEmpty)
+            if (value.IsEmpty == true)
             {
-                return null;
+                return string.Empty;
             }
 
-            if (span[0] == '"')
+            if (value[0] == '"' && value[^1] == '"')
             {
-                span = span[1..];
+                value = value[1..^1];
             }
 
-            if (span[^1] == '"')
-            {
-                span = span[0..^1];
-            }
-
-            var value = span.Contains("\"\"", StringComparison.InvariantCulture)
-                ? span.ToString().Replace("\"\"", "\"")
-                : span.ToString();
-
-            return string.IsNullOrEmpty(value) ? null : value;
-        }
-
-        /// <summary>
-        /// 转换为文本
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"Table[{this.TableIndex}].Row[{this.RowIndex}].{this.Column} = {this.Value}";
+            return value.ToString().Replace("\"\"", "\"");
         }
     }
 }
