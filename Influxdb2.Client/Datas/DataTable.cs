@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Influxdb2.Client.Datas
@@ -58,11 +59,7 @@ namespace Influxdb2.Client.Datas
                 for (var i = 1; i < csvLine.Count; i++)
                 {
                     var column = columns[i];
-                    var value = csvLine[i];
-                    if (value.Length == 0)
-                    {
-                        value = null;
-                    }
+                    var value = GetValue(csvLine, i);
                     row.TryAdd(column, value);
                 }
 
@@ -77,11 +74,29 @@ namespace Influxdb2.Client.Datas
             return tables;
         }
 
+        /// <summary>
+        /// 读取值
+        /// </summary>
+        /// <param name="csvLine"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string? GetValue(IList<string> csvLine, int index)
+        {
+            if (index > csvLine.Count)
+            {
+                return null;
+            }
+
+            var value = csvLine[index];
+            return value.Length == 0 ? null : value;
+        }
 
         /// <summary>
         /// csvLine是否有效
         /// </summary> 
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsValidLine(IList<string> csvLine)
         {
             const string Error = "error";

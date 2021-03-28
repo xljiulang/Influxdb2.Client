@@ -10,6 +10,24 @@ namespace Influxdb2.Client
     public static class DataExtensions
     {
         /// <summary>
+        /// 获取首行指定列的值
+        /// 获取不到则返回类型默认值
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dataTable"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        [return: MaybeNull]
+        public static TValue GetFirstValueOrDefault<TValue>(this IDataTable dataTable, string column)
+        {
+            if (dataTable.Rows.Count > 0)
+            {
+                return dataTable.Rows[0].GetValueOrDefault<TValue>(column);
+            }
+            return default;
+        }
+
+        /// <summary>
         /// 获取指定列的所有值
         /// </summary>
         /// <param name="dataTable"></param>

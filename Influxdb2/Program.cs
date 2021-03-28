@@ -79,7 +79,7 @@ namespace Influxdb2
                 .Mean();
 
             var sumTables = await infuxdb.QueryAsync(meanTempFulx);
-            sumTables.TryGetFirstValue<double>(Column.Value, out var meanTemp);
+            var meanTemp = sumTables.GetFirstValueOrDefault<double>(Column.Value);
 
             Console.WriteLine("Hello World!");
         }

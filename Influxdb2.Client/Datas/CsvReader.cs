@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,6 +48,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static IList<string> Parse(ReadOnlySpan<char> content)
         {
             var cells = new List<string>();
@@ -77,6 +79,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="content">内容</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetCellValueLength(ReadOnlySpan<char> content)
         {
             if (content.IsEmpty == true)
@@ -116,6 +119,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="value">值</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string DecodeCellValue(ReadOnlySpan<char> value)
         {
             if (value.IsEmpty == true)
