@@ -1,21 +1,30 @@
-﻿namespace Influxdb2.Client
+﻿using System.Collections.Generic;
+
+namespace Influxdb2.Client
 {
     /// <summary>
     /// 数据行
     /// </summary>
-    public interface IDataRow
+    public interface IDataRow : IEnumerable<ColumnValue>
     {
+        /// <summary>
+        /// 获取列集合
+        /// </summary>
+        IList<string> Columns { get; }
+
+        /// <summary>
+        /// 通过列索引获取值
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        string? this[int columnIndex] { get; }
+
         /// <summary>
         /// 获取多列的值
         /// </summary>
         /// <param name="column">列集合</param>
         /// <returns></returns>
         ColumnValue[] this[Columns columns] { get; }
-
-        /// <summary>
-        /// 是否包含指定的列
-        /// </summary>
-        bool ContainColumn(string column);
 
         /// <summary>
         /// 尝试获取列的数据

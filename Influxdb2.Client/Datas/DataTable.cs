@@ -55,14 +55,7 @@ namespace Influxdb2.Client.Datas
                     continue;
                 }
 
-                var row = new DataRow();
-                for (var i = 1; i < csvLine.Count; i++)
-                {
-                    var column = columns[i];
-                    var value = GetValue(csvLine, i);
-                    row.TryAdd(column, value);
-                }
-
+                var row = new DataRow(columns, csvLine);
                 if (table == null)
                 {
                     table = new DataTable(columns);
@@ -72,24 +65,6 @@ namespace Influxdb2.Client.Datas
             }
 
             return tables;
-        }
-
-        /// <summary>
-        /// 读取值
-        /// </summary>
-        /// <param name="csvLine"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static string? GetValue(IList<string> csvLine, int index)
-        {
-            if (index > csvLine.Count)
-            {
-                return null;
-            }
-
-            var value = csvLine[index];
-            return value.Length == 0 ? null : value;
         }
 
         /// <summary>
