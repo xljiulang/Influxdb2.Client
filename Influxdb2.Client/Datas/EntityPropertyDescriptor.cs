@@ -25,10 +25,16 @@ namespace Influxdb2.Client.Datas
         public EntityPropertyDescriptor(PropertyInfo property)
             : base(property)
         {
-            var attr = property.GetCustomAttribute<ColumnTypeAttribute>();
-            if (attr != null)
+            var typeAttr = property.GetCustomAttribute<ColumnTypeAttribute>();
+            if (typeAttr != null)
             {
-                this.ColumnType = attr.ColumnType;
+                this.ColumnType = typeAttr.ColumnType;
+            }
+
+            var nameAttr = property.GetCustomAttribute<ColumnNameAttribute>();
+            if (nameAttr != null)
+            {
+                this.Name = nameAttr.Name;
             }
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;

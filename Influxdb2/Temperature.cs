@@ -10,7 +10,7 @@ namespace Influxdb2
         public double Value { get; set; }
 
         // public DateTimeOffset _time { get; set; }
-        [ColumnType(ColumnType.Timestamp)]
+        [ColumnName(Column.Time)]    
         public DateTimeOffset Time { get; set; }
     }
 }

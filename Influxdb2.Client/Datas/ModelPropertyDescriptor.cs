@@ -25,14 +25,20 @@ namespace Influxdb2.Client.Datas
         public ModelPropertyDescriptor(PropertyInfo property)
             : base(property)
         {
-            var attr = property.GetCustomAttribute<ColumnTypeAttribute>();
-            if (attr != null)
+            var typeAttr = property.GetCustomAttribute<ColumnTypeAttribute>();
+            if (typeAttr != null)
             {
-                if (attr.ColumnType == ColumnType.Timestamp)
+                if (typeAttr.ColumnType == ColumnType.Timestamp)
                 {
                     this.Name = Column.Time;
                 }
-                this.IsFieldColumn = attr.ColumnType == ColumnType.Field;
+                this.IsFieldColumn = typeAttr.ColumnType == ColumnType.Field;
+            }
+
+            var nameAttr = property.GetCustomAttribute<ColumnNameAttribute>();
+            if (nameAttr != null)
+            {
+                this.Name = nameAttr.Name;
             }
 
             this.valueConverter = CreateValueConverter(property.PropertyType);
