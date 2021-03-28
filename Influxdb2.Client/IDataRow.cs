@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Influxdb2.Client
+﻿namespace Influxdb2.Client
 {
     /// <summary>
     /// 数据行
@@ -8,21 +6,16 @@ namespace Influxdb2.Client
     public interface IDataRow
     {
         /// <summary>
-        /// 获取所有列名
-        /// </summary>
-        ICollection<string> Columns { get; }
-
-        /// <summary>
-        /// 获取所有值
-        /// </summary>
-        ICollection<string?> Values { get; }
-
-        /// <summary>
         /// 获取多列的值
         /// </summary>
         /// <param name="column">列集合</param>
         /// <returns></returns>
         ColumnValue[] this[Columns columns] { get; }
+
+        /// <summary>
+        /// 是否包含指定的列
+        /// </summary>
+        bool ContainColumn(string column);
 
         /// <summary>
         /// 尝试获取列的数据
