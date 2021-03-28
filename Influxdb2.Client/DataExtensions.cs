@@ -5,26 +5,65 @@ using System.Runtime.CompilerServices;
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 数据操作扩展
+    /// 数据读取扩展
     /// </summary>
     public static class DataExtensions
     {
         /// <summary>
-        /// 尝试获取第一行的指定列的值
+        /// 获取指定列的所有值
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="column"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns></returns>
+        public static TValue[] GetColumnValues<TValue>(this IDataTable dataTable, string column)
+        {
+            var index = 0;
+            var values = new TValue[dataTable.Rows.Count];
+            foreach (var row in dataTable.Rows)
+            {
+                values[index] = row.GetValue<TValue>(column);
+                index += 1;
+            }
+            return values;
+        }
+
+
+        /// <summary>
+        /// 获取指定列的值      
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
-        /// <param name="column">指定列</param>
-        /// <param name="value">值</param>
+        /// <param name="dataRow"></param>
+        /// <param name="column"></param>
+        /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public static bool TryGetFirstValue<TValue>(this IDataTable dataTable, string column, [MaybeNullWhen(false)] out TValue value)
+        public static TValue GetValue<TValue>(this IDataRow dataRow, string column)
         {
-            if (dataTable.Rows.Count == 0)
+            if (dataRow.TryGetValue<TValue>(column, out var value))
             {
-                value = default;
-                return false;
+                return value;
             }
-            return dataTable.Rows[0].TryGetValue(column, out value);
+            throw new ArgumentException($"找不到指定的列：{column}", nameof(column));
         }
+
+        /// <summary>
+        /// 获取指定列的值
+        /// 获取不得则返回类型的默认值
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dataRow"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        [return: MaybeNull]
+        public static TValue GetValueOrDefault<TValue>(this IDataRow dataRow, string column)
+        {
+            if (dataRow.TryGetValue<TValue>(column, out var value))
+            {
+                return value;
+            }
+            return default;
+        }
+
 
         /// <summary>
         /// 尝试获取列的数据并转换指定类型
