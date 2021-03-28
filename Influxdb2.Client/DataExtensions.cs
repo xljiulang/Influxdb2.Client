@@ -28,26 +28,6 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 获取指定列的所有值
-        /// </summary>
-        /// <param name="dataTable"></param>
-        /// <param name="column"></param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <returns></returns>
-        public static TValue[] GetColumnValues<TValue>(this IDataTable dataTable, string column)
-        {
-            var index = 0;
-            var values = new TValue[dataTable.Rows.Count];
-            foreach (var row in dataTable.Rows)
-            {
-                values[index] = row.GetValue<TValue>(column);
-                index += 1;
-            }
-            return values;
-        }
-
-
-        /// <summary>
         /// 获取指定列的值      
         /// </summary>
         /// <typeparam name="TValue"></typeparam>

@@ -42,7 +42,7 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 获取第一张表首行指定列的值
+        /// 获取包含指定列的的第一个表的首行对应列的值
         /// 获取不到则返回类型默认值
         /// </summary>
         /// <typeparam name="TValue"></typeparam> 
@@ -51,9 +51,12 @@ namespace Influxdb2.Client
         [return: MaybeNull]
         public TValue GetFirstValueOrDefault<TValue>(string column)
         {
-            if (this.Count > 0)
+            foreach (var table in this)
             {
-                return this[0].GetFirstValueOrDefault<TValue>(column);
+                if (table.Columns.Contains(column))
+                {
+                    return table.GetFirstValueOrDefault<TValue>(column);
+                }
             }
             return default;
         }
