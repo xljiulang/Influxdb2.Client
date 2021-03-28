@@ -9,7 +9,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// Csv读取器
     /// </summary>
-    public sealed class CsvReader
+    sealed class CsvReader
     {
         private readonly StreamReader reader;
 

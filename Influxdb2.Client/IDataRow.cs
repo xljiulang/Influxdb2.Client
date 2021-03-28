@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Influxdb2.Client
 {
@@ -32,14 +31,5 @@ namespace Influxdb2.Client
         /// <param name="value"></param>
         /// <returns></returns>
         bool TryGetValue(string column, out string? value);
-
-
-        /// <summary>
-        /// 尝试获取列的数据并转换指定类型
-        /// </summary>
-        /// <param name="column">列名</param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        bool TryGetValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value);
     }
 }

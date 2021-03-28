@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Influxdb2.Client.Datas
@@ -11,9 +9,9 @@ namespace Influxdb2.Client.Datas
     sealed class DataTable : IDataTable
     {
         /// <summary>
-        /// 获取是否为空
+        /// 获取列的集合
         /// </summary>
-        public bool IsEmpty => this.Rows.Count == 0;
+        public IList<string> Columns { get; }
 
         /// <summary>
         /// 获取所有数据行
@@ -21,20 +19,12 @@ namespace Influxdb2.Client.Datas
         public IList<IDataRow> Rows { get; } = new List<IDataRow>();
 
         /// <summary>
-        /// 尝试获取第一行的指定列的值
+        /// 数据表
         /// </summary>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="column">指定列</param>
-        /// <param name="value">值</param>
-        /// <returns></returns>
-        public bool TryGetFirstValue<TValue>(string column, [MaybeNullWhen(false)] out TValue value)
+        /// <param name="columns">列集合</param>
+        public DataTable(IList<string> columns)
         {
-            if (this.IsEmpty == true)
-            {
-                value = default;
-                return false;
-            }
-            return this.Rows.First().TryGetValue(column, out value);
+            this.Columns = columns;
         }
 
         /// <summary>
@@ -78,7 +68,7 @@ namespace Influxdb2.Client.Datas
 
                 if (table == null)
                 {
-                    table = new DataTable();
+                    table = new DataTable(columns);
                     tables.Add(table);
                 }
                 table.Rows.Add(row);
@@ -86,7 +76,6 @@ namespace Influxdb2.Client.Datas
 
             return tables;
         }
-
 
 
         /// <summary>

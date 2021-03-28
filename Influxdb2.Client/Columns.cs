@@ -9,48 +9,55 @@ namespace Influxdb2.Client
     /// </summary>
     public class Columns : IEnumerable<string>
     {
-        private readonly string columnsString;
+        private string? columnsString;
 
         /// <summary>
         /// 所有列
         /// </summary>
-        private readonly IEnumerable<string> columns;
+        private readonly IList<string> columns;
+
 
         /// <summary>
         /// 获取列的数量
         /// </summary>
-        public int Count { get; }
+        public int Count => this.columns.Count;
 
         /// <summary>
         /// 获取是否为空
         /// </summary>
-        public bool IsEmpty => this.Count == 0;
+        public bool IsEmpty => this.columns.Count == 0;
 
+        /// <summary>
+        /// 通过索引获取值
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public string this[int index] => this.columns[index];
 
         /// <summary>
         /// 返回空集合
         /// </summary>
-        public static Columns Empty { get; } = new Columns();
+        public static Columns Empty { get; } = Create();
 
         /// <summary>
         /// 只包含_value列的集合
         /// </summary>
-        public static Columns Value { get; } = new Columns(Column.Value);
+        public static Columns Value { get; } = Create(Column.Value);
 
         /// <summary>
         /// 只包含_time列的集合
         /// </summary>
-        public static Columns Time { get; } = new Columns(Column.Time);
+        public static Columns Time { get; } = Create(Column.Time);
 
         /// <summary>
         /// 只包含_field列的集合
         /// </summary>
-        public static Columns Field { get; } = new Columns(Column.Field);
+        public static Columns Field { get; } = Create(Column.Field);
 
         /// <summary>
         /// 包含_start和_stop列的集合
         /// </summary>
-        public static Columns StartStop { get; } = new Columns(Column.Start, Column.Stop);
+        public static Columns StartStop { get; } = Create(Column.Start, Column.Stop);
 
         /// <summary>
         /// 创建多个列的结合
@@ -62,6 +69,8 @@ namespace Influxdb2.Client
             return new Columns(columns);
         }
 
+
+
         /// <summary>
         /// 表示多个列名
         /// </summary>
@@ -70,8 +79,16 @@ namespace Influxdb2.Client
         public Columns(params string[] columns)
         {
             this.columns = columns;
-            this.Count = columns.Length;
-            this.columnsString = $"[{string.Join(", ", columns.Select(c => @$"""{c}"""))}]";
+        }
+
+        /// <summary>
+        /// 表示多个列名
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public Columns(IList<string> columns)
+        {
+            this.columns = columns;
         }
 
         /// <summary>
@@ -80,12 +97,20 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public override string ToString()
         {
+            if (this.columnsString == null)
+            {
+                this.columnsString = $"[{string.Join(", ", this.columns.Select(c => @$"""{c}"""))}]";
+            }
             return this.columnsString;
         }
 
+        /// <summary>
+        /// 获取迭代器
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<string> GetEnumerator()
         {
-            return this.columns.GetEnumerator();
+            return ((IEnumerable<string>)this.columns).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
