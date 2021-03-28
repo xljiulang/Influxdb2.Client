@@ -8,12 +8,12 @@ namespace Influxdb2.Client
     /// </summary>
     public class FnBody
     {
-        private readonly StringBuilder builder = new StringBuilder();
+        private readonly StringBuilder builder = new();
 
         /// <summary>
         /// 返回r参数名的过滤函数
         /// </summary>
-        public static FnBody R => new FnBody("r");
+        public static FnBody R => new("r");
 
         /// <summary>
         /// 获取参数名

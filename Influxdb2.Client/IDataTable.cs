@@ -5,7 +5,7 @@ namespace Influxdb2.Client
     /// <summary>
     /// 数据表
     /// </summary>
-    public interface IDataTable
+    public interface IDataTable : IEnumerable<IDataRow>
     {
         /// <summary>
         /// 获取列的集合
@@ -13,8 +13,15 @@ namespace Influxdb2.Client
         IList<string> Columns { get; }
 
         /// <summary>
-        /// 获取所有数据行
+        /// 获取数据行的数量
         /// </summary>
-        IList<IDataRow> Rows { get; }
+        int Count { get; }
+
+        /// <summary>
+        /// 通过行索引获取数据行
+        /// </summary>
+        /// <param name="rowIndex">行索引</param>
+        /// <returns></returns>
+        IDataRow this[int rowIndex] { get; }
     }
 }

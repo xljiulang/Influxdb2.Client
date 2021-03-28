@@ -89,7 +89,7 @@ namespace Influxdb2.Client
             var result = new List<TModel>();
             var descriptor = ModelDescriptor.Get(typeof(TModel));
             var rowGroups = this
-                .SelectMany(item => item.Rows)
+                .SelectMany(item => item)
                 .GroupBy(item => item[groupColumns], ColumnValuesEqualityComparer.Instance);
 
             foreach (var group in rowGroups)

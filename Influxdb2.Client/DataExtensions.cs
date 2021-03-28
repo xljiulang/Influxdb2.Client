@@ -20,9 +20,9 @@ namespace Influxdb2.Client
         [return: MaybeNull]
         public static TValue GetFirstValueOrDefault<TValue>(this IDataTable dataTable, string column)
         {
-            if (dataTable.Rows.Count > 0)
+            if (dataTable.Count > 0)
             {
-                return dataTable.Rows[0].GetValueOrDefault<TValue>(column);
+                return dataTable[0].GetValueOrDefault<TValue>(column);
             }
             return default;
         }
