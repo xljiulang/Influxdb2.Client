@@ -7,14 +7,14 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// DataTable解析器
     /// </summary>
-    static class DataTablesParser
+    static class DataTableCollectionParser
     {
         /// <summary>
         /// 从csv读取得到多表格
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public static async Task<DataTables> ParseAsync(CsvReader reader)
+        public static async Task<DataTableCollection> ParseAsync(CsvReader reader)
         {
             var columns = default(IList<string>);
             var table = default(DataTable);
@@ -45,7 +45,7 @@ namespace Influxdb2.Client.Datas
                 table.AddDataRow(row);
             }
 
-            return new DataTables(tables);
+            return new DataTableCollection(tables);
         }
 
         /// <summary>

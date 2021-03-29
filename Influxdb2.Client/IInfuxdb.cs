@@ -41,7 +41,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         [QueryReturn]
         [HttpPost("/api/v2/query")]
-        Task<DataTables> QueryAsync([Required, FluxContent] IFlux flux, [DefaultOrg] string? org = default);
+        Task<DataTableCollection> QueryAsync([Required, FluxContent] IFlux flux, [DefaultOrg] string? org = default);
 
         /// <summary>
         /// 查询数据
@@ -51,6 +51,6 @@ namespace Influxdb2.Client
         /// <returns></returns>
         [QueryReturn]
         [HttpPost("/api/v2/query")]
-        Task<DataTables> QueryAsync([Required, FluxContent] string flux, [DefaultOrg] string? org = default);
+        Task<DataTableCollection> QueryAsync([Required, FluxContent] string flux, [DefaultOrg] string? org = default);
     }
 }

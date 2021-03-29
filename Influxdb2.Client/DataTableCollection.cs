@@ -12,7 +12,7 @@ namespace Influxdb2.Client
     /// 表示表格集合
     /// </summary>
     [DebuggerDisplay("Count = {Count}")]
-    public class DataTables : IEnumerable<IDataTable>
+    public class DataTableCollection : IEnumerable<IDataTable>
     {
         /// <summary>
         /// 所有表格
@@ -36,7 +36,7 @@ namespace Influxdb2.Client
         /// 表格集合
         /// </summary>
         /// <param name="tables">表格</param>
-        public DataTables(IList<IDataTable> tables)
+        public DataTableCollection(IList<IDataTable> tables)
         {
             this.tables = tables;
         }
