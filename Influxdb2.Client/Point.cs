@@ -20,7 +20,7 @@ namespace Influxdb2.Client
         /// <param name="lineProtocol">数据点的行文本协议</param>
         public Point(string lineProtocol)
         {
-            this.LineProtocol = lineProtocol.ToString();
+            this.LineProtocol = lineProtocol;
         }
 
         /// <summary>
@@ -37,6 +37,7 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="entity">由ColumnTypeAttribute标记属性的实体</param>
         /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ProtocolException"></exception>
         public Point(object entity)
         {
             var desciptor = EntityDesciptor.Get(entity.GetType());
