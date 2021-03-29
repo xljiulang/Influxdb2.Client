@@ -110,7 +110,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public IEnumerator<string> GetEnumerator()
         {
-            return ((IEnumerable<string>)this.columns).GetEnumerator();
+            return this.columns.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

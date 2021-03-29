@@ -1,46 +1,16 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示表格集合
+    /// 数据读取扩展
     /// </summary>
-    [DebuggerDisplay("Count = {Count}")]
-    public class DataTableCollection : IEnumerable<IDataTable>
+    public static partial class ReadExtensions
     {
-        /// <summary>
-        /// 所有表格
-        /// </summary>
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly IList<IDataTable> tables;
-
-        /// <summary>
-        /// 获取表格的数量
-        /// </summary>
-        public int Count => this.tables.Count;
-
-        /// <summary>
-        /// 通过索引获取表格
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public IDataTable this[int index] => this.tables[index];
-
-        /// <summary>
-        /// 表格集合
-        /// </summary>
-        /// <param name="tables">表格</param>
-        public DataTableCollection(IList<IDataTable> tables)
-        {
-            this.tables = tables;
-        }
-
         /// <summary>
         /// 获取包含指定列的的第一个表的首行对应列的值
         /// 获取不到则返回类型默认值
@@ -49,9 +19,9 @@ namespace Influxdb2.Client
         /// <param name="column"></param>
         /// <returns></returns>
         [return: MaybeNull]
-        public TValue GetFirstValueOrDefault<TValue>(string column)
+        public static TValue GetFirstValueOrDefault<TValue>(this IDataTableCollection dataTables, string column)
         {
-            foreach (var table in this)
+            foreach (var table in dataTables)
             {
                 if (table.Columns.Contains(column))
                 {
@@ -61,25 +31,28 @@ namespace Influxdb2.Client
             return default;
         }
 
+
         /// <summary>
         /// 以_time列为分组条件合并所有数据行并转换为指定强类型模型
         /// </summary>
+        /// <param name="dataTables"></param>
         /// <typeparam name="TModel"></typeparam>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public IList<TModel> ToModels<TModel>() where TModel : new()
+        public static IList<TModel> ToModels<TModel>(this IDataTableCollection dataTables) where TModel : new()
         {
-            return this.ToModels<TModel>(Columns.Time);
+            return dataTables.ToModels<TModel>(Columns.Time);
         }
 
         /// <summary>
         /// 以指定多列为分组条件合并所有数据行并转换为指定强类型模型
         /// </summary>
         /// <typeparam name="TModel"></typeparam>
+        /// <param name="dataTables"></param>
         /// <param name="groupColumns">列值相同的行，将整合到一个model实例</param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public IList<TModel> ToModels<TModel>(Columns groupColumns) where TModel : new()
+        public static IList<TModel> ToModels<TModel>(this IDataTableCollection dataTables, Columns groupColumns) where TModel : new()
         {
             if (groupColumns.IsEmpty)
             {
@@ -88,7 +61,7 @@ namespace Influxdb2.Client
 
             var result = new List<TModel>();
             var descriptor = ModelDescriptor.Get(typeof(TModel));
-            var rowGroups = this
+            var rowGroups = dataTables
                 .SelectMany(item => item)
                 .GroupBy(item => item[groupColumns], ColumnValuesEqualityComparer.Instance);
 
@@ -145,23 +118,6 @@ namespace Influxdb2.Client
             return fieldValues;
         }
 
-        /// <summary>
-        /// 获取迭代器
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<IDataTable> GetEnumerator()
-        {
-            return this.tables.GetEnumerator();
-        }
-
-        /// <summary>
-        /// 获取迭代器
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.tables.GetEnumerator();
-        }
 
         /// <summary>
         /// ColumnValue集合相等比较

@@ -7,6 +7,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 数据表
     /// </summary>
+    [DebuggerDisplay("Count = {Count}")]
     sealed class DataTable : IDataTable
     {
         /// <summary>

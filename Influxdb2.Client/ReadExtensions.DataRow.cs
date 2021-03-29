@@ -7,26 +7,8 @@ namespace Influxdb2.Client
     /// <summary>
     /// 数据读取扩展
     /// </summary>
-    public static class DataExtensions
+    public static partial class ReadExtensions
     {
-        /// <summary>
-        /// 获取首行指定列的值
-        /// 获取不到则返回类型默认值
-        /// </summary>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="dataTable"></param>
-        /// <param name="column"></param>
-        /// <returns></returns>
-        [return: MaybeNull]
-        public static TValue GetFirstValueOrDefault<TValue>(this IDataTable dataTable, string column)
-        {
-            if (dataTable.Count > 0)
-            {
-                return dataTable[0].GetValueOrDefault<TValue>(column);
-            }
-            return default;
-        }
-
         /// <summary>
         /// 获取指定列的值      
         /// </summary>
@@ -37,11 +19,9 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static TValue GetValue<TValue>(this IDataRow dataRow, string column)
         {
-            if (dataRow.TryGetValue<TValue>(column, out var value))
-            {
-                return value;
-            }
-            throw new ArgumentException($"找不到指定的列：{column}", nameof(column));
+            return dataRow.TryGetValue<TValue>(column, out var value)
+                ? value
+                : throw new ArgumentException($"找不到指定的列：{column}", nameof(column));
         }
 
         /// <summary>
@@ -55,11 +35,7 @@ namespace Influxdb2.Client
         [return: MaybeNull]
         public static TValue GetValueOrDefault<TValue>(this IDataRow dataRow, string column)
         {
-            if (dataRow.TryGetValue<TValue>(column, out var value))
-            {
-                return value;
-            }
-            return default;
+            return dataRow.TryGetValue<TValue>(column, out var value) ? value : default;
         }
 
 

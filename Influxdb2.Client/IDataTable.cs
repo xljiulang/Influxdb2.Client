@@ -8,14 +8,14 @@ namespace Influxdb2.Client
     public interface IDataTable : IEnumerable<IDataRow>
     {
         /// <summary>
-        /// 获取列的集合
-        /// </summary>
-        IList<string> Columns { get; }
-
-        /// <summary>
         /// 获取数据行的数量
         /// </summary>
         int Count { get; }
+
+        /// <summary>
+        /// 获取列的集合
+        /// </summary>
+        IList<string> Columns { get; }
 
         /// <summary>
         /// 通过行索引获取数据行
