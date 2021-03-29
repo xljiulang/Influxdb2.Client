@@ -13,6 +13,11 @@ namespace Influxdb2.Client
         int Count { get; }
 
         /// <summary>
+        /// 获取表格类型
+        /// </summary>
+        TableType TableType { get; }
+
+        /// <summary>
         /// 获取列的集合
         /// </summary>
         IList<string> Columns { get; }

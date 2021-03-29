@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Influxdb2.Client.Datas
@@ -71,7 +70,7 @@ namespace Influxdb2.Client.Datas
             while (reader.CanRead == true)
             {
                 var csvLine = await reader.ReadlineAsync();
-                if (IsValidLine(csvLine) == false)
+                if (csvLine.Count == 0 || csvLine[0].StartsWith('#'))
                 {
                     columns = null;
                     table = null;
@@ -94,24 +93,6 @@ namespace Influxdb2.Client.Datas
             }
 
             return new DataTableCollection(tables);
-        }
-
-        /// <summary>
-        /// csvLine是否有效
-        /// </summary> 
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsValidLine(IList<string> csvLine)
-        {
-            const string Error = "error";
-
-            if (csvLine.Count == 0)
-            {
-                return false;
-            }
-
-            var value = csvLine[0];
-            return value.StartsWith('#') == false && value != Error;
         }
     }
 }

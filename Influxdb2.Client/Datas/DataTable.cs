@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -16,15 +17,24 @@ namespace Influxdb2.Client.Datas
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly IList<IDataRow> rows = new List<IDataRow>();
 
-        /// <summary>
-        /// 获取列的集合
-        /// </summary>
-        public IList<string> Columns { get; }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly TableType tableType;
 
         /// <summary>
         /// 获取数据行的数量
         /// </summary>
         public int Count => this.rows.Count;
+
+        /// <summary>
+        /// 获取表格类型
+        /// </summary>
+        public TableType TableType => this.tableType;
+
+        /// <summary>
+        /// 获取列的集合
+        /// </summary>
+        public IList<string> Columns { get; }
+
 
         /// <summary>
         /// 通过行索引获取数据行
@@ -40,6 +50,11 @@ namespace Influxdb2.Client.Datas
         public DataTable(IList<string> columns)
         {
             this.Columns = columns;
+            if (columns.Count > 1)
+            {
+                var typeValue = columns[1];
+                Enum.TryParse(typeValue, ignoreCase: true, out this.tableType);
+            }
         }
 
         /// <summary>
