@@ -1,55 +1,57 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
-using System.Diagnostics;
 using System.Text;
 
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示自动完成的数据点 
-    /// </summary> 
-    [DebuggerDisplay("Measurement = {desciptor.Measurement}")]
-    public class AutoManualPoint : IPoint
+    /// 表示一个数据点
+    /// </summary>
+    public class Point : IPoint
     {
         /// <summary>
-        /// 实体描述
+        /// 获取行文本协议内容
         /// </summary>
-        private readonly EntityDesciptor desciptor;
+        public string LineProtocol { get; }
 
         /// <summary>
-        /// 获取数据实体
+        /// 数据点
         /// </summary>
-        public object Entity { get; }
-
-        /// <summary>
-        /// 自动完成的数据点 
-        /// </summary>
-        /// <param name="entity">由ColumnTypeAttribute标记属性的实体</param>
-        /// <exception cref="ArgumentException"></exception>
-        public AutoManualPoint(object entity)
+        /// <param name="lineProtocol">数据点的行文本协议</param>
+        public Point(string lineProtocol)
         {
-            this.desciptor = EntityDesciptor.Get(entity.GetType());
-            this.Entity = entity;
+            this.LineProtocol = lineProtocol.ToString();
         }
 
         /// <summary>
-        /// 转换为LineProtocol
-        /// 因为c#语法关系，所有字属性名不用编码
+        /// 数据点
         /// </summary>
-        /// <returns></returns>
-        public string ToLineProtocol()
+        /// <param name="lineProtocol">数据点的行文本协议</param>
+        public Point(StringBuilder lineProtocol)
         {
+            this.LineProtocol = lineProtocol.ToString();
+        }
+
+        /// <summary>
+        /// 实体数据点
+        /// </summary>
+        /// <param name="entity">由ColumnTypeAttribute标记属性的实体</param>
+        /// <exception cref="ArgumentException"></exception>
+        public Point(object entity)
+        {
+            var desciptor = EntityDesciptor.Get(entity.GetType());
             var builder = new StringBuilder(desciptor.Measurement);
+
             foreach (var tag in desciptor.Tags)
             {
-                var value = tag.GetStringValue(this.Entity);
+                var value = tag.GetStringValue(entity);
                 builder.Append(',').Append(tag.Name).Append('=').Append(value);
             }
 
             var firstField = true;
             foreach (var field in desciptor.Fields)
             {
-                var value = field.GetStringValue(this.Entity);
+                var value = field.GetStringValue(entity);
                 var divider = firstField ? ' ' : ',';
                 builder.Append(divider).Append(field.Name).Append('=').Append(value);
                 firstField = false;
@@ -57,23 +59,23 @@ namespace Influxdb2.Client
 
             if (desciptor.Timestamp != null)
             {
-                var timestamp = desciptor.Timestamp.GetStringValue(this.Entity);
+                var timestamp = desciptor.Timestamp.GetStringValue(entity);
                 if (timestamp != null)
                 {
                     builder.Append(' ').Append(timestamp);
                 }
             }
 
-            return builder.ToString();
+            this.LineProtocol = builder.ToString();
         }
 
         /// <summary>
-        /// 转换为文本
+        /// 转换为文本 
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return this.ToLineProtocol();
+            return this.LineProtocol;
         }
     }
 }

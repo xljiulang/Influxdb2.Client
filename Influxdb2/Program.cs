@@ -36,17 +36,18 @@ namespace Influxdb2
                 CreateTime = DateTimeOffset.Now
             };
 
-            // await infuxdb.WriteAsync(new AutoManualPoint(enitty));
+            // await infuxdb.WriteAsync(new Point(entity));
             await infuxdb.WriteAsync(entity);
 
 
             // 写手工定义的数据点
-            var manualPoint = new ManualPoint($"{nameof(Temperature)}")
+            var point = new PointBuilder($"{nameof(Temperature)}")
                 .SetTag($"{nameof(Temperature.Location)}", "west")
                 .SetField($"{nameof(Temperature.Value)}", 26D)
-                .SetTimestamp(DateTimeOffset.Now);
+                .SetTimestamp(DateTimeOffset.Now) 
+                .Build();
 
-            await infuxdb.WriteAsync(manualPoint);
+            await infuxdb.WriteAsync(point);
 
 
             // 使用Flux对象查询
@@ -73,7 +74,7 @@ namespace Influxdb2
 
             var tempTables = await infuxdb.QueryAsync(tempFlux);
             var temperatures = tempTables.ToModels<Temperature>();
-             
+
 
             var meanTempFulx = Flux
                 .From("v6")

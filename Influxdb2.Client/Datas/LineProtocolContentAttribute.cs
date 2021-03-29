@@ -29,11 +29,10 @@ namespace Influxdb2.Client.Datas
 
             if (entity is not IPoint point)
             {
-                point = new AutoManualPoint(entity);
+                point = new Point(entity);
             }
 
-            var lineProtocol = point.ToLineProtocol();
-            context.HttpContext.RequestMessage.Content = new StringContent(lineProtocol, Encoding.UTF8, mediaType);
+            context.HttpContext.RequestMessage.Content = new StringContent(point.LineProtocol, Encoding.UTF8, mediaType);
             return Task.CompletedTask;
         }
     }

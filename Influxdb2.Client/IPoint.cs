@@ -1,14 +1,13 @@
 ﻿namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示一个数据点
+    /// 数据点
     /// </summary>
     public interface IPoint
     {
         /// <summary>
-        /// 转换为LineProtocol
+        /// 获取行文本协议内容
         /// </summary>
-        /// <returns></returns>
-        string ToLineProtocol();
+        string LineProtocol { get; }
     }
 }

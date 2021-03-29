@@ -2,52 +2,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
 namespace Influxdb2.Client
 {
     /// <summary>
-    /// 表示手工定义的数据点
-    /// </summary>
-    [DebuggerDisplay("Measurement = {Measurement}")]
-    public class ManualPoint : IPoint
+    /// 表示数据点的创建器 
+    /// </summary> 
+    public class PointBuilder
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private long? timestamp;
+        private readonly string measurement;
         private readonly ColumnValueCollection tags = new();
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly ColumnValueCollection fields = new();
 
         /// <summary>
-        /// 获取umeasurement
-        /// </summary>
-        public string Measurement { get; }
-
-        /// <summary>
-        /// 获取unix纳秒时间戳
-        /// </summary>
-        public long? Timestamp { get; private set; }
-
-        /// <summary>
-        /// 获取标签集合
-        /// </summary>
-        public ICollection<ColumnValue> Tags => this.tags;
-
-        /// <summary>
-        /// 获取字段集合
-        /// </summary>
-        public ICollection<ColumnValue> Fields => this.fields;
-
-        /// <summary>
-        /// 手工定义的数据点
+        /// 数据点的创建器 
         /// </summary>
         /// <param name="measurement">measurement</param>
         /// <exception cref="ProtocolException"></exception>
-        public ManualPoint(string measurement)
+        public PointBuilder(string measurement)
         {
-            this.Measurement = LineProtocolUtil.Encode(measurement);
+            this.measurement = LineProtocolUtil.Encode(measurement);
         }
 
         /// <summary>
@@ -58,7 +35,7 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public ManualPoint SetTag(string name, string value)
+        public PointBuilder SetTag(string name, string value)
         {
             name = LineProtocolUtil.Encode(name);
             value = LineProtocolUtil.Encode(value);
@@ -74,7 +51,7 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public ManualPoint SetField(string name, string? value)
+        public PointBuilder SetField(string name, string? value)
         {
             name = LineProtocolUtil.Encode(name);
             value = LineProtocolUtil.EncodeFieldValue(value);
@@ -91,7 +68,7 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public ManualPoint SetField(string name, object value)
+        public PointBuilder SetField(string name, object value)
         {
             if (value == null)
             {
@@ -109,9 +86,9 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="value">unix纳秒时间戳</param>
         /// <returns></returns>
-        public ManualPoint SetTimestamp(long value)
+        public PointBuilder SetTimestamp(long? value)
         {
-            this.Timestamp = value;
+            this.timestamp = value;
             return this;
         }
 
@@ -120,9 +97,9 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="value">unix纳秒时间戳</param>
         /// <returns></returns>
-        public ManualPoint SetTimestamp(DateTimeOffset value)
+        public PointBuilder SetTimestamp(DateTimeOffset? value)
         {
-            this.Timestamp = LineProtocolUtil.GetNsTimestamp(value);
+            this.timestamp = LineProtocolUtil.GetNsTimestamp(value);
             return this;
         }
 
@@ -131,66 +108,57 @@ namespace Influxdb2.Client
         /// </summary>
         /// <param name="timestamp">unix纳秒时间戳</param>
         /// <returns></returns>
-        public ManualPoint SetTimestamp(DateTime value)
+        public PointBuilder SetTimestamp(DateTime? value)
         {
-            this.Timestamp = LineProtocolUtil.GetNsTimestamp(value);
+            this.timestamp = LineProtocolUtil.GetNsTimestamp(value);
             return this;
         }
 
         /// <summary>
-        /// 转换为LineProtocol
+        /// 创建一个Point
         /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         /// <returns></returns>
-        public string ToLineProtocol()
+        public IPoint Build()
         {
-            if (this.Fields.Count == 0)
+            if (this.fields.Count == 0)
             {
-                throw new ArgumentException($"至少设置一个Field值");
+                throw new InvalidOperationException($"至少设置一个Field值");
             }
 
-            var builder = new StringBuilder(this.Measurement);
-            foreach (var item in this.Tags.OrderBy(item => item.Column))
+            var builder = new StringBuilder(this.measurement);
+            foreach (var item in this.tags.OrderBy(item => item.Column))
             {
                 builder.Append(',').Append(item.Column).Append('=').Append(item.Value);
             }
 
             var firstField = true;
-            foreach (var item in this.Fields.OrderBy(item => item.Column))
+            foreach (var item in this.fields.OrderBy(item => item.Column))
             {
                 var divider = firstField ? ' ' : ',';
                 builder.Append(divider).Append(item.Column).Append('=').Append(item.Value);
                 firstField = false;
             }
 
-            if (this.Timestamp != null)
+            if (this.timestamp != null)
             {
-                builder.Append(' ').Append(this.Timestamp.ToString());
+                builder.Append(' ').Append(this.timestamp.ToString());
             }
 
-            return builder.ToString();
+            return new Point(builder);
         }
 
-        /// <summary>
-        /// 转换为文本
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return this.ToLineProtocol();
-        }
 
 
         /// <summary>
         /// ColumnValue集合
         /// </summary>
-        private class ColumnValueCollection : ICollection<ColumnValue>
+        private class ColumnValueCollection : IEnumerable<ColumnValue>
         {
-            [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+            private readonly HashSet<string> columns = new();
             private readonly List<ColumnValue> columnValues = new();
 
-            int ICollection<ColumnValue>.Count => this.columnValues.Count;
-
-            bool ICollection<ColumnValue>.IsReadOnly => true;
+            public int Count => this.columnValues.Count;
 
             /// <summary>
             /// 添加列与值
@@ -200,31 +168,11 @@ namespace Influxdb2.Client
             /// <exception cref="ArgumentException"></exception>
             public void Add(string column, string? value)
             {
-                if (this.columnValues.Any(item => item.Column == column))
+                if (this.columns.Add(column) == false)
                 {
                     throw new ArgumentException($"不允许添加重复的列: {column}", nameof(column));
                 }
                 this.columnValues.Add(new ColumnValue(column, value));
-            }
-
-            void ICollection<ColumnValue>.Add(ColumnValue item)
-            {
-                throw new InvalidOperationException();
-            }
-
-            void ICollection<ColumnValue>.Clear()
-            {
-                throw new InvalidOperationException();
-            }
-
-            bool ICollection<ColumnValue>.Contains(ColumnValue item)
-            {
-                return this.columnValues.Contains(item);
-            }
-
-            void ICollection<ColumnValue>.CopyTo(ColumnValue[] array, int arrayIndex)
-            {
-                this.columnValues.CopyTo(array, arrayIndex);
             }
 
             IEnumerator<ColumnValue> IEnumerable<ColumnValue>.GetEnumerator()
@@ -236,11 +184,7 @@ namespace Influxdb2.Client
             {
                 return this.columnValues.GetEnumerator();
             }
-
-            bool ICollection<ColumnValue>.Remove(ColumnValue item)
-            {
-                throw new InvalidOperationException();
-            }
         }
     }
+
 }
