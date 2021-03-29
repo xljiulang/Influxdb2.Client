@@ -25,7 +25,7 @@
         /// <returns></returns>
         public static IFlux Bottom(this IFlux flux, int n, Columns columns)
         {
-            return flux.Pipe($"bottom(n:{n}, columns:{columns})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"bottom(n: {n}, columns: {columns})", SingleQuotesBehavior.NoReplace);
         }
 
 
@@ -50,7 +50,7 @@
         /// <returns></returns>
         public static IFlux Top(this IFlux flux, int n, Columns columns)
         {
-            return flux.Pipe($"top(n:{n}, columns: {columns})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"top(n: {n}, columns: {columns})", SingleQuotesBehavior.NoReplace);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@
         /// <returns></returns>
         public static IFlux Last(this IFlux flux, string column = Column.Value)
         {
-            return flux.Pipe($"last(column:'{column}')");
+            return flux.Pipe($"last(column: '{column}')");
         }
 
 
@@ -83,7 +83,7 @@
         /// <returns></returns>
         public static IFlux Max(this IFlux flux, string column = Column.Value)
         {
-            return flux.Pipe($"max(column:'{column}')");
+            return flux.Pipe($"max(column: '{column}')");
         }
 
         /// <summary>
@@ -94,7 +94,7 @@
         /// <returns></returns>
         public static IFlux Min(this IFlux flux, string column = Column.Value)
         {
-            return flux.Pipe($"min(column:'{column}')");
+            return flux.Pipe($"min(column: '{column}')");
         }
 
         /// <summary>
@@ -105,7 +105,7 @@
         /// <returns></returns>
         public static IFlux Unique(this IFlux flux, string column = Column.Value)
         {
-            return flux.Pipe($"unique(column:'{column}')");
+            return flux.Pipe($"unique(column: '{column}')");
         }
 
         /// <summary>
@@ -116,7 +116,7 @@
         /// <returns></returns>
         public static IFlux Distinct(this IFlux flux, string column = Column.Value)
         {
-            return flux.Pipe($"distinct('{column}')");
+            return flux.Pipe($"distinct(column: '{column}')");
         }
     }
 }

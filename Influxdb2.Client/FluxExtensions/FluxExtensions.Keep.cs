@@ -13,7 +13,7 @@
         /// <returns></returns>
         public static IFlux Keep(this IFlux flux, Columns columns)
         {
-            return flux.Pipe($"keep(columns:{columns})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"keep(columns: {columns})", SingleQuotesBehavior.NoReplace);
         }
     }
 }

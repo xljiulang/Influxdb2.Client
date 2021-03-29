@@ -15,7 +15,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux Range(this IFlux flux, string start)
         {
-            return flux.Pipe($"range(start:{start})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"range(start: {start})", SingleQuotesBehavior.NoReplace);
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux Range(this IFlux flux, DateTimeOffset start)
         {
-            return flux.Pipe($"range(start:{start:O})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"range(start: {start:O})", SingleQuotesBehavior.NoReplace);
         }
 
 
@@ -40,7 +40,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux Range(this IFlux flux, string start, string stop)
         {
-            return flux.Pipe($"range(start:{start}, stop:{stop})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"range(start: {start}, stop: {stop})", SingleQuotesBehavior.NoReplace);
         }
 
 
@@ -54,7 +54,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux Range(this IFlux flux, string start, DateTimeOffset stop)
         {
-            return flux.Pipe($"range(start:{start}, stop:{stop:O})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"range(start: {start}, stop: {stop:O})", SingleQuotesBehavior.NoReplace);
         }
 
 
@@ -69,7 +69,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux Range(this IFlux flux, DateTimeOffset start, string stop)
         {
-            return flux.Pipe($"range(start:{start:O}, stop:{stop})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"range(start: {start:O}, stop: {stop})", SingleQuotesBehavior.NoReplace);
         }
 
 
@@ -83,7 +83,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux Range(this IFlux flux, DateTimeOffset start, DateTimeOffset stop)
         {
-            return flux.Pipe($"range(start:{start:O}, stop:{stop:O})", SingleQuotesBehavior.NoReplace);
+            return flux.Pipe($"range(start: {start:O}, stop: {stop:O})", SingleQuotesBehavior.NoReplace);
         }
 
     }

@@ -15,7 +15,7 @@
         /// <returns></returns>
         public static IFlux Filter(this IFlux flux, string fnBody, string paramName = "r", SingleQuotesBehavior behavior = SingleQuotesBehavior.Replace)
         {
-            return flux.Pipe($"filter(fn: ({paramName}) => {fnBody} )", behavior);
+            return flux.Pipe($"filter(fn: ({paramName}) => {fnBody})", behavior);
         }
 
         /// <summary>
