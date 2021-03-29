@@ -15,7 +15,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public static IFlux From(string bucket)
         {
-            return Parse(@$"from(bucket:""{bucket}""){Environment.NewLine}");
+            return Parse(@$"from(bucket:""{bucket}"")");
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Influxdb2.Client
                     value = RepaceSingleQuotes(value);
                 }
 
-                this.builder.Append("|> ").AppendLine(value);
+                this.builder.AppendLine().Append("|> ").Append(value);
                 return this;
             }
 
