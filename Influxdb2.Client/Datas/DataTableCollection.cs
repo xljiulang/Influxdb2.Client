@@ -7,8 +7,7 @@ namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// 表示表格集合
-    /// </summary>
-    [DebuggerDisplay("Count = {Count}")]
+    /// </summary> 
     sealed class DataTableCollection : IDataTableCollection
     {
         /// <summary>
