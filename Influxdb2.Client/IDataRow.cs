@@ -25,13 +25,6 @@ namespace Influxdb2.Client
         string? this[int columnIndex] { get; }
 
         /// <summary>
-        /// 获取多列的值
-        /// </summary>
-        /// <param name="column">列集合</param>
-        /// <returns></returns>
-        ColumnValue[] this[Columns columns] { get; }
-
-        /// <summary>
         /// 尝试获取列的数据
         /// </summary>
         /// <param name="column">列名</param>

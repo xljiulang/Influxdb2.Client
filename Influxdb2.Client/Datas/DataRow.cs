@@ -31,28 +31,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public string? this[int columnIndex] => this.Values[columnIndex];
-
-        /// <summary>
-        /// 获取多列的值
-        /// </summary>
-        /// <param name="column">列集合</param>
-        /// <returns></returns>
-        public ColumnValue[] this[Columns columns]
-        {
-            get
-            {
-                var index = 0;
-                var array = new ColumnValue[columns.Count];
-                foreach (var column in columns)
-                {
-                    this.map.TryGetValue(column, out var value);
-                    array[index] = new ColumnValue(column, value);
-                    index += 1;
-                }
-                return array;
-            }
-        }
+        public string? this[int columnIndex] => this.Values[columnIndex]; 
 
         /// <summary>
         /// 数据行
