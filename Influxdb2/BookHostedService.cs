@@ -23,16 +23,23 @@ namespace Influxdb2
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {            
-            var count = 1000;
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+        {
+            try
+            {
+                var count = 1000;
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
 
-            var tasks = Enumerable.Range(0, count).Select(i => ReadWriteAsync());
-            await Task.WhenAll(tasks);
+                var tasks = Enumerable.Range(0, count).Select(i => ReadWriteAsync());
+                await Task.WhenAll(tasks);
 
-            stopwatch.Stop();
-            this.logger.LogInformation($"并发读写各{count}次总耗时：{stopwatch.Elapsed}");
+                stopwatch.Stop();
+                this.logger.LogInformation($"并发读写各{count}次总耗时：{stopwatch.Elapsed}");
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Influxdb2.Client异常");
+            }
         }
 
 
