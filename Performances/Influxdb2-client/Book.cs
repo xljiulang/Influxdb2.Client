@@ -1,7 +1,7 @@
 ﻿using Influxdb2.Client;
 using System;
 
-namespace influxdb2_client_csharp
+namespace influxdb2_client
 {
     class Book
     {

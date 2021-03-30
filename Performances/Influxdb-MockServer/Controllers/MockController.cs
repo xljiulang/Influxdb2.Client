@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace MockServer.Controllers
+namespace Influxdb_MockServer.Controllers
 {
     [ApiController]
     public class MockController : ControllerBase

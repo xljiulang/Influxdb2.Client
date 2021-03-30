@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Influxdb2.Client\Influxdb2.Client.csproj" />
+	  <ProjectReference Include="..\..\Influxdb2.Client\Influxdb2.Client.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

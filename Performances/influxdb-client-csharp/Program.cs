@@ -1,5 +1,5 @@
 ﻿using InfluxDB.Client;
-using influxdb2_client_csharp.Client;
+using Influxdb2.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
