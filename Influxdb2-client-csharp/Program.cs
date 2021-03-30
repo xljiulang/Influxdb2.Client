@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
-namespace Influxdb2
+namespace influxdb2_client_csharp
 {
     class Program
     {

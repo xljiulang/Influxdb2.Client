@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Influxdb2
+namespace influxdb2_client_csharp
 {
     class BookHostedService : BackgroundService
     {

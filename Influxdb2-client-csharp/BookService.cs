@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Influxdb2
+namespace influxdb2_client_csharp
 {
     class BookService
     {

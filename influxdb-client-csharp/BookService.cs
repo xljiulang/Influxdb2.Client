@@ -1,6 +1,6 @@
 ﻿using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
-using Influxdb2.Client;
+using influxdb2_client_csharp.Client;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
