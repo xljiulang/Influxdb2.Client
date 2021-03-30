@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Influxdb2.Client.Datas;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -9,6 +10,25 @@ namespace Influxdb2.Client
     /// </summary>
     public static partial class ReadExtensions
     {
+        /// <summary>
+        /// 转换为强类型模型
+        /// </summary>
+        /// <typeparam name="TModel">模型类型</typeparam>
+        /// <param name="dataRow"></param>
+        /// <returns></returns>
+        public static TModel ToModel<TModel>(this IDataRow dataRow) where TModel : new()
+        {
+            var model = new TModel();
+            foreach (var property in ModelDescriptor<TModel>.PropertyDescriptors)
+            {
+                if (dataRow.TryGetValue(property.Name, out var stringValue))
+                {
+                    property.SetStringValue(model, stringValue);
+                }
+            }
+            return model;
+        }
+
         /// <summary>
         /// 获取指定列的值      
         /// </summary>

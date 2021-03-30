@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Influxdb2.Client
 {
@@ -7,6 +9,17 @@ namespace Influxdb2.Client
     /// </summary>
     public static partial class ReadExtensions
     {
+        /// <summary>
+        /// 转换为强类型模型
+        /// </summary>
+        /// <typeparam name="TModel">模型类型</typeparam>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        public static IList<TModel> ToModels<TModel>(this IDataTable dataTable) where TModel : new()
+        {
+            return dataTable.Select(item => item.ToModel<TModel>()).ToList();
+        }
+
         /// <summary>
         /// 获取首行指定列的值
         /// 获取不到则返回类型默认值
@@ -18,8 +31,8 @@ namespace Influxdb2.Client
         [return: MaybeNull]
         public static TValue GetFirstValueOrDefault<TValue>(this IDataTable dataTable, string column)
         {
-            return dataTable.Count > 0 
-                ? dataTable[0].GetValueOrDefault<TValue>(column) 
+            return dataTable.Count > 0
+                ? dataTable[0].GetValueOrDefault<TValue>(column)
                 : default;
         }
     }

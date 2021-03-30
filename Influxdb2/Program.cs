@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Influxdb2
@@ -53,13 +54,14 @@ namespace Influxdb2
             // 使用Flux对象查询
             var booFlux = Flux
                 .From("v6")
-                .Range("-24h")
+                .Range("-3d")
                 .Filter(FnBody.R.MeasurementEquals($"{nameof(Book)}"))
+                .Pivot()
                 .Limit(10)
                 ;
 
             var bookTables = await infuxdb.QueryAsync(booFlux);
-            var books = bookTables.ToModels<Book>();
+            var books = bookTables.Single().ToModels<Book>();
 
 
             // 使用Flux对象查询
@@ -67,20 +69,21 @@ namespace Influxdb2
                 .From("v6")
                 .Range(DateTimeOffset.Now.AddDays(-1d))
                 .Filter(FnBody.R.MeasurementEquals($"{nameof(Temperature)}"))
+                .Pivot()
                 .Sort(desc: true)
                 .Limit(10)
                 ;
 
 
             var tempTables = await infuxdb.QueryAsync(tempFlux);
-            var temperatures = tempTables.ToModels<Temperature>();
+            var temperatures = tempTables.Single().ToModels<Temperature>();
 
 
             var meanTempFulx = Flux
                 .From("v6")
                 .Range(DateTimeOffset.Now.AddDays(-1d))
                 .Filter(FnBody.R.MeasurementEquals($"{nameof(Temperature)}").And().FieldEquals("Value"))
-                .Mean();
+                .Sum();
 
             var sumTables = await infuxdb.QueryAsync(meanTempFulx);
             var meanTemp = sumTables.GetFirstValueOrDefault<double>(Column.Value);

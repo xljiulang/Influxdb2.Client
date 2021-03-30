@@ -6,7 +6,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 模型属性描述器
     /// </summary>
-    sealed class ModelPropertyDescriptor : PropertyDescriptor<object, object?>
+    sealed class ModelPropertyDescriptor<T> : PropertyDescriptor<T, object?>
     {
         /// <summary>
         /// 值转换器
@@ -49,7 +49,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="instance"></param>
         /// <param name="value"></param>
-        public void SetStringValue(object instance, string? value)
+        public void SetStringValue(T instance, string? value)
         {
             var castValue = this.valueConverter.Invoke(value);
             base.SetValue(instance, castValue);
