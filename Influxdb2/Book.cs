@@ -14,7 +14,7 @@ namespace Influxdb2
 
 
         [ColumnType(ColumnType.Field)]
-        public decimal? Price { get; set; }
+        public double? Price { get; set; }
 
 
         [ColumnType(ColumnType.Field)]
