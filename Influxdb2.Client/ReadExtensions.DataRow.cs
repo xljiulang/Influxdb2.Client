@@ -1,6 +1,5 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Influxdb2.Client
@@ -30,102 +29,40 @@ namespace Influxdb2.Client
         }
 
         /// <summary>
-        /// 获取指定列的值      
+        /// 获取指定列的值
+        /// 获取失败则返回null
         /// </summary>
-        /// <typeparam name="TValue"></typeparam>
         /// <param name="dataRow"></param>
         /// <param name="column"></param>
-        /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public static TValue GetValue<TValue>(this IDataRow dataRow, string column)
+        public static string? GetValueOrDefault(this IDataRow dataRow, string column)
         {
-            return dataRow.TryGetValue<TValue>(column, out var value)
-                ? value
-                : throw new ArgumentException($"找不到指定的列：{column}", nameof(column));
+            dataRow.TryGetValue(column, out var value);
+            return value;
         }
 
         /// <summary>
         /// 获取指定列的值
-        /// 获取不得则返回类型的默认值
+        /// 获取失败则返回类型默认值
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="dataRow"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        [return: MaybeNull]
-        public static TValue GetValueOrDefault<TValue>(this IDataRow dataRow, string column)
+        public static TValue GetValueOrDefault<TValue>(this IDataRow dataRow, string column) where TValue : struct
         {
-            return dataRow.TryGetValue<TValue>(column, out var value) ? value : default;
-        }
-
-
-        /// <summary>
-        /// 尝试获取列的数据并转换指定类型
-        /// </summary>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="dataRow"></param>
-        /// <param name="column">列名</param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static bool TryGetValue<TValue>(this IDataRow dataRow, string column, [MaybeNullWhen(false)] out TValue value)
-        {
-            if (dataRow.TryGetValue(column, out var stringValue))
+            if (dataRow.TryGetValue(column, out var value) == false || value == null)
             {
-                if (stringValue != null)
-                {
-                    if (typeof(TValue) == typeof(string))
-                    {
-                        value = Unsafe.As<string, TValue>(ref stringValue);
-                    }
-                    else
-                    {
-                        var castValue = ConvertToType(stringValue, typeof(TValue));
-                        value = (TValue)castValue;
-                    }
-                    return true;
-                }
+                return default;
             }
 
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// 转换为目标类型
-        /// </summary>
-        /// <param name="value">要转换的值</param>
-        /// <param name="targetType">转换的目标类型</param>
-        /// <exception cref="NotSupportedException"></exception>
-        /// <returns></returns>
-        private static object ConvertToType(string value, Type targetType)
-        {
-            var underlyingType = Nullable.GetUnderlyingType(targetType);
-            if (underlyingType != null)
+            if (typeof(TValue) == typeof(DateTimeOffset))
             {
-                targetType = underlyingType;
+                var datetimeOffset = DateTimeOffset.Parse(value);
+                return Unsafe.As<DateTimeOffset, TValue>(ref datetimeOffset);
             }
 
-            if (targetType.IsEnum == true)
-            {
-                return Enum.Parse(targetType, value.ToString(), true);
-            }
-
-            if (typeof(IConvertible).IsAssignableFrom(targetType))
-            {
-                return ((IConvertible)value).ToType(targetType, null);
-            }
-
-            if (typeof(DateTimeOffset) == targetType)
-            {
-                return DateTimeOffset.Parse(value.ToString());
-            }
-
-            if (typeof(Guid) == targetType)
-            {
-                return Guid.Parse(value.ToString());
-            }
-
-            throw new NotSupportedException($"不支持将值{value}转换为{targetType}");
+            return (TValue)((IConvertible)value).ToType(typeof(TValue), null);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Influxdb2
             var point = new PointBuilder($"{nameof(Temperature)}")
                 .SetTag($"{nameof(Temperature.Location)}", "west")
                 .SetField($"{nameof(Temperature.Value)}", 26D)
-                .SetTimestamp(DateTimeOffset.Now) 
+                .SetTimestamp(DateTimeOffset.Now)
                 .Build();
 
             await infuxdb.WriteAsync(point);
@@ -86,7 +86,7 @@ namespace Influxdb2
                 .Sum();
 
             var sumTables = await infuxdb.QueryAsync(meanTempFulx);
-            var meanTemp = sumTables.GetFirstValueOrDefault<double>(Column.Value);
+            var sumTemp = sumTables.GetFirstValueOrDefault<double>(Column.Value);
 
             Console.WriteLine("Hello World!");
         }
