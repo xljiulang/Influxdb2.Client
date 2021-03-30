@@ -51,7 +51,7 @@ namespace Influxdb2.Client.Datas
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                return null;
+                return value;
             }
 
             var span = value.AsSpan();
@@ -149,11 +149,9 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         public static long? GetNsTimestamp(DateTimeOffset? dateTimeOffset)
         {
-            if (dateTimeOffset == null)
-            {
-                return null;
-            }
-            return dateTimeOffset.Value.Subtract(DateTimeOffset.UnixEpoch).Ticks * 100;
+            return dateTimeOffset == null
+                ? default 
+                : dateTimeOffset.Value.Subtract(DateTimeOffset.UnixEpoch).Ticks * 100;
         }
     }
 }

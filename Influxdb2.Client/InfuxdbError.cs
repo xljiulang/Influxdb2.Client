@@ -41,7 +41,7 @@
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{nameof(Code)}: {this.Code} {nameof(Message)}: {this.Message}";
+            return $"{nameof(Code)}: {this.Code} {nameof(Message)}: {this.Message ?? this.Err}";
         }
     }
 }

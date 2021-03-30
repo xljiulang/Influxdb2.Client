@@ -27,7 +27,7 @@ namespace Influxdb2.Client.Datas
 
             if (string.IsNullOrEmpty(bucket) == true)
             {
-                throw new ArgumentNullException(context.ParameterName, "bucket不能为空，除非配置了DefaultBucket");
+                throw new ArgumentNullException(context.ParameterName, $"bucket不能为空，除非配置了{nameof(InfuxdbOptions.DefaultBucket)}");
             }
 
             context.HttpContext.RequestMessage.AddUrlQuery(context.ParameterName, bucket);

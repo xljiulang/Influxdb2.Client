@@ -27,7 +27,7 @@ namespace Influxdb2.Client.Datas
 
             if (string.IsNullOrEmpty(org) == true)
             {
-                throw new ArgumentNullException(context.ParameterName, "org不能为空，除非配置了DefaultOrg");
+                throw new ArgumentNullException(context.ParameterName, $"org不能为空，除非配置了{nameof(InfuxdbOptions.DefaultOrg)}");
             }
 
             context.HttpContext.RequestMessage.AddUrlQuery(context.ParameterName, org);
