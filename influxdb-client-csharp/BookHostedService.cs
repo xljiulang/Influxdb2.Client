@@ -2,13 +2,12 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Influxdb2
+namespace influxdb_client_csharp
 {
     class BookHostedService : BackgroundService
     {
@@ -23,16 +22,23 @@ namespace Influxdb2
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {            
-            var count = 1000;
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+        {
+            try
+            {
+                var count = 1000;
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
 
-            var tasks = Enumerable.Range(0, count).Select(i => ReadWriteAsync());
-            await Task.WhenAll(tasks);
+                var tasks = Enumerable.Range(0, count).Select(i => ReadWriteAsync());
+                await Task.WhenAll(tasks);
 
-            stopwatch.Stop();
-            this.logger.LogInformation($"并发读写各{count}次总耗时：{stopwatch.Elapsed}");
+                stopwatch.Stop();
+                this.logger.LogInformation($"并发读写各{count}次总耗时：{stopwatch.Elapsed}");
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "influxdb_client_csharp异常");
+            }
         }
 
 
@@ -46,7 +52,7 @@ namespace Influxdb2
                 Name = $"{random.Next(1, 100)}体",
                 Price = random.NextDouble() * 100d,
                 SpecialOffer = random.NextDouble() < 0.5d,
-                CreateTime = DateTimeOffset.Now
+                Time = DateTime.UtcNow
             };
 
             await service.AddAsync(book);
