@@ -16,7 +16,7 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         public static string Encode(string? name)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (name == null)
             {
                 throw new ProtocolException($"标签或字段名的值不能为空");
             }
@@ -150,7 +150,7 @@ namespace Influxdb2.Client.Datas
         public static long? GetNsTimestamp(DateTimeOffset? dateTimeOffset)
         {
             return dateTimeOffset == null
-                ? default 
+                ? default
                 : dateTimeOffset.Value.Subtract(DateTimeOffset.UnixEpoch).Ticks * 100;
         }
     }
