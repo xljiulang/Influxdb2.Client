@@ -79,10 +79,16 @@ namespace Influxdb2
             var temperatures = tempTables.Single().ToModels<Temperature>();
 
 
+            var fn = FnBody.R
+                .MeasurementEquals($"{nameof(Temperature)}")
+                .And().ColumnEquals(Column.Field, "Value")
+                .And().ColumnEquals("Location", "west")
+                ;
+
             var meanTempFulx = Flux
                 .From("v6")
                 .Range(DateTimeOffset.Now.AddDays(-1d))
-                .Filter(FnBody.R.MeasurementEquals($"{nameof(Temperature)}").And().FieldEquals("Value"))
+                .Filter(fn)
                 .Sum();
 
             var sumTables = await infuxdb.QueryAsync(meanTempFulx);

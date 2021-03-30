@@ -36,13 +36,9 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public FnBody And(FnBody fn)
         {
-            if (this.ParamName != fn.ParamName)
-            {
-                throw new ArgumentException($"{nameof(fn)}的{nameof(ParamName)}必须为{ParamName}");
-            }
-            this.And();
-            this.builder.Append($"({fn})");
-            return this;
+            return this.ParamName == fn.ParamName
+                ? this.And().Then($"({fn})")
+                : throw new ArgumentException($"{nameof(fn)}的{nameof(ParamName)}必须为{ParamName}");
         }
 
         /// <summary>
@@ -51,8 +47,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public FnBody And()
         {
-            this.builder.Append(" and ");
-            return this;
+            return this.Then("and");
         }
 
         /// <summary>
@@ -62,14 +57,9 @@ namespace Influxdb2.Client
         /// <returns></returns> 
         public FnBody Or(FnBody fn)
         {
-            if (this.ParamName != fn.ParamName)
-            {
-                throw new ArgumentException($"{nameof(fn)}的{nameof(ParamName)}必须为{ParamName}");
-            }
-
-            this.Or();
-            this.builder.Append($"({fn})");
-            return this;
+            return this.ParamName == fn.ParamName
+                ? this.Or().Then($"({fn})")
+                : throw new ArgumentException($"{nameof(fn)}的{nameof(ParamName)}必须为{ParamName}");
         }
 
         /// <summary>
@@ -78,8 +68,7 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public FnBody Or()
         {
-            this.builder.Append(" or ");
-            return this;
+            return this.Then("or");
         }
 
         /// <summary>
@@ -89,59 +78,42 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public FnBody MeasurementEquals(string measurement)
         {
-            return this.WhenColumn("_measurement", "==", measurement);
+            return this.ColumnEquals("_measurement", measurement);
         }
 
         /// <summary>
-        /// _field列名等于
+        /// 指定列的值为目标值
         /// </summary>
-        /// <param name="field">名</param>
+        /// <param name="column">列名</param>
+        /// <param name="value">值</param>
         /// <returns></returns>
-        public FnBody FieldEquals(string field)
+        public FnBody ColumnEquals(string column, object value)
         {
-            return this.WhenColumn("_field", "==", field);
-        }
-
-        /// <summary>
-        /// 指定标签列的值等于
-        /// </summary>
-        /// <param name="tagName">名</param>
-        /// <param name="tagValue">值</param>
-        /// <returns></returns>
-        public FnBody TagEquals(string tagName, string tagValue)
-        {
-            return this.WhenColumn(tagName, "==", tagValue);
+            return this.Column(column, "==", value);
         }
 
         /// <summary>
         /// 当列符合条件时
         /// </summary> 
-        /// <param name="columnName">列名</param>
+        /// <param name="column">列名</param>
         /// <param name="op">比较符号</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public FnBody WhenColumn(string columnName, string op, object value)
+        public FnBody Column(string column, string op, object value)
         {
-            if (value is string stringValue)
-            {
-                builder.Append(@$"{this.ParamName}.{columnName} {op} ""{stringValue}""");
-            }
-            else
-            {
-                builder.Append(@$"{this.ParamName}.{columnName} {op} {value}");
-            }
-            return this;
+            return value is string stringValue
+                ? this.Then(@$"{this.ParamName}.{column} {op} ""{stringValue}""")
+                : this.Then(@$"{this.ParamName}.{column} {op} {value}");
         }
 
-
         /// <summary>
-        /// 追加body
+        /// 追加内容
         /// </summary>
-        /// <param name="fnBody"></param>
+        /// <param name="content">内容</param>
         /// <returns></returns>
-        public FnBody Then(string fnBody)
+        public FnBody Then(string content)
         {
-            builder.Append(" ").Append(fnBody);
+            builder.Append(' ').Append(content).Append(' ');
             return this;
         }
 

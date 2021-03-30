@@ -47,22 +47,22 @@ namespace Influxdb2.Client
             /// <summary>
             /// 添加管道
             /// </summary>
-            /// <param name="value">值，不包含管道符号 </param>
+            /// <param name="content">值，不包含管道符号 </param>
             /// <param name="behavior">单引号处理方式</param>
             /// <returns></returns>
-            public IFlux Pipe(string value, SingleQuotesBehavior behavior)
+            public IFlux Pipe(string content, SingleQuotesBehavior behavior)
             {
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(content))
                 {
                     return this;
                 }
 
                 if (behavior == SingleQuotesBehavior.Replace)
                 {
-                    value = RepaceSingleQuotes(value);
+                    content = RepaceSingleQuotes(content);
                 }
 
-                this.builder.AppendLine().Append("|> ").Append(value);
+                this.builder.AppendLine().Append("|> ").Append(content);
                 return this;
             }
 
