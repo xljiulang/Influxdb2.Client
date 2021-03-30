@@ -26,6 +26,7 @@ namespace influxdb_client_csharp
 
         public async Task<List<Book>> GetBooksAsync()
         {
+            // 这里借用Influxdb2.Client的Flux对象辅助生成查询字符串
             var flux = Flux
                 .From(options.DefaultBucket)
                 .Range("-3d")
