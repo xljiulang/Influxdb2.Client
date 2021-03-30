@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Influxdb2.Client
+﻿namespace Influxdb2.Client
 {
     /// <summary>
     /// 数据读取扩展
@@ -14,9 +11,14 @@ namespace Influxdb2.Client
         /// <typeparam name="TModel">模型类型</typeparam>
         /// <param name="dataTable"></param>
         /// <returns></returns>
-        public static IList<TModel> ToModels<TModel>(this IDataTable dataTable) where TModel : new()
+        public static TModel[] ToModels<TModel>(this IDataTable dataTable) where TModel : new()
         {
-            return dataTable.Select(item => item.ToModel<TModel>()).ToList();
+            var array = new TModel[dataTable.Count];
+            for (var i = 0; i < dataTable.Count; i++)
+            {
+                array[i] = dataTable[i].ToModel<TModel>();
+            }
+            return array;
         }
 
         /// <summary>
@@ -26,7 +28,7 @@ namespace Influxdb2.Client
         /// <param name="dataTable"></param>
         /// <param name="column"></param>
         /// <returns></returns> 
-        public static string? GetFirstValueOrDefault(this IDataTable dataTable, string column)  
+        public static string? GetFirstValueOrDefault(this IDataTable dataTable, string column)
         {
             return dataTable.Count > 0
                 ? dataTable[0].GetValueOrDefault(column)

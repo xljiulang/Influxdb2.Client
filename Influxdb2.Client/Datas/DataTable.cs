@@ -8,7 +8,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 数据表
     /// </summary> 
-    sealed class DataTable : IDataTable
+    sealed class DataTable : IDataTable, IEnumerable<IDataRow>
     {
         /// <summary>
         /// 获取所有数据行

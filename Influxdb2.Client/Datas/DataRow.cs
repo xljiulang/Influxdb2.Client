@@ -7,7 +7,7 @@ namespace Influxdb2.Client.Datas
     /// <summary>
     /// 数据行
     /// </summary>
-    sealed class DataRow : IDataRow
+    sealed class DataRow : IDataRow, IEnumerable<ColumnValue>
     {
         /// <summary>
         /// 键值映射
@@ -31,7 +31,7 @@ namespace Influxdb2.Client.Datas
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public string? this[int columnIndex] => this.Values[columnIndex]; 
+        public string? this[int columnIndex] => this.Values[columnIndex];
 
         /// <summary>
         /// 数据行

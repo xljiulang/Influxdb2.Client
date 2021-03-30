@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Influxdb2.Client
 {
     /// <summary>
     /// 数据表
     /// </summary>
-    public interface IDataTable : IEnumerable<IDataRow>
+    public interface IDataTable : IEnumerable
     {
         /// <summary>
         /// 获取数据行的数量
