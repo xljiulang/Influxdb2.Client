@@ -7,7 +7,7 @@ namespace Influxdb2
     {
         public string Location { get; set; }
 
-        public double Value { get; set; }
+        public double? Value { get; set; }
 
         // public DateTimeOffset _time { get; set; }
         [ColumnName(Column.Time)]    

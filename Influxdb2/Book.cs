@@ -14,14 +14,14 @@ namespace Influxdb2
 
 
         [ColumnType(ColumnType.Field)]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
 
         [ColumnType(ColumnType.Field)]
-        public bool SpecialOffer { get; set; }
+        public bool? SpecialOffer { get; set; }
 
 
         [ColumnType(ColumnType.Timestamp)]
-        public DateTimeOffset CreateTime { get; set; }
+        public DateTimeOffset? CreateTime { get; set; }
     }
 }
