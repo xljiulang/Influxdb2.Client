@@ -49,14 +49,20 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         public static string? EncodeFieldValue(string? value)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value) == false)
             {
-                return value;
+                value = EncodeFieldValueContent(value);
             }
+            return $"\"{value}\""; ;
 
-            var span = value.AsSpan();
-            if (span.IndexOfAny("\"\r\n") >= 0)
+            static string EncodeFieldValueContent(string content)
             {
+                var span = content.AsSpan();
+                if (span.IndexOfAny("\"\r\n") < 0)
+                {
+                    return content;
+                }
+
                 var buidler = new StringBuilder();
                 foreach (var c in span)
                 {
@@ -72,9 +78,7 @@ namespace Influxdb2.Client.Datas
                 }
                 return buidler.ToString();
             }
-            return value;
         }
-
 
         /// <summary>
         /// 创建字段值的转换器
@@ -108,10 +112,10 @@ namespace Influxdb2.Client.Datas
                 return value => value == null ? Throw() : value.ToString();
             }
 
+            // 文本类型的Field
             return value =>
             {
-                var encodeValue = EncodeFieldValue(value?.ToString());
-                return encodeValue == null ? null : @$"""{encodeValue}""";
+                return EncodeFieldValue(value?.ToString());
             };
 
             static string? Throw()

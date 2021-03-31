@@ -187,6 +187,22 @@ namespace Influxdb2.Client.Datas
                     : (value => value == null ? Throw(value) : Guid.Parse(value));
             }
 
+            if (targetType == typeof(Version))
+            {
+                return value => value == null ? default : Version.Parse(value);
+            }
+
+            if (targetType == typeof(Uri))
+            {
+                return value => value == null ? default : new Uri(value);
+            }
+
+            if (targetType == typeof(Type))
+            {
+                return value => value == null ? default : Type.GetType(value);
+            }
+
+
             return value => Throw(value);
 
             object Throw(string? value)

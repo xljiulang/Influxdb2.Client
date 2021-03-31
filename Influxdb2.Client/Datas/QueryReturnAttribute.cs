@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
 
@@ -33,8 +34,9 @@ namespace Influxdb2.Client.Datas
                     }
                 }
 
+                var encoding = response.Content.GetEncoding(); 
                 using var stream = await response.Content.ReadAsStreamAsync();
-                var csvReader = new CsvReader(stream);
+                var csvReader = new CsvReader(stream, encoding);
                 context.Result = await DataTableCollection.ParseAsync(csvReader);
             }
         }

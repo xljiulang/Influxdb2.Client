@@ -28,9 +28,10 @@ namespace Influxdb2.Client.Datas
         /// Csv读取器
         /// </summary>
         /// <param name="stream"></param>
-        public CsvReader(Stream stream)
+        /// <param name="encoding"></param>
+        public CsvReader(Stream stream, Encoding encoding)
         {
-            this.reader = new StreamReader(stream, Encoding.UTF8, false, 8 * 1024, true);
+            this.reader = new StreamReader(stream, encoding, false, 8 * 1024, true);
         }
 
         /// <summary>
@@ -132,7 +133,7 @@ namespace Influxdb2.Client.Datas
                 value = value[1..^1];
             }
 
-            return value.ToString().Replace("\"\"", "\"");
+            return value.ToString().Replace("\"\"", "\"", StringComparison.InvariantCulture);
         }
     }
 }
