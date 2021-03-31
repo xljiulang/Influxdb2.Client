@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Influxdb2.Client.Datas
+namespace Influxdb2.Client.Implementations
 {
     /// <summary>
     /// 表示模型描述器

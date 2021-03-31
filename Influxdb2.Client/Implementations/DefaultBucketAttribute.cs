@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
 
-namespace Influxdb2.Client.Datas
+namespace Influxdb2.Client.Implementations
 {
     /// <summary>
     /// 默认bucket

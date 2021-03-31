@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiClientCore.Internals;
 
-namespace Influxdb2.Client.Datas
+namespace Influxdb2.Client.Implementations
 {
     /// <summary>
     /// 表示LineProtocol的http内容

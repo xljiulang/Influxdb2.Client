@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using WebApiClientCore.Internals;
 
-namespace Influxdb2.Client.Datas
+namespace Influxdb2.Client.Implementations
 {
     /// <summary>
     /// 表示属性描述

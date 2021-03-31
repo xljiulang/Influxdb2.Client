@@ -3,34 +3,28 @@ using System.Threading.Tasks;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
 
-namespace Influxdb2.Client.Datas
+namespace Influxdb2.Client.Implementations
 {
     /// <summary>
-    /// LineProtocol内容
+    /// 实体集合内容特性
     /// </summary>
-    sealed class LineProtocolContentAttribute : HttpContentAttribute
+    sealed class EntityArrayContentAttribute : HttpContentAttribute
     {
-        /// <summary>
-        /// 写入内容
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         protected override Task SetHttpContentAsync(ApiParameterContext context)
         {
-            var entity = context.ParameterValue;
-            if (entity == null)
+            if (context.ParameterValue is not Array entities)
             {
                 throw new ArgumentNullException(context.ParameterName);
             }
 
-            if (entity is not IPoint point)
-            {
-                point = new Point(entity);
-            }
-
             var content = new LineProtocolContent();
-            point.WriteLineProtocol(content);
             context.HttpContext.RequestMessage.Content = content;
+
+            foreach (var entity in entities)
+            {
+                var point = new Point(entity);
+                point.WriteLineProtocol(content);
+            }
 
             return Task.CompletedTask;
         }

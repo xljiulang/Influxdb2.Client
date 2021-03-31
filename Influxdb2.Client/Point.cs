@@ -1,4 +1,4 @@
-﻿using Influxdb2.Client.Datas;
+﻿using Influxdb2.Client.Implementations;
 using System;
 
 namespace Influxdb2.Client

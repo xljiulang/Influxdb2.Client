@@ -2,7 +2,7 @@
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
 
-namespace Influxdb2.Client.Datas
+namespace Influxdb2.Client.Implementations
 {
     /// <summary>
     /// 写入返回检测

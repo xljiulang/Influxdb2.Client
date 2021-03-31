@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Influxdb2.Client.Datas
+namespace Influxdb2.Client.Implementations
 {
     /// <summary>
     /// 模型属性描述器
