@@ -26,9 +26,8 @@ namespace Influxdb2.Client.Core
         /// <summary>
         /// 添加char
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public ValueStringBuilder Append(char value)
+        /// <param name="value"></param> 
+        public void Append(char value)
         {
             var newSize = this.index + 1;
             if (newSize > this.chars.Length)
@@ -38,7 +37,6 @@ namespace Influxdb2.Client.Core
 
             this.chars.Slice(this.index)[0] = value;
             this.index = newSize;
-            return this;
         }
 
         /// <summary>
@@ -46,11 +44,11 @@ namespace Influxdb2.Client.Core
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public ValueStringBuilder Append(ReadOnlySpan<char> value)
+        public void Append(ReadOnlySpan<char> value)
         {
             if (value.IsEmpty)
             {
-                return this;
+                return;
             }
 
             var newSize = this.index + value.Length;
@@ -61,7 +59,6 @@ namespace Influxdb2.Client.Core
 
             value.CopyTo(this.chars.Slice(this.index));
             this.index = newSize;
-            return this;
         }
 
         /// <summary>

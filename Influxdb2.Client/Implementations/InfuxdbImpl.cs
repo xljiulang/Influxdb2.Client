@@ -42,7 +42,11 @@ namespace Influxdb2.Client.Implementations
         public async Task<TModel[]> QueryAsync<TModel>(string flux, string? org = default) where TModel : new()
         {
             var tables = await this.QueryAsync(flux, org);
-            return tables.EnsureNoError().SelectMany(item => item.ToModels<TModel>()).ToArray();
+            tables.EnsureNoError();
+
+            return tables.Count == 1 
+                ? tables[0].ToModels<TModel>() 
+                : tables.SelectMany(item => item.ToModels<TModel>()).ToArray();
         }
 
         /// <summary>
