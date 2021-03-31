@@ -1,7 +1,5 @@
-﻿using Influxdb2.Client.Implementations;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebApiClientCore.Attributes;
 
 namespace Influxdb2.Client
 {
@@ -11,46 +9,62 @@ namespace Influxdb2.Client
     public interface IInfuxdb
     {
         /// <summary>
-        /// 写入数据
+        /// 查询数据
         /// </summary>
+        /// <param name="flux">flux表达式</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        Task<IDataTableCollection> QueryAsync(IFlux flux, string? org = default);
+
+        /// <summary>
+        /// 查询数据
+        /// </summary>
+        /// <param name="flux">flux表达式</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        Task<IDataTableCollection> QueryAsync(string flux, string? org = default);
+
+
+
+        /// <summary>
+        /// 写入实体
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
         /// <param name="entity">ColumnTypeAttribute标记的实体</param>
         /// <param name="bucket">空间名</param>
         /// <param name="org">组织</param>
         /// <returns></returns>
-        [WriteReturn]
-        [HttpPost("/api/v2/write")]
-        Task WriteAsync([Required, LineProtocolContent] object entity, [DefaultBucket] string? bucket = default, [DefaultOrg] string? org = default);
+        Task<int> WriteAsync<TEntity>(TEntity entity, string? bucket = default, string? org = default) where TEntity : notnull;
 
         /// <summary>
-        /// 写入数据
+        /// 写入实体
         /// </summary>
-        /// <param name="point">数据点</param>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="entities">ColumnTypeAttribute标记的实体</param>
         /// <param name="bucket">空间名</param>
         /// <param name="org">组织</param>
         /// <returns></returns>
-        [WriteReturn]
-        [HttpPost("/api/v2/write")]
-        Task WriteAsync([Required, LineProtocolContent] IPoint point, [DefaultBucket] string? bucket = default, [DefaultOrg] string? org = default);
+        Task<int> WriteAsync<TEntity>(IEnumerable<TEntity> entities, string? bucket = default, string? org = default) where TEntity : notnull;
+
+
+
+        /// <summary>
+        /// 写入数据点
+        /// </summary>
+        /// <param name="entity">数据点</param>
+        /// <param name="bucket">空间名</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        Task<int> WritePointAsync(IPoint point, string? bucket = default, string? org = default);
 
 
         /// <summary>
-        /// 查询数据
+        /// 写入数据点
         /// </summary>
-        /// <param name="flux">flux表达式</param>
+        /// <param name="points">数据点</param>
+        /// <param name="bucket">空间名</param>
         /// <param name="org">组织</param>
         /// <returns></returns>
-        [QueryReturn]
-        [HttpPost("/api/v2/query")]
-        Task<IDataTableCollection> QueryAsync([Required, FluxContent] IFlux flux, [DefaultOrg] string? org = default);
-
-        /// <summary>
-        /// 查询数据
-        /// </summary>
-        /// <param name="flux">flux表达式</param>
-        /// <param name="org">组织</param>
-        /// <returns></returns>
-        [QueryReturn]
-        [HttpPost("/api/v2/query")]
-        Task<IDataTableCollection> QueryAsync([Required, FluxContent] string flux, [DefaultOrg] string? org = default);
+        Task<int> WritePointAsync(IEnumerable<IPoint> points, string? bucket = default, string? org = default);
     }
 }

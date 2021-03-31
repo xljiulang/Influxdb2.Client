@@ -140,7 +140,7 @@ namespace Influxdb2.Client
             /// </summary>
             /// <exception cref="InvalidOperationException"></exception> 
             /// <param name="writer">写入器 </param>
-            public void WriteLineProtocol(ILineProtocolWriter writer)
+            public void WriteTo(ILineProtocolWriter writer)
             {
                 if (this.builder.fields.Count == 0)
                 {

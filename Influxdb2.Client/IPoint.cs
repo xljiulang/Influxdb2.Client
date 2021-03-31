@@ -9,6 +9,6 @@
         /// 写入行文本协议内容
         /// </summary>
         /// <param name="writer">写入器 </param>
-        void WriteLineProtocol(ILineProtocolWriter writer);
+        void WriteTo(ILineProtocolWriter writer);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Influxdb2.Client;
+using Influxdb2.Client.Implementations;
 using Microsoft.Extensions.Options;
 using System;
 
@@ -28,7 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IHttpClientBuilder AddInfuxdb(this IServiceCollection services)
         {
             return services
-                .AddHttpApi<IInfuxdb>()
+                .AddTransient<IInfuxdb, InfuxdbImpl>()
+                .AddHttpApi<IInfuxdbApi>()
                 .ConfigureHttpClient((sp, httpClient) =>
                 {
                     var infuxdb = sp.GetRequiredService<IOptionsMonitor<InfuxdbOptions>>().CurrentValue;

@@ -27,7 +27,7 @@ namespace Influxdb2.Client
         /// 写入行文本协议内容
         /// </summary>
         /// <param name="writer">写入器 </param>
-        public void WriteLineProtocol(ILineProtocolWriter writer)
+        public void WriteTo(ILineProtocolWriter writer)
         {
             writer.Write(desciptor.Utf8Measurement);
             foreach (var tag in desciptor.Tags)

@@ -5,12 +5,12 @@ using WebApiClientCore.Attributes;
 namespace Influxdb2.Client.Implementations
 {
     /// <summary>
-    /// 写入返回检测
+    /// Influxdb返回验证
     /// </summary>
-    sealed class WriteReturnAttribute : SpecialReturnAttribute
+    sealed class InfuxdbReturnAttribute : SpecialReturnAttribute
     {
         /// <summary>
-        /// 检测结果的正确性
+        /// 设置结果
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
