@@ -24,7 +24,7 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         public PointBuilder(string measurement)
         {
-            this.measurement = LineProtocolUtil.Encode(measurement);
+            this.measurement = LineProtocolUtil.Encode(measurement, escapeEqual: false);
         }
 
         /// <summary>
