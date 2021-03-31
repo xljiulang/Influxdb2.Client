@@ -1,6 +1,6 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
-using System.Text;
+using System.Buffers;
 
 namespace Influxdb2.Client
 {
@@ -9,28 +9,8 @@ namespace Influxdb2.Client
     /// </summary>
     public class Point : IPoint
     {
-        /// <summary>
-        /// 获取行文本协议内容
-        /// </summary>
-        public string LineProtocol { get; }
-
-        /// <summary>
-        /// 数据点
-        /// </summary>
-        /// <param name="lineProtocol">数据点的行文本协议</param>
-        public Point(string lineProtocol)
-        {
-            this.LineProtocol = lineProtocol;
-        }
-
-        /// <summary>
-        /// 数据点
-        /// </summary>
-        /// <param name="lineProtocol">数据点的行文本协议</param>
-        public Point(StringBuilder lineProtocol)
-        {
-            this.LineProtocol = lineProtocol.ToString();
-        }
+        private readonly object entity;
+        private readonly EntityDesciptor desciptor;
 
         /// <summary>
         /// 实体数据点
@@ -40,21 +20,29 @@ namespace Influxdb2.Client
         /// <exception cref="ProtocolException"></exception>
         public Point(object entity)
         {
-            var desciptor = EntityDesciptor.Get(entity.GetType());
-            var builder = new StringBuilder(desciptor.Measurement);
+            this.entity = entity;
+            this.desciptor = EntityDesciptor.Get(entity.GetType());
+        }
 
+        /// <summary>
+        /// 写入行文本协议内容
+        /// </summary>
+        /// <param name="writer">写入器 </param>
+        public void WriteLineProtocol(ILineProtocolWriter writer)
+        {
+            writer.Write(desciptor.Measurement);
             foreach (var tag in desciptor.Tags)
             {
                 var value = tag.GetStringValue(entity);
-                builder.Append(',').Append(tag.Name).Append('=').Append(value);
+                writer.Write(",").Write(tag.Name).Write("=").Write(value);
             }
 
             var firstField = true;
             foreach (var field in desciptor.Fields)
             {
                 var value = field.GetStringValue(entity);
-                var divider = firstField ? ' ' : ',';
-                builder.Append(divider).Append(field.Name).Append('=').Append(value);
+                var divider = firstField ? " " : ",";
+                writer.Write(divider).Write(field.Name).Write("=").Write(value);
                 firstField = false;
             }
 
@@ -63,20 +51,9 @@ namespace Influxdb2.Client
                 var timestamp = desciptor.Timestamp.GetStringValue(entity);
                 if (timestamp != null)
                 {
-                    builder.Append(' ').Append(timestamp);
+                    writer.Write(" ").Write(timestamp);
                 }
             }
-
-            this.LineProtocol = builder.ToString();
-        }
-
-        /// <summary>
-        /// 转换为文本 
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return this.LineProtocol;
         }
     }
 }

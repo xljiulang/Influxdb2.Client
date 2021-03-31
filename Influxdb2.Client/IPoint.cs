@@ -6,8 +6,9 @@
     public interface IPoint
     {
         /// <summary>
-        /// 获取行文本协议内容
+        /// 写入行文本协议内容
         /// </summary>
-        string LineProtocol { get; }
+        /// <param name="writer">写入器 </param>
+        void WriteLineProtocol(ILineProtocolWriter writer);
     }
 }

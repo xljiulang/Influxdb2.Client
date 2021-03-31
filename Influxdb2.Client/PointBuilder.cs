@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Influxdb2.Client
 {
@@ -121,34 +120,53 @@ namespace Influxdb2.Client
         /// <returns></returns>
         public IPoint Build()
         {
-            if (this.fields.Count == 0)
-            {
-                throw new InvalidOperationException($"至少设置一个Field值");
-            }
-
-            var builder = new StringBuilder(this.measurement);
-            foreach (var item in this.tags.OrderBy(item => item.Column))
-            {
-                builder.Append(',').Append(item.Column).Append('=').Append(item.Value);
-            }
-
-            var firstField = true;
-            foreach (var item in this.fields.OrderBy(item => item.Column))
-            {
-                var divider = firstField ? ' ' : ',';
-                builder.Append(divider).Append(item.Column).Append('=').Append(item.Value);
-                firstField = false;
-            }
-
-            if (this.timestamp != null)
-            {
-                builder.Append(' ').Append(this.timestamp.ToString());
-            }
-
-            return new Point(builder);
+            return new BuilderPoint(this);
         }
 
+        /// <summary>
+        /// Builder对应的数据点
+        /// </summary>
+        private class BuilderPoint : IPoint
+        {
+            private readonly PointBuilder builder;
 
+            public BuilderPoint(PointBuilder builder)
+            {
+                this.builder = builder;
+            }
+
+            /// <summary>
+            /// 写入行文本协议内容
+            /// </summary>
+            /// <exception cref="InvalidOperationException"></exception> 
+            /// <param name="writer">写入器 </param>
+            public void WriteLineProtocol(ILineProtocolWriter writer)
+            {
+                if (this.builder.fields.Count == 0)
+                {
+                    throw new InvalidOperationException($"至少设置一个Field值");
+                }
+
+                writer.Write(this.builder.measurement);
+                foreach (var item in this.builder.tags.OrderBy(item => item.Column))
+                {
+                    writer.Write(",").Write(item.Column).Write("=").Write(item.Value);
+                }
+
+                var firstField = true;
+                foreach (var item in this.builder.fields.OrderBy(item => item.Column))
+                {
+                    var divider = firstField ? " " : ",";
+                    writer.Write(divider).Write(item.Column).Write("=").Write(item.Value);
+                    firstField = false;
+                }
+
+                if (this.builder.timestamp != null)
+                {
+                    writer.Write(" ").Write(this.builder.timestamp.ToString());
+                }
+            }
+        }
 
         /// <summary>
         /// ColumnValue集合
