@@ -8,6 +8,9 @@ namespace Influxdb2.Client.Datas
     /// </summary>
     static class LineProtocolUtil
     {
+        private static readonly char[] encodeChars = new char[] { ',', '=', ' ', '\r', '\n' };
+        private static readonly char[] encodeFieldValueChars = new char[] { '"', '\r', '\n' };
+
         /// <summary>
         /// 对标签或字段名进行编码
         /// </summary>
@@ -21,25 +24,25 @@ namespace Influxdb2.Client.Datas
                 throw new ProtocolException($"标签或字段名的值不能为空");
             }
 
-            var span = name.AsSpan();
-            if (span.IndexOfAny(",= \r\n") >= 0)
+            if (name.IndexOfAny(encodeChars) < 0)
             {
-                var buidler = new StringBuilder();
-                foreach (var c in span)
-                {
-                    if (c == '\r' || c == '\n')
-                    {
-                        continue;
-                    }
-                    if (c == ',' || c == '=' || c == ' ')
-                    {
-                        buidler.Append('\\');
-                    }
-                    buidler.Append(c);
-                }
-                return buidler.ToString();
+                return name;
             }
-            return name;
+
+            var builder = new StringBuilder();
+            foreach (var c in name)
+            {
+                if (c == '\r' || c == '\n')
+                {
+                    continue;
+                }
+                if (c == ',' || c == '=' || c == ' ')
+                {
+                    builder.Append('\\');
+                }
+                builder.Append(c);
+            }
+            return builder.ToString();
         }
 
         /// <summary>
@@ -49,35 +52,30 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         public static string? EncodeFieldValue(string? value)
         {
-            if (string.IsNullOrWhiteSpace(value) == false)
+            var builder = new StringBuilder().Append('"');
+            if (string.IsNullOrEmpty(value) == false)
             {
-                value = EncodeFieldValueContent(value);
-            }
-            return $"\"{value}\""; ;
-
-            static string EncodeFieldValueContent(string content)
-            {
-                var span = content.AsSpan();
-                if (span.IndexOfAny("\"\r\n") < 0)
+                if (value.IndexOfAny(encodeFieldValueChars) < 0)
                 {
-                    return content;
+                    builder.Append(value);
                 }
-
-                var buidler = new StringBuilder();
-                foreach (var c in span)
+                else
                 {
-                    if (c == '\r' || c == '\n')
+                    foreach (var c in value)
                     {
-                        continue;
+                        if (c == '\r' || c == '\n')
+                        {
+                            continue;
+                        }
+                        if (c == '"')
+                        {
+                            builder.Append('\\');
+                        }
+                        builder.Append(c);
                     }
-                    if (c == '"')
-                    {
-                        buidler.Append('\\');
-                    }
-                    buidler.Append(c);
                 }
-                return buidler.ToString();
             }
+            return builder.Append('"').ToString();
         }
 
         /// <summary>
