@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 namespace Influxdb2.Client.Core
 {
@@ -23,7 +22,7 @@ namespace Influxdb2.Client.Core
                 throw new ProtocolException($"标签或字段名的值不能为空");
             }
 
-            var builder = new StringBuilder();
+            var builder = new ValueStringBuilder(stackalloc char[256]);
             foreach (var c in name)
             {
                 switch (c)
@@ -60,7 +59,7 @@ namespace Influxdb2.Client.Core
         /// <returns></returns>
         public static string? EncodeFieldValue(string? value)
         {
-            var builder = new StringBuilder().Append('"');
+            var builder = new ValueStringBuilder(stackalloc char[256]).Append('"');
             if (string.IsNullOrEmpty(value) == false)
             {
                 if (value.IndexOfAny(encodeFieldValueChars) < 0)
