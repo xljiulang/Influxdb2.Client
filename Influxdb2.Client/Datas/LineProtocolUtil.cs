@@ -8,8 +8,7 @@ namespace Influxdb2.Client.Datas
     /// </summary>
     static class LineProtocolUtil
     {
-        private static readonly char[] encodeChars = new char[] { ',', '=', ' ', '\r', '\n' };
-        private static readonly char[] encodeFieldValueChars = new char[] { '"', '\r', '\n' };
+        private static readonly char[] encodeFieldValueChars = new char[] { '"', '\\' };
 
         /// <summary>
         /// 对标签或字段名进行编码
@@ -17,28 +16,37 @@ namespace Influxdb2.Client.Datas
         /// <param name="name">名称</param>
         /// <exception cref="ProtocolException"></exception>
         /// <returns></returns>
-        public static string Encode(string? name)
+        public static string Encode(string? name, bool escapeEqual = true)
         {
             if (name == null)
             {
                 throw new ProtocolException($"标签或字段名的值不能为空");
             }
 
-            if (name.IndexOfAny(encodeChars) < 0)
-            {
-                return name;
-            }
-
             var builder = new StringBuilder();
             foreach (var c in name)
             {
-                if (c == '\r' || c == '\n')
+                switch (c)
                 {
-                    continue;
-                }
-                if (c == ',' || c == '=' || c == ' ')
-                {
-                    builder.Append('\\');
+                    case '\r':
+                        builder.Append("\\r");
+                        continue;
+                    case '\n':
+                        builder.Append("\\n");
+                        continue;
+                    case '\t':
+                        builder.Append("\\t");
+                        continue;
+                    case ' ':
+                    case ',':
+                        builder.Append('\\');
+                        break;
+                    case '=':
+                        if (escapeEqual == true)
+                        {
+                            builder.Append('\\');
+                        }
+                        break;
                 }
                 builder.Append(c);
             }
@@ -63,11 +71,7 @@ namespace Influxdb2.Client.Datas
                 {
                     foreach (var c in value)
                     {
-                        if (c == '\r' || c == '\n')
-                        {
-                            continue;
-                        }
-                        if (c == '"')
+                        if (c == '"' || c == '\\')
                         {
                             builder.Append('\\');
                         }
