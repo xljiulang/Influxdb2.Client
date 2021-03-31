@@ -14,11 +14,6 @@ namespace Influxdb2.Client.Core
         private readonly Func<string?, object?> valueConverter;
 
         /// <summary>
-        /// 是否为Field类型
-        /// </summary>
-        public bool? IsFieldColumn { get; }
-
-        /// <summary>
         /// 模型属性描述器
         /// </summary>
         /// <param name="property"></param>
@@ -26,13 +21,9 @@ namespace Influxdb2.Client.Core
             : base(property)
         {
             var typeAttr = property.GetCustomAttribute<ColumnTypeAttribute>();
-            if (typeAttr != null)
+            if (typeAttr != null && typeAttr.ColumnType == ColumnType.Timestamp)
             {
-                if (typeAttr.ColumnType == ColumnType.Timestamp)
-                {
-                    this.Name = Column.Time;
-                }
-                this.IsFieldColumn = typeAttr.ColumnType == ColumnType.Field;
+                this.Name = Column.Time;
             }
 
             var nameAttr = property.GetCustomAttribute<ColumnNameAttribute>();
