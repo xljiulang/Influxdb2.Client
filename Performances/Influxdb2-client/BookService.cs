@@ -1,6 +1,5 @@
 ﻿using Influxdb2.Client;
 using Microsoft.Extensions.Options;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace influxdb2_client
@@ -32,8 +31,7 @@ namespace influxdb2_client
                 .Limit(10)
                 ;
 
-            var tables = await infuxdb.QueryAsync(flux);
-            return tables.Single().ToModels<Book>();
+            return await infuxdb.QueryAsync<Book>(flux);
         }
     }
 }

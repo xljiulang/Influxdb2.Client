@@ -11,6 +11,25 @@ namespace Influxdb2.Client
         /// <summary>
         /// 查询数据
         /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <param name="flux">flux表达式</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        Task<TModel[]> QueryAsync<TModel>(IFlux flux, string? org = default) where TModel : new();
+
+        /// <summary>
+        /// 查询数据
+        /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <param name="flux">flux表达式</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        Task<TModel[]> QueryAsync<TModel>(string flux, string? org = default) where TModel : new();
+
+
+        /// <summary>
+        /// 查询数据
+        /// </summary>
         /// <param name="flux">flux表达式</param>
         /// <param name="org">组织</param>
         /// <returns></returns>

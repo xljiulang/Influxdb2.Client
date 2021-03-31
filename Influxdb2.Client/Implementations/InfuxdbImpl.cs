@@ -21,6 +21,31 @@ namespace Influxdb2.Client.Implementations
         }
 
         /// <summary>
+        /// 查询数据
+        /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <param name="flux">flux表达式</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        public Task<TModel[]> QueryAsync<TModel>(IFlux flux, string? org = default) where TModel : new()
+        {
+            return this.QueryAsync<TModel>(flux.ToString(), org);
+        }
+
+        /// <summary>
+        /// 查询数据
+        /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <param name="flux">flux表达式</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        public async Task<TModel[]> QueryAsync<TModel>(string flux, string? org = default) where TModel : new()
+        {
+            var tables = await this.QueryAsync(flux, org);
+            return tables.EnsureNoError().SelectMany(item => item.ToModels<TModel>()).ToArray();
+        }
+
+        /// <summary>
         /// 查询
         /// </summary>
         /// <param name="flux"></param>
