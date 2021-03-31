@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
-using WebApiClientCore.Internals;
 
 namespace Influxdb2.Client.Core
 {

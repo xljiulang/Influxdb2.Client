@@ -30,7 +30,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             return services
                 .AddTransient<IInfuxdb, InfuxdbImpl>()
-                .AddHttpApi<IInfuxdbApi>()
+                .AddTransient<InfuxdbClient>()
+                .AddHttpClient(nameof(InfuxdbClient))
                 .ConfigureHttpClient((sp, httpClient) =>
                 {
                     var infuxdb = sp.GetRequiredService<IOptionsMonitor<InfuxdbOptions>>().CurrentValue;

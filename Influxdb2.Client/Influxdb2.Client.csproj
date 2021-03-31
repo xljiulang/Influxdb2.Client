@@ -7,7 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="WebApiClientCore" Version="2.0.1" />
+		<PackageReference Include="System.Text.Json" Version="4.6.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
 	</ItemGroup>
 
 </Project>

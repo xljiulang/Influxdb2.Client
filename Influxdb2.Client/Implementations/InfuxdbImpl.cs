@@ -1,9 +1,5 @@
-﻿using Influxdb2.Client.Datas;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Influxdb2.Client.Implementations
@@ -13,18 +9,15 @@ namespace Influxdb2.Client.Implementations
     /// </summary>
     sealed class InfuxdbImpl : IInfuxdb
     {
-        private readonly IInfuxdbApi infuxdbApi;
-        private readonly InfuxdbOptions options;
+        private readonly InfuxdbClient infuxdbClient;
 
         /// <summary>
         /// IInfuxdb实现
         /// </summary>
-        /// <param name="infuxdb"></param>
-        /// <param name="options"></param>
-        public InfuxdbImpl(IInfuxdbApi infuxdb, IOptionsMonitor<InfuxdbOptions> options)
+        /// <param name="infuxdbClient"></param>
+        public InfuxdbImpl(InfuxdbClient infuxdbClient)
         {
-            this.infuxdbApi = infuxdb;
-            this.options = options.CurrentValue;
+            this.infuxdbClient = infuxdbClient;
         }
 
         /// <summary>
@@ -46,11 +39,8 @@ namespace Influxdb2.Client.Implementations
         /// <returns></returns>
         public async Task<IDataTableCollection> QueryAsync(string flux, string? org = null)
         {
-            var orgValue = (org ?? this.options.DefaultOrg) ?? throw new ArgumentNullException(nameof(org));
             using var content = new FluxContent(flux);
-            var stream = await this.infuxdbApi.QueryAsync(content, orgValue);
-            var csvReader = new CsvReader(stream, Encoding.UTF8);
-            return await DataTableCollection.ParseAsync(csvReader);
+            return await this.infuxdbClient.QueryAsync(content, org);
         }
 
         /// <summary>
@@ -61,10 +51,10 @@ namespace Influxdb2.Client.Implementations
         /// <param name="bucket"></param>
         /// <param name="org"></param>
         /// <returns></returns>
-        public async Task<int> WriteAsync<TEntity>(TEntity entity, string? bucket = null, string? org = null) where TEntity : notnull
+        public Task<int> WriteAsync<TEntity>(TEntity entity, string? bucket = null, string? org = null) where TEntity : notnull
         {
             var point = new Point(entity);
-            return await this.WritePointAsync(point);
+            return this.WritePointAsync(point);
         }
 
         /// <summary>
@@ -120,10 +110,7 @@ namespace Influxdb2.Client.Implementations
                 }
             }
 
-            var orgValue = (org ?? this.options.DefaultOrg) ?? throw new ArgumentNullException(nameof(org));
-            var bucketValue = (bucket ?? this.options.DefaultBucket) ?? throw new ArgumentNullException(nameof(bucket));
-
-            await this.infuxdbApi.WriteAsync(content, bucketValue, orgValue);
+            await this.infuxdbClient.WriteAsync(content, bucket, org);
             return count;
         }
     }

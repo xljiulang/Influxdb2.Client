@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Influxdb2.Client.Core;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using WebApiClientCore.Internals;
 
 namespace Influxdb2.Client.Implementations
 {
