@@ -28,11 +28,10 @@ namespace Influxdb2.Client.Datas
                 point = new Point(entity);
             }
 
-            var writer = new LineProtocolWriter();
-            point.WriteLineProtocol(writer);
-
-            var content = new LineProtocolContent(writer);
+            var content = new LineProtocolContent();
+            point.WriteLineProtocol(content);
             context.HttpContext.RequestMessage.Content = content;
+
             return Task.CompletedTask;
         }
     }

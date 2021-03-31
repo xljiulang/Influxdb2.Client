@@ -150,20 +150,27 @@ namespace Influxdb2.Client
                 writer.Write(this.builder.measurement);
                 foreach (var item in this.builder.tags.OrderBy(item => item.Column))
                 {
-                    writer.Write(",").Write(item.Column).Write("=").Write(item.Value);
+                    writer.WriteComma().Write(item.Column).WriteEqual().Write(item.Value);
                 }
 
                 var firstField = true;
                 foreach (var item in this.builder.fields.OrderBy(item => item.Column))
                 {
-                    var divider = firstField ? " " : ",";
-                    writer.Write(divider).Write(item.Column).Write("=").Write(item.Value);
-                    firstField = false;
+                    if (firstField == true)
+                    {
+                        firstField = false;
+                        writer.WriteSpace();
+                    }
+                    else
+                    {
+                        writer.WriteComma();
+                    }
+                    writer.Write(item.Column).WriteEqual().Write(item.Value);
                 }
 
                 if (this.builder.timestamp != null)
                 {
-                    writer.Write(" ").Write(this.builder.timestamp.ToString());
+                    writer.WriteSpace().Write(this.builder.timestamp.ToString());
                 }
             }
         }

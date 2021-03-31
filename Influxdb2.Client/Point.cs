@@ -1,6 +1,5 @@
 ﻿using Influxdb2.Client.Datas;
 using System;
-using System.Buffers;
 
 namespace Influxdb2.Client
 {
@@ -30,20 +29,28 @@ namespace Influxdb2.Client
         /// <param name="writer">写入器 </param>
         public void WriteLineProtocol(ILineProtocolWriter writer)
         {
-            writer.Write(desciptor.Measurement);
+            writer.Write(desciptor.Utf8Measurement);
             foreach (var tag in desciptor.Tags)
             {
                 var value = tag.GetStringValue(entity);
-                writer.Write(",").Write(tag.Name).Write("=").Write(value);
+                writer.WriteComma().Write(tag.Utf8Name).WriteEqual().Write(value);
             }
 
             var firstField = true;
             foreach (var field in desciptor.Fields)
             {
+                if (firstField == true)
+                {
+                    firstField = false;
+                    writer.WriteSpace();
+                }
+                else
+                {
+                    writer.WriteComma();
+                }
+
                 var value = field.GetStringValue(entity);
-                var divider = firstField ? " " : ",";
-                writer.Write(divider).Write(field.Name).Write("=").Write(value);
-                firstField = false;
+                writer.Write(field.Utf8Name).WriteEqual().Write(value);
             }
 
             if (desciptor.Timestamp != null)
@@ -51,7 +58,7 @@ namespace Influxdb2.Client
                 var timestamp = desciptor.Timestamp.GetStringValue(entity);
                 if (timestamp != null)
                 {
-                    writer.Write(" ").Write(timestamp);
+                    writer.WriteSpace().Write(timestamp);
                 }
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Text;
 
 namespace Influxdb2.Client.Datas
 {
@@ -12,6 +13,11 @@ namespace Influxdb2.Client.Datas
         /// 获取列类型
         /// </summary>
         public ColumnType ColumnType { get; }
+
+        /// <summary>
+        /// 获取utf8名称
+        /// </summary>
+        public byte[] Utf8Name { get; }
 
         /// <summary>
         /// 值转换器
@@ -34,8 +40,9 @@ namespace Influxdb2.Client.Datas
             var nameAttr = property.GetCustomAttribute<ColumnNameAttribute>();
             if (nameAttr != null)
             {
-                this.Name = nameAttr.Name;
+                this.Name = LineProtocolUtil.Encode(nameAttr.Name);
             }
+            this.Utf8Name = Encoding.UTF8.GetBytes(this.Name);
 
             var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
             if (this.ColumnType == ColumnType.Timestamp)

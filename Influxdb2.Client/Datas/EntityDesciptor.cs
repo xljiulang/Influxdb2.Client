@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Influxdb2.Client.Datas
 {
@@ -31,6 +32,11 @@ namespace Influxdb2.Client.Datas
         /// 获取Measurement
         /// </summary>
         public string Measurement { get; }
+
+        /// <summary>
+        /// utf8表示的Measurement
+        /// </summary>
+        public byte[] Utf8Measurement { get; }
 
         /// <summary>
         /// 获取所有字段
@@ -76,6 +82,7 @@ namespace Influxdb2.Client.Datas
             }
 
             this.Measurement = entityType.Name;
+            this.Utf8Measurement = Encoding.UTF8.GetBytes(entityType.Name);
             this.Tags = tags;
             this.Fields = fields;
             this.Timestamp = timestamps.FirstOrDefault();

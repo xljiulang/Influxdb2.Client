@@ -11,12 +11,12 @@ namespace Influxdb2.Client.Datas
     /// </summary>
     sealed class FluxContentAttribute : HttpContentAttribute
     {
-        private const string mediaType = "application/vnd.flux";
+        private const string MediaType = "application/vnd.flux";
 
         protected override Task SetHttpContentAsync(ApiParameterContext context)
         {
             var flux = context.ParameterValue?.ToString();
-            var fluxContent = new StringContent(flux, Encoding.UTF8, mediaType);
+            var fluxContent = new StringContent(flux, Encoding.UTF8, MediaType);
             context.HttpContext.RequestMessage.Content = fluxContent;
             return Task.CompletedTask;
         }
