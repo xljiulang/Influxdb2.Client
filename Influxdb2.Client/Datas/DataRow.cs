@@ -58,19 +58,21 @@ namespace Influxdb2.Client.Datas
         /// <returns></returns>
         private static IList<string?> TransformValues(IList<string> values, int columnCount)
         {
-            var result = new List<string?>(columnCount);
-            foreach (var value in values)
+            for (var i = 0; i < values.Count; i++)
             {
-                if (value.Length == 0)
+                if (values[i].Length == 0)
                 {
-                    result.Add(null);
-                }
-                else
-                {
-                    result.Add(value);
+                    values[i] = null!;
                 }
             }
-            return result;
+
+            var count = columnCount - values.Count;
+            for (var i = 0; i < count; i++)
+            {
+                values.Add(null!);
+            }
+
+            return values!;
         }
 
         /// <summary>
