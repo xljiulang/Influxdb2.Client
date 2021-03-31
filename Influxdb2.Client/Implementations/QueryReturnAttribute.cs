@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using Influxdb2.Client.Datas;
+using System.Net.Http;
 using System.Threading.Tasks;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;

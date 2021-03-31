@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Influxdb2.Client.Implementations
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// Csv读取器

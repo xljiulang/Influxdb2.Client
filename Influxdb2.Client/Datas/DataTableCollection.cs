@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Influxdb2.Client.Implementations
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// 表示表格集合

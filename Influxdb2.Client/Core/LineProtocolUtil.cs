@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Influxdb2.Client.Implementations
+namespace Influxdb2.Client.Core
 {
     /// <summary>
     /// LineProtocol工具

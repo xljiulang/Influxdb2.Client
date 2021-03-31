@@ -1,4 +1,4 @@
-﻿using Influxdb2.Client.Implementations;
+﻿using Influxdb2.Client.Core;
 using System;
 using System.Runtime.CompilerServices;
 

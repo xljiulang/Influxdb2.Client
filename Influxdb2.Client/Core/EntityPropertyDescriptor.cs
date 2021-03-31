@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text;
 
-namespace Influxdb2.Client.Implementations
+namespace Influxdb2.Client.Core
 {
     /// <summary>
     /// 实体的属性描述

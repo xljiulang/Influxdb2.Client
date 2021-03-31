@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Influxdb2.Client.Implementations
+namespace Influxdb2.Client.Datas
 {
     /// <summary>
     /// 数据行
