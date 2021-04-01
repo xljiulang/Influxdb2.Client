@@ -90,6 +90,11 @@ namespace Influxdb2.Client.Core
         /// <returns></returns>
         public static Func<object?, string?> CreateFieldValueConverter(Type fieldType)
         {
+            if (typeof(Enum).IsAssignableFrom(fieldType))
+            {
+                return value => value == null ? Throw() : $"{(int)value}i";
+            }
+
             if (fieldType == typeof(sbyte) ||
                 fieldType == typeof(byte) ||
                 fieldType == typeof(short) ||
