@@ -1,7 +1,10 @@
 # Influxdb2.Client
-Influxdb2的.net高性能客户端库，读写性能为官方客户端库的180%(本机mock Influxdb服务器，完整的读写流程)
+Influxdb2读写性能最快的dotnet客户端，读写性能为官方客户端库的180%(本机mock Influxdb服务器，完整的读写流程)
 
-
+> 
+```
+dotnet add package Influxdb2.Client --version 1.0.0-*
+```
 ### 服务注册
 ```
 services.AddInfuxdb(o =>
