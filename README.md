@@ -3,7 +3,7 @@ Influxdb2读写性能最快的dotnet客户端，读写性能为官方客户端�
 
 > 
 ```
-dotnet add package Influxdb2.Client --version 1.0.0-beta1
+dotnet add package Influxdb2.Client --version 1.0.0-*
 ```
 ### 服务注册
 ```
