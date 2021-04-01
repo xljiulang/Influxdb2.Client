@@ -44,8 +44,8 @@ namespace Influxdb2.Client.Implementations
             var tables = await this.QueryAsync(flux, org);
             tables.EnsureNoError();
 
-            return tables.Count == 1 
-                ? tables[0].ToModels<TModel>() 
+            return tables.Count == 1
+                ? tables[0].ToModels<TModel>()
                 : tables.SelectMany(item => item.ToModels<TModel>()).ToArray();
         }
 
@@ -82,7 +82,7 @@ namespace Influxdb2.Client.Implementations
         /// <returns></returns>
         public Task<int> WriteAsync<TEntity>(TEntity entity, string? bucket = null, string? org = null) where TEntity : notnull
         {
-            var point = new Point(entity);
+            var point = new Point<TEntity>(entity);
             return this.WritePointAsync(point);
         }
 
@@ -96,7 +96,7 @@ namespace Influxdb2.Client.Implementations
         /// <returns></returns>
         public Task<int> WriteAsync<TEntity>(IEnumerable<TEntity> entities, string? bucket = null, string? org = null) where TEntity : notnull
         {
-            var points = entities.Select(item => new Point(item));
+            var points = entities.Select(e => new Point<TEntity>(e));
             return this.WritePointAsync(points, bucket, org);
         }
 

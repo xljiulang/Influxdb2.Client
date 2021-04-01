@@ -6,10 +6,11 @@ namespace Influxdb2.Client
     /// <summary>
     /// 表示一个数据点
     /// </summary>
-    public class Point : IPoint
+    /// <typeparam name="TEntity"></typeparam>
+    public class Point<TEntity> : IPoint
     {
-        private readonly object entity;
-        private readonly EntityDesciptor desciptor;
+        private readonly TEntity entity;
+        private readonly EntityDesciptor<TEntity> desciptor;
 
         /// <summary>
         /// 实体数据点
@@ -17,10 +18,10 @@ namespace Influxdb2.Client
         /// <param name="entity">由ColumnTypeAttribute标记属性的实体</param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ProtocolException"></exception>
-        public Point(object entity)
+        public Point(TEntity entity)
         {
             this.entity = entity;
-            this.desciptor = EntityDesciptor.Get(entity.GetType());
+            this.desciptor = EntityDesciptor<TEntity>.Instance;
         }
 
         /// <summary>

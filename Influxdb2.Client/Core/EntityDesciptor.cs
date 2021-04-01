@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,23 +8,12 @@ namespace Influxdb2.Client.Core
     /// <summary>
     /// 实体描述
     /// </summary>
-    sealed class EntityDesciptor
+    sealed class EntityDesciptor<T>
     {
         /// <summary>
-        /// 描述缓存
+        /// 获取描述实例
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, EntityDesciptor> cache = new();
-
-        /// <summary>
-        /// 获取描述
-        /// </summary>
-        /// <param name="entityType"></param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <returns></returns>
-        public static EntityDesciptor Get(Type entityType)
-        {
-            return cache.GetOrAdd(entityType, t => new EntityDesciptor(t));
-        }
+        public static EntityDesciptor<T> Instance { get; } = new();
 
 
         /// <summary>
@@ -41,17 +29,17 @@ namespace Influxdb2.Client.Core
         /// <summary>
         /// 获取所有字段
         /// </summary>
-        public EntityPropertyDescriptor[] Fields { get; }
+        public EntityPropertyDescriptor<T>[] Fields { get; }
 
         /// <summary>
         /// 获取所有标签
         /// </summary>
-        public EntityPropertyDescriptor[] Tags { get; }
+        public EntityPropertyDescriptor<T>[] Tags { get; }
 
         /// <summary>
         /// 获取时间点
         /// </summary>
-        public EntityPropertyDescriptor? Timestamp { get; }
+        public EntityPropertyDescriptor<T>? Timestamp { get; }
 
 
         /// <summary>
@@ -59,11 +47,12 @@ namespace Influxdb2.Client.Core
         /// </summary>
         /// <param name="entityType">实体类型</param>
         /// <exception cref="ArgumentException"></exception>
-        private EntityDesciptor(Type entityType)
+        public EntityDesciptor()
         {
+            var entityType = typeof(T);
             var properties = entityType.GetProperties()
                 .Where(item => item.CanRead && item.IsDefined(typeof(ColumnTypeAttribute)))
-                .Select(p => new EntityPropertyDescriptor(p))
+                .Select(p => new EntityPropertyDescriptor<T>(p))
                 .OrderBy(item => item.Name)
                 .ToArray();
 

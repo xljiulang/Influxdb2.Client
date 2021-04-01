@@ -7,7 +7,7 @@ namespace Influxdb2.Client.Core
     /// <summary>
     /// 实体的属性描述
     /// </summary>
-    sealed class EntityPropertyDescriptor : PropertyDescriptor<object, object?>
+    sealed class EntityPropertyDescriptor<T> : PropertyDescriptor<T, object?>
     {
         /// <summary>
         /// 获取列类型
@@ -64,7 +64,7 @@ namespace Influxdb2.Client.Core
         /// </summary>
         /// <param name="instance">实例</param>
         /// <returns></returns>
-        public string? GetStringValue(object instance)
+        public string? GetStringValue(T instance)
         {
             var value = base.GetValue(instance);
             return this.valueConverter.Invoke(value);

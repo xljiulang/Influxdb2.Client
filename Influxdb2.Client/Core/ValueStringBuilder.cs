@@ -35,7 +35,7 @@ namespace Influxdb2.Client.Core
                 this.Grow(newSize);
             }
 
-            this.chars.Slice(this.index)[0] = value;
+            this.chars[this.index..][0] = value;
             this.index = newSize;
         }
 
@@ -57,7 +57,7 @@ namespace Influxdb2.Client.Core
                 this.Grow(newSize);
             }
 
-            value.CopyTo(this.chars.Slice(this.index));
+            value.CopyTo(this.chars[this.index..]);
             this.index = newSize;
         }
 
