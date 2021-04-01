@@ -59,7 +59,8 @@ namespace Influxdb2.Client.Core
         /// <returns></returns>
         public static string? EncodeFieldValue(string? value)
         {
-            var builder = new ValueStringBuilder(stackalloc char[256]).Append('"');
+            var builder = new ValueStringBuilder(stackalloc char[256]);
+            builder.Append('"');
             if (string.IsNullOrEmpty(value) == false)
             {
                 if (value.IndexOfAny(encodeFieldValueChars) < 0)
@@ -78,7 +79,8 @@ namespace Influxdb2.Client.Core
                     }
                 }
             }
-            return builder.Append('"').ToString();
+            builder.Append('"');
+            return builder.ToString();
         }
 
         /// <summary>
