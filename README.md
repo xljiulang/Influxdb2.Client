@@ -13,6 +13,14 @@ services.AddInfuxdb(o =>
 });
 ```
 
+### 服务获取
+```
+MyService(IInfuxdb infuxdb)
+{
+}
+```
+###
+
 ### 写入数据
 ```
 var book = new Book();
