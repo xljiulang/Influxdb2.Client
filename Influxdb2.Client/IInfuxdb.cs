@@ -54,6 +54,15 @@ namespace Influxdb2.Client
         /// <param name="org">组织</param>
         /// <returns></returns>
         Task<int> WriteAsync<TEntity>(TEntity entity, string? bucket = default, string? org = default) where TEntity : notnull;
+         
+        /// <summary>
+        /// 写入数据点
+        /// </summary>
+        /// <param name="entity">数据点</param>
+        /// <param name="bucket">空间名</param>
+        /// <param name="org">组织</param>
+        /// <returns></returns>
+        Task<int> WriteAsync(IPoint point, string? bucket = default, string? org = default);
 
         /// <summary>
         /// 写入实体
@@ -63,19 +72,7 @@ namespace Influxdb2.Client
         /// <param name="bucket">空间名</param>
         /// <param name="org">组织</param>
         /// <returns></returns>
-        Task<int> WriteAsync<TEntity>(IEnumerable<TEntity> entities, string? bucket = default, string? org = default) where TEntity : notnull;
-
-
-
-        /// <summary>
-        /// 写入数据点
-        /// </summary>
-        /// <param name="entity">数据点</param>
-        /// <param name="bucket">空间名</param>
-        /// <param name="org">组织</param>
-        /// <returns></returns>
-        Task<int> WritePointAsync(IPoint point, string? bucket = default, string? org = default);
-
+        Task<int> WriteManyAsync<TEntity>(IEnumerable<TEntity> entities, string? bucket = default, string? org = default) where TEntity : notnull;
 
         /// <summary>
         /// 写入数据点
@@ -84,6 +81,6 @@ namespace Influxdb2.Client
         /// <param name="bucket">空间名</param>
         /// <param name="org">组织</param>
         /// <returns></returns>
-        Task<int> WritePointAsync(IEnumerable<IPoint> points, string? bucket = default, string? org = default);
+        Task<int> WriteManyAsync(IEnumerable<IPoint> points, string? bucket = default, string? org = default);
     }
 }

@@ -83,7 +83,20 @@ namespace Influxdb2.Client.Implementations
         public Task<int> WriteAsync<TEntity>(TEntity entity, string? bucket = null, string? org = null) where TEntity : notnull
         {
             var point = new Point<TEntity>(entity);
-            return this.WritePointAsync(point);
+            return this.WriteAsync((IPoint)point, bucket, org);
+        }
+
+        /// <summary>
+        /// 写入数据点
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="bucket"></param>
+        /// <param name="org"></param>
+        /// <returns></returns>
+        public Task<int> WriteAsync(IPoint point, string? bucket = null, string? org = null)
+        {
+            var points = new[] { point };
+            return this.WriteManyAsync(points, bucket, org);
         }
 
         /// <summary>
@@ -94,23 +107,10 @@ namespace Influxdb2.Client.Implementations
         /// <param name="bucket"></param>
         /// <param name="org"></param>
         /// <returns></returns>
-        public Task<int> WriteAsync<TEntity>(IEnumerable<TEntity> entities, string? bucket = null, string? org = null) where TEntity : notnull
+        public Task<int> WriteManyAsync<TEntity>(IEnumerable<TEntity> entities, string? bucket = null, string? org = null) where TEntity : notnull
         {
             var points = entities.Select(e => new Point<TEntity>(e));
-            return this.WritePointAsync(points, bucket, org);
-        }
-
-        /// <summary>
-        /// 写入数据点
-        /// </summary>
-        /// <param name="point"></param>
-        /// <param name="bucket"></param>
-        /// <param name="org"></param>
-        /// <returns></returns>
-        public Task<int> WritePointAsync(IPoint point, string? bucket = null, string? org = null)
-        {
-            var points = new[] { point };
-            return this.WritePointAsync(points, bucket, org);
+            return this.WriteManyAsync((IEnumerable<IPoint>)points, bucket, org);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Influxdb2.Client.Implementations
         /// <param name="bucket"></param>
         /// <param name="org"></param>
         /// <returns></returns>
-        public async Task<int> WritePointAsync(IEnumerable<IPoint> points, string? bucket = null, string? org = null)
+        public async Task<int> WriteManyAsync(IEnumerable<IPoint> points, string? bucket = null, string? org = null)
         {
             var count = points.Count();
             if (count == 0)
