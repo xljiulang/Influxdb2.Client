@@ -1,5 +1,5 @@
 # Influxdb2.Client
-Influxdb2的.net高性能客户端库，读写性能为官方客户端库的180%
+Influxdb2的.net高性能客户端库，读写性能为官方客户端库的180%(本机mock Influxdb服务器，完整的读写流程)
 
 
 ### 服务注册
@@ -13,7 +13,7 @@ services.AddInfuxdb(o =>
 });
 ```
 
-### 写入实体
+### 写入数据
 ```
 var book = new Book();
 await infuxdb.WriteAsync(book);
@@ -24,9 +24,10 @@ var book = new PointBuilder("Book")
     .SetTag("key", "value")
     .SetField("field", "value")
     .Build();
-await infuxdb.WriteAsync(book);
+await infuxdb.WritePointAsync(book);
 ```
 
+数据属性需要ColumnType标记
 ```
 class Book
 {
@@ -47,7 +48,7 @@ class Book
 
 
     [ColumnType(ColumnType.Timestamp)]
-    public DateTimeOffset? CreateTime { get; set; }
+    public DateTimeOffset? CreateTime { get; set; } 
 }
 ```
 
