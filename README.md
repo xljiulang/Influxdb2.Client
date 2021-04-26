@@ -35,7 +35,7 @@ var book = new PointBuilder("Book")
     .SetTag("key", "value")
     .SetField("field", "value")
     .Build();
-await infuxdb.WritePointAsync(book);
+await infuxdb.WriteAsync(book);
 ```
 
 数据属性需要ColumnType标记
