@@ -45,7 +45,6 @@ namespace Influxdb2.Client.Core
         /// <summary>
         /// 实体描述
         /// </summary>
-        /// <param name="entityType">实体类型</param>
         /// <exception cref="ArgumentException"></exception>
         public EntityDesciptor()
         {

@@ -13,6 +13,7 @@ namespace Influxdb2.Client.Core
         /// 对标签或字段名进行编码
         /// </summary>
         /// <param name="name">名称</param>
+        /// <param name="escapeEqual"></param>
         /// <exception cref="ProtocolException"></exception>
         /// <returns></returns>
         public static string Encode(string? name, bool escapeEqual = true)

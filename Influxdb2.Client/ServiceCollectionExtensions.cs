@@ -14,6 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加IInfuxdb
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="configureOptions"></param>
         /// <returns></returns>
         public static IHttpClientBuilder AddInfuxdb(this IServiceCollection services, Action<InfuxdbOptions> configureOptions)
         {
@@ -24,7 +25,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加IInfuxdbClient
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configureOptions"></param>
         /// <returns></returns>
         public static IHttpClientBuilder AddInfuxdb(this IServiceCollection services)
         {

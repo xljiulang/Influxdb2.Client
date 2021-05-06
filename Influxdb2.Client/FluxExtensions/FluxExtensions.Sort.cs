@@ -9,6 +9,7 @@
         /// 排序
         /// </summary>
         /// <param name="flux"></param>
+        /// <param name="desc"></param>
         /// <returns></returns>
         public static IFlux Sort(this IFlux flux, bool desc = false)
         {
@@ -19,6 +20,8 @@
         /// 排序
         /// </summary>
         /// <param name="flux"></param>
+        /// <param name="columns"></param>
+        /// <param name="desc"></param>
         /// <returns></returns>
         public static IFlux Sort(this IFlux flux, Columns columns, bool desc = false)
         {

@@ -105,7 +105,7 @@ namespace Influxdb2.Client
         /// <summary>
         /// 设置unix纳秒时间戳
         /// </summary>
-        /// <param name="timestamp">unix纳秒时间戳</param>
+        /// <param name="value">unix纳秒时间戳</param>
         /// <returns></returns>
         public PointBuilder SetTimestamp(DateTime? value)
         {

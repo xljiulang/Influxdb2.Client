@@ -54,11 +54,11 @@ namespace Influxdb2.Client
         /// <param name="org">组织</param>
         /// <returns></returns>
         Task<int> WriteAsync<TEntity>(TEntity entity, string? bucket = default, string? org = default) where TEntity : notnull;
-         
+
         /// <summary>
         /// 写入数据点
         /// </summary>
-        /// <param name="entity">数据点</param>
+        /// <param name="point">数据点</param>
         /// <param name="bucket">空间名</param>
         /// <param name="org">组织</param>
         /// <returns></returns>

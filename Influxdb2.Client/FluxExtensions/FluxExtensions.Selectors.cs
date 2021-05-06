@@ -34,7 +34,6 @@
         /// </summary>
         /// <param name="flux"></param>
         /// <param name="n"></param>
-        /// <param name="columns">排序列</param>
         /// <returns></returns>
         public static IFlux Top(this IFlux flux, int n)
         {

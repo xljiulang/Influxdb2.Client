@@ -12,7 +12,7 @@ namespace influxdb2_client
 {
     class BookHostedService : BackgroundService
     {
-        private readonly Random random = new Random();
+        private readonly Random random = new();
         private readonly IServiceScopeFactory scopeFactory;
         private readonly ILogger<BookHostedService> logger;
 

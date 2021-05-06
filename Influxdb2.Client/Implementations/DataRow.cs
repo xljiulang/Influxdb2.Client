@@ -29,7 +29,7 @@ namespace Influxdb2.Client.Implementations
         /// <summary>
         /// 通过列索引获取值
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="columnIndex"></param>
         /// <returns></returns>
         public string? this[int columnIndex] => this.Values[columnIndex];
 

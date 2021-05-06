@@ -28,7 +28,8 @@
         /// <summary>
         /// 获取包含指定列的的第一个表的首行对应列的值
         /// 获取不到则返回类型默认值
-        /// </summary> 
+        /// </summary>
+        /// <param name="dataTables"></param> 
         /// <param name="column"></param>
         /// <returns></returns> 
         public static string? GetFirstValueOrDefault(this IDataTableCollection dataTables, string column)
@@ -47,7 +48,8 @@
         /// 获取包含指定列的的第一个表的首行对应列的值
         /// 获取不到则返回类型默认值
         /// </summary>
-        /// <typeparam name="TValue"></typeparam> 
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dataTables"></param> 
         /// <param name="column"></param>
         /// <returns></returns> 
         public static TValue GetFirstValueOrDefault<TValue>(this IDataTableCollection dataTables, string column) where TValue : struct

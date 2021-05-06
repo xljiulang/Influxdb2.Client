@@ -9,6 +9,7 @@
         /// 合并两个查询
         /// </summary>
         /// <param name="flux"></param>
+        /// <param name="other"></param>
         /// <returns></returns>
         public static IFlux Union(this IFlux flux, IFlux other)
         {

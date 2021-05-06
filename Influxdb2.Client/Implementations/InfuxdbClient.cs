@@ -30,7 +30,7 @@ namespace Influxdb2.Client.Implementations
         /// <summary>
         /// 查询数据
         /// </summary>
-        /// <param name="flux">flux表达式</param>
+        /// <param name="content">flux表达式</param>
         /// <param name="org">组织</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InfluxdbException"></exception>

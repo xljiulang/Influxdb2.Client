@@ -21,7 +21,7 @@ namespace Influxdb2.Client
         /// <summary>
         /// 通过列索引获取值
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="columnIndex"></param>
         /// <returns></returns>
         string? this[int columnIndex] { get; }
 

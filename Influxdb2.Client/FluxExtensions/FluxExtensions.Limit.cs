@@ -9,6 +9,8 @@
         /// limit
         /// </summary>
         /// <param name="flux"></param>
+        /// <param name="n"></param>
+        /// <param name="offset"></param>
         /// <returns></returns>
         public static IFlux Limit(this IFlux flux, int n, int offset = 0)
         {
